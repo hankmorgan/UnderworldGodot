@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  tests:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # Underworld.csproj targets net9.0 and the test project targets net10.0.
+      # SDK 10 builds both; SDK 8 builds neither.
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Godot itself is not needed: Godot.NET.Sdk and GodotSharp restore from NuGet.
+      - name: Build
+        run: dotnet build Underworld.csproj
+
+      # The test project is deliberately outside Underworld.sln, so name it.
+      # These never load Godot, and the game-data tests return early when the
+      # .SYS files are absent.
+      - name: Unit tests
+        # Only the font tests. The rest of the suite reads save fixtures from
+        # ../UW2GOG, which is proprietary game data this runner has no licence to
+        # carry, so 30 of its 177 tests fail here through no fault of the code. Making
+        # those skip is worth doing and belongs on issue #60, where the maintainer
+        # already offered to decide the CI layout; it is not this branch's to take.
+        run: |
+          dotnet test tests/Underworld.Save.Tests/Underworld.Save.Tests.csproj \
+            --verbosity normal \
+            --filter "FullyQualifiedName~SysFont|FullyQualifiedName~InstallationValidator|FullyQualifiedName~SceneFontWiring"
+
+  render:
+    name: Font render test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # Underworld.csproj targets net9.0, so its runtimeconfig asks for
+          # Microsoft.NETCore.App 9.0.0 with LatestMinor roll-forward, which does not cross
+          # to 10. A 10 SDK builds it happily but Godot cannot host it, and the failure is
+          # silent: CoreCLR never starts, so no test writes a line and the log holds only
+          # shutdown noise. Both are needed here.
+          dotnet-version: |
+            9.0.x
+            10.0.x
+
+      - name: Install xvfb
+        run: |
+          # Mesa too: xvfb supplies an X display but no GPU, so the software GL driver
+          # is what actually rasterises the render test.
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
+
+      # The mono build, because the render test is C# and calls SysFontBuilder.
+      - name: Fetch Godot 4.3 mono
+        run: |
+          curl -sL -o godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_mono_linux_x86_64.zip
+          unzip -q godot.zip
+          echo "GODOT=$PWD/Godot_v4.3-stable_mono_linux_x86_64/Godot_v4.3-stable_mono_linux.x86_64" >> $GITHUB_ENV
+
+      - name: Build
+        run: dotnet build Underworld.csproj
+
+      # A fresh checkout has no .godot directory, and Godot cannot run a scene until it
+      # has imported the project once. Without this every scene dies before it prints
+      # anything, which reads as "produced no verdict".
+      - name: Import the project
+        run: |
+          chmod +x "$GODOT"
+          xvfb-run -a "$GODOT" --headless --path . --import || true
+
+      # A real driver under xvfb, never --headless: the render test compares pixels, and
+      # headless returns dummy values from the RenderingServer.
+      #
+      # Every scene is run, not just the render test. The exit status is not trusted:
+      # Godot 4.3 mono can fault on shutdown after Quit(), so each test prints a verdict
+      # line and this harness keys off that. A run that prints no verdict is a failure,
+      # because it died before deciding.
+      #
+      # SKIP is expected here and is not a failure: three of these need the shipped .SYS
+      # fonts, which CI has no licence to carry. They report SKIP and start protecting the
+      # branch the moment game data is available.
+      - name: Godot tests
+        run: |
+          chmod +x "$GODOT"
+          rc=0
+          for scene in font_render_test font_placement_test; do
+            out="/tmp/$scene.log"
+            timeout 180 xvfb-run -a "$GODOT" --rendering-driver opengl3 \
+              --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true
+            verdict=$(grep -m1 '^GODOT-TEST-VERDICT ' "$out" || true)
+            if [ -z "$verdict" ]; then
+              # Print the START of the log, not the end. Godot's real error happens during
+              # startup, while the tail is filled with allocator and static-string
+              # diagnostics it emits on every shutdown. Tailing hid a missing runtime.
+              echo "::error::$scene produced no verdict"
+              head -40 "$out"
+              echo "  ... matching lines ..."
+              grep -iE 'hostfxr|coreclr|dotnet|assembly|runtime' "$out" | head -10 || true
+              rc=1
+            else
+              echo "$scene: $verdict"
+              case "$verdict" in
+                *" PASS"*) ;;
+                *" SKIP"*) echo "::notice::$scene skipped, no game data" ;;
+                *) echo "::error::$scene failed"; tail -30 "$out"; rc=1 ;;
+              esac
+            fi
+          done
+          exit $rc

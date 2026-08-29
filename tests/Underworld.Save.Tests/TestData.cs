@@ -45,4 +45,9 @@ public static class TestData
     /// Returns the path to a file in UW1/DATA.
     /// </summary>
     public static string Uw1Data(string filename) => Path.Combine(UW2GogRoot, "UW1", "DATA", filename);
+
+    /// <summary>
+    /// Returns the path to a file in UW2/DATA.
+    /// </summary>
+    public static string Uw2Data(string filename) => Path.Combine(UW2GogRoot, "UW2", "DATA", filename);
 }
