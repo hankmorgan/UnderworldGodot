@@ -35,6 +35,7 @@ namespace Underworld
 
         static void ProcessNextEndGameStage()
         {
+            uimanager.CurrentGameMode = GameModes.ENDGAME;
             switch (EndGameStage)
             {
                 case EndGameStages.NotStarted:

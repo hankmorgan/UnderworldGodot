@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=32 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" path="res://resources/fonts/FONT5X6I.tres" id="3_safdl"]
@@ -1828,9 +1828,9 @@ offset_bottom = 260.0
 theme = SubResource("Theme_i11v8")
 theme_override_fonts/font = ExtResource("4_pfbet")
 theme_override_font_sizes/font_size = 64
+text = "255"
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "255"
 max_lines_visible = 1
 visible_characters = 3
 
@@ -2865,6 +2865,7 @@ offset_left = 160.0
 offset_top = 120.0
 offset_right = 1120.0
 offset_bottom = 720.0
+mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_kj12g")
 theme_override_font_sizes/normal_font_size = 40
 bbcode_enabled = true
