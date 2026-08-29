@@ -105,6 +105,27 @@ namespace Underworld
             {
                 return;
             }
+            switch (inventoryPressSlotName)
+            {
+                case "RightShoulder":
+                case "LeftShoulder":
+                case "RightHand":
+                case "LeftHand":
+                    if (obj.index != OpenedContainerIndex && OpenedContainerIndex != -1)
+                    {
+                        var match = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: obj.index,
+                            itemIndex: OpenedContainerIndex,
+                            objList: playerdat.InventoryObjects,
+                            SkipNext: true);
+                        if (match != null)
+                        {
+                            Debug.Print("attempt to pickup container while it or sub-object is opened");
+                            return;
+                        }
+                    }
+                    break;
+            }
             if (obj.index == OpenedContainerIndex)
             {
                 return; // don't drag the container currently being viewed
