@@ -57,12 +57,6 @@ public class uwsettings
                 break;
         }
 
-        if (main.cameraPitchGimbal_world != null)
-        {
-            main.cameraPitchGimbal_world.Fov = Math.Max(50, instance.FOV);
-            main.cameraPitchGimbal_sprites.Fov = main.cameraPitchGimbal_world.Fov;
-        }
-
         // A file can parse and still be unusable. gametoload set to null, or to something that
         // names no game, used to throw from here, and this runs from the static constructor, so
         // the effect was the same as an unreadable file: the type faults and the game cannot
@@ -92,6 +86,14 @@ public class uwsettings
 
         UWClass._RES = res;
         UWClass.BasePath = (res == UWClass.GAME_UW2) ? instance.pathuw2 : instance.pathuw1;
+
+        // After the game selection, so a file that is about to be discarded does not get to
+        // move the camera on its way out.
+        if (main.cameraPitchGimbal_world != null)
+        {
+            main.cameraPitchGimbal_world.Fov = Math.Max(50, instance.FOV);
+            main.cameraPitchGimbal_sprites.Fov = main.cameraPitchGimbal_world.Fov;
+        }
 
         // Backward compat: if legacy 'rompath' is set but new 'synthpath' isn't,
         // promote rompath to synthpath.

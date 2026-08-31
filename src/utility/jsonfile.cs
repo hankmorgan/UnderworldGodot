@@ -99,8 +99,10 @@ public static class JsonFile
                 File.Move(path, kept);
                 return kept;
             }
-            catch (IOException) when (File.Exists(kept))
+            catch (IOException) when (File.Exists(kept) || Directory.Exists(kept))
             {
+                // Something is already at that name, so try the next one. File.Exists alone
+                // reports false for a directory, which would end the search on the first slot.
                 continue;
             }
             catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)

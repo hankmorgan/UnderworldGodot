@@ -80,18 +80,14 @@ public partial class SfxStreamPlayer : Node
         _renderBuffer = new short[FramesPerTick * 2];
         _frames = new Vector2[FramesPerTick];
 
-        // Everything that can fail happens before anything is started. Path.Combine throws if
-        // BasePath is null, which is what happens when the settings could not be read, and if
-        // that throw came after the player was playing and the producer thread was running,
-        // Resolve the path before building anything. Path.Combine throws if BasePath is null,
-        // which is what happens when the settings could not be read, and a throw after the
-        // player was playing and the producer thread was running would leave the node
-        // half-built with live audio attached to it.
+        // Resolve the path before the player and the thread exist. Path.Combine throws if
+        // BasePath is null, which is what happens when the settings could not be read, and a
+        // throw after the generator was playing and the producer thread was running would leave
+        // both going against a construction that had already failed. The chip, the sink and the
+        // buffers above are already built by this point, and _ExitTree is what takes those down.
         //
         // SFX is currently UW1-only (the TVFX engine targets UW.AD; the UW2
-        // path falls back to .voc files which we don't yet wire). Initialising
-        // SoundEffects here means the singleton + scene-tree timing matches
-        // MusicStreamPlayer's lifecycle.
+        // path falls back to .voc files which we don't yet wire).
         //if (UWClass._RES == UWClass.GAME_UW1)
        // {
             if (string.IsNullOrWhiteSpace(UWClass.BasePath))

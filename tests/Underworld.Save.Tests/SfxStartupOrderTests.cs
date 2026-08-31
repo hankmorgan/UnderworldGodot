@@ -8,9 +8,11 @@ namespace Underworld.Save.Tests;
 ///
 /// Two orderings matter, at opposite ends.
 ///
-/// The sound directory must be resolved before anything is built. <c>Path.Combine</c> throws
-/// when no game path is configured, and a throw after the generator was playing and the
-/// producer thread was running left the node half-built, with live audio attached to it.
+/// The sound directory must be resolved before the player and the producer thread exist.
+/// <c>Path.Combine</c> throws when no game path is configured, and a throw after the generator
+/// was playing and the thread was running left both going against a construction that had
+/// already failed. The chip and the singleton are created earlier still and are taken down by
+/// <c>_ExitTree</c>, so this is about what gets started, not about leaks.
 ///
 /// <c>SoundEffects.Initialize</c> must come last, because it is what makes this node reachable
 /// from <c>SoundEffects.Play</c>. Publishing it earlier would mean a failure while building the
@@ -45,7 +47,7 @@ public class SfxStartupOrderTests
 
         Assert.True(combine < play,
             "the sound directory must be resolved before the generator plays, or a failure to "
-            + "resolve it leaves audio running with no way to stop it (#79)");
+            + "resolve it leaves audio playing that nothing asked to start (#79)");
         Assert.True(combine < startThread,
             "the sound directory must be resolved before the producer thread starts (#79)");
     }
@@ -67,7 +69,7 @@ public class SfxStartupOrderTests
     {
         string s = Source;
 
-        int initialise = PositionOf(s, "SoundEffects.Initialize");
+        int initialise = PositionOf(s, "SoundEffects.Initialize(uwsettings");
         int play = PositionOf(s, "_player.Play()");
         int startThread = PositionOf(s, "_audioThread.Start()");
 

@@ -199,14 +199,35 @@ public class JsonFileTests
     }
 
     [Fact]
-    public void PreserveUnreadable_WhenItCannotMove_ReportsFailureRatherThanThrowing()
+    public void PreserveUnreadable_WithNothingToMove_ReportsFailureRatherThanThrowing()
     {
         string dir = TempDir();
         try
         {
-            // Nothing to move. The caller uses the null to tell the user that the bad file is
-            // still in place and the next save will replace it.
             Assert.Null(JsonFile.PreserveUnreadable(Path.Combine(dir, "absent.json")));
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    [Fact]
+    public void PreserveUnreadable_StepsPastADirectorySittingOnTheName()
+    {
+        string dir = TempDir();
+        try
+        {
+            string path = Path.Combine(dir, "settings.json");
+            File.WriteAllText(path, "the bad one");
+            // A directory where the first copy would go. File.Exists reports false for one, so
+            // a collision check that only asks File.Exists gives up here instead of trying the
+            // next name, and the bad file is left to be overwritten by the next save.
+            Directory.CreateDirectory(path + ".corrupt");
+
+            string kept = JsonFile.PreserveUnreadable(path);
+
+            Assert.NotNull(kept);
+            Assert.Equal(path + ".corrupt.2", kept);
+            Assert.Equal("the bad one", File.ReadAllText(kept));
+            Assert.False(File.Exists(path));
         }
         finally { Directory.Delete(dir, true); }
     }
