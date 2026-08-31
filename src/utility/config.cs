@@ -27,16 +27,34 @@ public class uwsettings
     public static void LoadSettings()
     {
 
-        if (File.Exists(FilePath))
+        switch (JsonFile.TryRead<uwsettings>(FilePath, JsonOpts, out var loaded, out string error))
         {
-            Debug.Print($"Loading settings from {FilePath}");
-            using var stream = File.OpenRead(FilePath);
-            instance = JsonSerializer.Deserialize<uwsettings>(stream, JsonOpts);
-        }
-        else
-        {
-            Debug.Print($"No existing settings at {FilePath}. Loading defaults.");
-            instance = new();
+            case JsonReadOutcome.Ok:
+                Debug.Print($"Loading settings from {FilePath}");
+                instance = loaded;
+                break;
+
+            case JsonReadOutcome.NotFound:
+                Debug.Print($"No existing settings at {FilePath}. Loading defaults.");
+                instance = new();
+                break;
+
+            default:
+                // This runs from the static constructor, so letting the failure out faults the
+                // type for the whole process: every later read of uwsettings.instance throws,
+                // BasePath is never set, and the game cannot start with nothing on screen to
+                // say why. Keep the file so it can be looked at, and carry on with defaults.
+                //
+                // GD.PushWarning rather than Debug.Print: Debug.Print is [Conditional("DEBUG")]
+                // and compiles out of a release build, and this is the one message that explains
+                // why the settings just reverted.
+                string kept = JsonFile.PreserveUnreadable(FilePath);
+                GD.PushWarning($"Could not read {FilePath} ({error}). Loading defaults."
+                    + (kept != null
+                        ? $" The file was kept as {kept}."
+                        : " The file could not be moved aside, so the next save will replace it."));
+                instance = new();
+                break;
         }
 
         if (main.cameraPitchGimbal_world != null)
