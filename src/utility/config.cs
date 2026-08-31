@@ -63,26 +63,35 @@ public class uwsettings
             main.cameraPitchGimbal_sprites.Fov = main.cameraPitchGimbal_world.Fov;
         }
 
-        switch (instance.gametoload.ToUpper())
+        // A file can parse and still be unusable. gametoload set to null, or to something that
+        // names no game, used to throw from here, and this runs from the static constructor, so
+        // the effect was the same as an unreadable file: the type faults and the game cannot
+        // start. Treat it the same way, and keep the file so it can be looked at.
+        if (!GameSelection.TryResolve(instance.gametoload, out byte res))
         {
-            case "UW2":
-            case "2":
-                UWClass._RES = UWClass.GAME_UW2;
-                UWClass.BasePath = instance.pathuw2;
-                break;
-            case "UW1":
-            case "1":
-                UWClass._RES = UWClass.GAME_UW1;
-                UWClass.BasePath = instance.pathuw1;
-                break;
-            case "UWDEMO":
-            case "0":
-                UWClass._RES = UWClass.GAME_UWDEMO;
-                UWClass.BasePath = instance.pathuw1;
-                break;
-            default:
-                throw new InvalidOperationException("Invalid Game Selected");
+            string keptBadGame = JsonFile.PreserveUnreadable(FilePath);
+            GD.PushWarning(
+                $"{FilePath} names no game I recognise (gametoload was "
+                + (instance.gametoload == null ? "not set" : $"'{instance.gametoload}'")
+                + "). Loading defaults."
+                + (keptBadGame != null
+                    ? $" The file was kept as {keptBadGame}."
+                    : " The file could not be moved aside, so the next save will replace it."));
+            instance = new();
+            if (!GameSelection.TryResolve(instance.gametoload, out res))
+            {
+                // Only reachable if the default in this class stops naming a game, which would
+                // be a mistake in this file rather than in anyone's settings. Say so instead of
+                // running on with a selection nothing chose.
+                GD.PushError(
+                    $"uwsettings default gametoload '{instance.gametoload}' names no game. "
+                    + "Falling back to UW1.");
+                res = UWClass.GAME_UW1;
+            }
         }
+
+        UWClass._RES = res;
+        UWClass.BasePath = (res == UWClass.GAME_UW2) ? instance.pathuw2 : instance.pathuw1;
 
         // Backward compat: if legacy 'rompath' is set but new 'synthpath' isn't,
         // promote rompath to synthpath.
