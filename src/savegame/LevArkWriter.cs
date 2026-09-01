@@ -140,12 +140,17 @@ namespace Underworld
                 }
             }
 
-            // Replace automap-note blocks (240..319) with the in-memory notes when non-empty.
+            // Replace automap-note blocks (240..319) with the in-memory notes.
+            // A level whose notes were all deleted serialises to an empty array, which the
+            // layout step below turns into an absent block. Skipping the replacement instead
+            // would write the source ARK's notes back out and they would reappear on reload.
+            // automapsnotes[lvl] is only non-null for a level that has been loaded, and the
+            // constructor reads the source block, so an empty list means no notes.
             if (automapnote.automapsnotes != null)
             {
                 for (int lvl = 0; lvl < 80; lvl++)
                 {
-                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    if (automapnote.automapsnotes[lvl] != null)
                     {
                         blockData[240 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }
@@ -192,9 +197,12 @@ namespace Underworld
                 }
                 else
                 {
+                    // An absent block carries no allocation. Every absent block in the
+                    // shipped UW2 archive has offset, length and reserved all zero.
                     offsets[i] = 0;
                     flags[i] = 0;
                     lengths[i] = 0;
+                    reserved[i] = 0;
                 }
             }
 
@@ -245,13 +253,12 @@ namespace Underworld
             byte[][] blockData = new byte[noOfBlocks][];
 
             // For UW1, LoadUWBlock (default case) requires the caller to supply targetDataLen
-            // because the format has no per-block length metadata — only an offset table.
-            // We compute each block's length as offset[i+1] - offset[i] (or fileLen - offset[i]
-            // for the last present block).  This handles all block types (tilemap, overlay,
-            // texmap, automap, notes) correctly without hard-coding per-type sizes.
+            // because the format has no per-block length metadata, only an offset table.
+            // UW1BlockLength measures each block from the offsets, which handles all block
+            // types (tilemap, overlay, texmap, automap, notes) without hard-coding per-type
+            // sizes.
             byte[] uw1Src = LevArkLoader.lev_ark_file_data;
             int uw1HeaderBlocks = (uw1Src != null) ? (int)Loader.getAt(uw1Src, 0, 16) : noOfBlocks;
-            int uw1HeaderSize = 2 + uw1HeaderBlocks * 4;
 
             for (int i = 0; i < noOfBlocks; i++)
             {
@@ -266,26 +273,7 @@ namespace Underworld
                 }
                 else
                 {
-                    // Read this block's offset and find the next non-zero offset to compute length.
-                    int thisOff = (int)Loader.getAt(uw1Src, 2 + i * 4, 32);
-                    if (thisOff == 0)
-                    {
-                        tLen = 0; // absent block
-                    }
-                    else
-                    {
-                        int nextOff = uw1Src.Length; // default: run to end of file
-                        for (int j = i + 1; j < uw1HeaderBlocks; j++)
-                        {
-                            int candidate = (int)Loader.getAt(uw1Src, 2 + j * 4, 32);
-                            if (candidate > thisOff)
-                            {
-                                nextOff = candidate;
-                                break;
-                            }
-                        }
-                        tLen = nextOff - thisOff;
-                    }
+                    tLen = LevArkLoader.UW1BlockLength(uw1Src, i, uw1HeaderBlocks);
                 }
                 UWBlock src = ExtractSourceBlock(i, targetLen: tLen);
                 blockData[i] = src?.Data;
@@ -358,14 +346,17 @@ namespace Underworld
                 }
             }
 
-            // Replace automap-note blocks (36..44) with the in-memory notes when non-empty.
+            // Replace automap-note blocks (36..44) with the in-memory notes.
             // Without this, newly-created notes are silently lost on save because
-            // ExtractSourceBlock returns the pre-play bytes from the source ARK.
+            // ExtractSourceBlock returns the pre-play bytes from the source ARK. The same
+            // applies in reverse to deletion: a level whose notes were all deleted
+            // serialises to an empty array, which the layout step turns into an absent
+            // block, matching how the shipped archive represents a level with no notes.
             if (automapnote.automapsnotes != null)
             {
                 for (int lvl = 0; lvl < 9; lvl++)
                 {
-                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    if (automapnote.automapsnotes[lvl] != null)
                     {
                         blockData[36 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }

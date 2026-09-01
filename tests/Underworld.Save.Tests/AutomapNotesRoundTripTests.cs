@@ -36,12 +36,14 @@ public class AutomapNotesRoundTripTests : System.IDisposable
         note.notes.Add(new Underworld.automapnote.mapnotetext("hello", 42, 7));
         byte[] result = note.Serialize();
 
+        // Upper-cased on the way out. This test previously asserted "hello" byte for byte,
+        // which is a note DOS cannot draw: opening the automap on such a save hangs UW1.
         Assert.Equal(54, result.Length);
-        Assert.Equal((byte)'h', result[0]);
-        Assert.Equal((byte)'e', result[1]);
-        Assert.Equal((byte)'l', result[2]);
-        Assert.Equal((byte)'l', result[3]);
-        Assert.Equal((byte)'o', result[4]);
+        Assert.Equal((byte)'H', result[0]);
+        Assert.Equal((byte)'E', result[1]);
+        Assert.Equal((byte)'L', result[2]);
+        Assert.Equal((byte)'L', result[3]);
+        Assert.Equal((byte)'O', result[4]);
         Assert.Equal((byte)0, result[5]);
         Assert.Equal((byte)42, result[0x32]);
         Assert.Equal((byte)0, result[0x33]);
@@ -100,5 +102,274 @@ public class AutomapNotesRoundTripTests : System.IDisposable
             Underworld.LevArkLoader.lev_ark_file_data = originalFile;
             Underworld.automapnote.automapsnotes = null;
         }
+    }
+
+    // ---- issue #63: deleting every note on a level must survive save and reload -------
+
+    private static int Uw1NotesOffset(byte[] ark, int level) =>
+        (int)Underworld.Loader.getAt(ark, ((36 + level) * 4) + 2, 32);
+
+    private static (int off, int flag, int len, int res) Uw2BlockHeader(byte[] ark, int block)
+    {
+        int n = (int)Underworld.Loader.getAt(ark, 0, 32);
+        return ((int)Underworld.Loader.getAt(ark, 6 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 4 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 8 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 12 + block * 4, 32));
+    }
+
+    /// <summary>
+    /// Builds a UW1 ARK carrying notes on the given levels, so deletion has something to
+    /// delete. The shipped DATA/LEV.ARK has no notes blocks at all.
+    /// </summary>
+    private static byte[] Uw1ArkWithNotesOn(params int[] levels)
+    {
+        Underworld.automapnote.automapsnotes = new Underworld.automapnote[Underworld.UWTileMap.NO_OF_LEVELS];
+        foreach (int lvl in levels)
+        {
+            Underworld.automapnote.automapsnotes[lvl] = new Underworld.automapnote();
+            Underworld.automapnote.automapsnotes[lvl].notes.Add(
+                new Underworld.automapnote.mapnotetext($"NOTE ON LEVEL {lvl}", 10 + lvl, 20 + lvl));
+        }
+        byte[] ark = Underworld.LevArkWriter.Serialize();
+        Underworld.automapnote.automapsnotes = null;
+        return ark;
+    }
+
+    [Fact]
+    public void LevArkWriter_Uw1_DeletingEveryNote_ClearsTheBlockAndSurvivesReload()
+    {
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+        Assert.True(Underworld.LevArkLoader.LoadLevArkFileData(folder: "DATA"));
+
+        byte[] originalFile = Underworld.LevArkLoader.lev_ark_file_data;
+        try
+        {
+            byte[] withNote = Uw1ArkWithNotesOn(0);
+            Assert.NotEqual(0, Uw1NotesOffset(withNote, 0));
+
+            // Load that ARK, confirm the note is really there, then delete it.
+            Underworld.LevArkLoader.lev_ark_file_data = withNote;
+            Underworld.automapnote.automapsnotes = new Underworld.automapnote[Underworld.UWTileMap.NO_OF_LEVELS];
+            Underworld.automapnote.automapsnotes[0] = new Underworld.automapnote(0);
+            Assert.Single(Underworld.automapnote.automapsnotes[0].notes);
+            Underworld.automapnote.automapsnotes[0].notes.Clear();
+
+            byte[] cleared = Underworld.LevArkWriter.Serialize();
+
+            // The block must be gone, the way the shipped archive represents "no notes".
+            Assert.Equal(0, Uw1NotesOffset(cleared, 0));
+
+            Underworld.LevArkLoader.lev_ark_file_data = cleared;
+            var reloaded = new Underworld.automapnote(0);
+            Assert.NotNull(reloaded.notes);
+            Assert.Empty(reloaded.notes);
+        }
+        finally
+        {
+            Underworld.LevArkLoader.lev_ark_file_data = originalFile;
+            Underworld.automapnote.automapsnotes = null;
+        }
+    }
+
+    [Fact]
+    public void LevArkWriter_Uw1_DeletingNotesOnOneLevel_LeavesAnUnloadedLevelIntact()
+    {
+        // The regression guard for dropping the Count > 0 gate: a level that was never
+        // loaded stays null, so its source block must pass through untouched.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+        Assert.True(Underworld.LevArkLoader.LoadLevArkFileData(folder: "DATA"));
+
+        byte[] originalFile = Underworld.LevArkLoader.lev_ark_file_data;
+        try
+        {
+            byte[] withNotes = Uw1ArkWithNotesOn(0, 1);
+            Underworld.LevArkLoader.lev_ark_file_data = withNotes;
+
+            // Load level 0 only and clear it. Level 1 is left null, as if never visited.
+            Underworld.automapnote.automapsnotes = new Underworld.automapnote[Underworld.UWTileMap.NO_OF_LEVELS];
+            Underworld.automapnote.automapsnotes[0] = new Underworld.automapnote(0);
+            Underworld.automapnote.automapsnotes[0].notes.Clear();
+            Assert.Null(Underworld.automapnote.automapsnotes[1]);
+
+            byte[] cleared = Underworld.LevArkWriter.Serialize();
+
+            Underworld.LevArkLoader.lev_ark_file_data = cleared;
+            Assert.Equal(0, Uw1NotesOffset(cleared, 0));
+
+            var levelOne = new Underworld.automapnote(1);
+            Assert.Single(levelOne.notes);
+            Assert.Equal("NOTE ON LEVEL 1", levelOne.notes[0].notetext);
+            Assert.Equal(11, levelOne.notes[0].posX);
+            Assert.Equal(21, levelOne.notes[0].posY);
+        }
+        finally
+        {
+            Underworld.LevArkLoader.lev_ark_file_data = originalFile;
+            Underworld.automapnote.automapsnotes = null;
+        }
+    }
+
+    [Fact]
+    public void LevArkWriter_Uw2_DeletingEveryNote_ClearsTheBlockAndItsHeaderFields()
+    {
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        Assert.True(Underworld.LevArkLoader.LoadLevArkFileData(folder: "SAVE0"));
+
+        byte[] originalFile = Underworld.LevArkLoader.lev_ark_file_data;
+        try
+        {
+            // Level 0 is block 240 and carries notes in the shipped save.
+            var source = new Underworld.automapnote(0);
+            Assert.NotEmpty(source.notes);
+
+            Underworld.automapnote.automapsnotes = new Underworld.automapnote[Underworld.UWTileMap.NO_OF_LEVELS];
+            Underworld.automapnote.automapsnotes[0] = source;
+            source.notes.Clear();
+
+            byte[] cleared = Underworld.LevArkWriter.Serialize();
+
+            var (off, flag, len, res) = Uw2BlockHeader(cleared, 240);
+            Assert.Equal(0, off);
+            Assert.Equal(0, flag);
+            Assert.Equal(0, len);
+            Assert.Equal(0, res);   // an absent block carries no allocation
+
+            Underworld.LevArkLoader.lev_ark_file_data = cleared;
+            var reloaded = new Underworld.automapnote(0);
+            Assert.Empty(reloaded.notes);
+        }
+        finally
+        {
+            Underworld.LevArkLoader.lev_ark_file_data = originalFile;
+            Underworld.automapnote.automapsnotes = null;
+        }
+    }
+
+    [Fact]
+    public void LevArkWriter_Uw2_DeletingNotesOnOneLevel_LeavesAnUnloadedLevelIntact()
+    {
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        Assert.True(Underworld.LevArkLoader.LoadLevArkFileData(folder: "SAVE0"));
+
+        byte[] originalFile = Underworld.LevArkLoader.lev_ark_file_data;
+        try
+        {
+            // Block 313 is level 73 and also carries notes in the shipped save.
+            var untouched = new Underworld.automapnote(73);
+            Assert.NotEmpty(untouched.notes);
+            string expectedText = untouched.notes[0].notetext;
+
+            Underworld.automapnote.automapsnotes = new Underworld.automapnote[Underworld.UWTileMap.NO_OF_LEVELS];
+            Underworld.automapnote.automapsnotes[0] = new Underworld.automapnote(0);
+            Underworld.automapnote.automapsnotes[0].notes.Clear();
+            Assert.Null(Underworld.automapnote.automapsnotes[73]);
+
+            byte[] cleared = Underworld.LevArkWriter.Serialize();
+
+            Underworld.LevArkLoader.lev_ark_file_data = cleared;
+            var reloaded = new Underworld.automapnote(73);
+            Assert.NotEmpty(reloaded.notes);
+            Assert.Equal(expectedText, reloaded.notes[0].notetext);
+        }
+        finally
+        {
+            Underworld.LevArkLoader.lev_ark_file_data = originalFile;
+            Underworld.automapnote.automapsnotes = null;
+        }
+    }
+    // ---- note text must match what DOS can store and draw ---------------------------
+
+    [Theory]
+    [InlineData("alpha", "ALPHA")]                 // lower-case hangs UW1's automap
+    [InlineData("Mixed Case 12", "MIXED CASE 12")]
+    [InlineData("ALREADY UPPER", "ALREADY UPPER")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void NormaliseNoteText_UpperCasesAndLeavesValidCharacters(string input, string expected)
+    {
+        Assert.Equal(expected, Underworld.automapnote.NormaliseNoteText(input));
+    }
+
+    [Fact]
+    public void NormaliseNoteText_DropsCharactersDosNeverAccepts()
+    {
+        // DOS's entry loop takes 0x20..0x7A only. A NUL from a non-text key event is how
+        // the port produced notes that read back as empty.
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\0B"));
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\u007fB"));
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\u00e9B"));
+        Assert.Equal("", Underworld.automapnote.NormaliseNoteText("\0"));
+    }
+
+    [Fact]
+    public void NormaliseNoteText_TruncatesToTheDosMaximum()
+    {
+        var text = Underworld.automapnote.NormaliseNoteText(new string('A', 100));
+        Assert.Equal(Underworld.automapnote.MaxNoteLength, text.Length);
+        Assert.Equal(46, Underworld.automapnote.MaxNoteLength);
+    }
+
+    [Fact]
+    public void Serialize_LowerCaseNote_IsWrittenUpperCase()
+    {
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("alpha", 159, 179));
+
+        byte[] result = note.Serialize();
+
+        Assert.Equal(54, result.Length);
+        Assert.Equal("ALPHA", System.Text.Encoding.ASCII.GetString(result, 0, 5));
+        Assert.Equal(0, result[5]);
+        // coordinates are untouched: they were proved harmless in DOS
+        Assert.Equal(159, result[0x32] | (result[0x33] << 8));
+        Assert.Equal(179, result[0x34] | (result[0x35] << 8));
+    }
+
+    [Fact]
+    public void Serialize_NoteStartingWithNul_NoLongerReadsBackAsEmpty()
+    {
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("\0ALOHA", 47, 47));
+
+        byte[] result = note.Serialize();
+
+        Assert.NotEqual(0, result[0]);
+        Assert.Equal("ALOHA", System.Text.Encoding.ASCII.GetString(result, 0, 5));
+    }
+    // ---- new notes: what the port declines to create ---------------------------------
+
+    [Theory]
+    [InlineData("ALPHA", true)]
+    [InlineData("a", true)]
+    [InlineData(" A ", true)]      // real text with spaces around it is fine
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    [InlineData("   ", false)]     // DOS would keep this one; we decline it
+    [InlineData("\t", false)]      // normalises away to nothing
+    [InlineData("\0", false)]
+    public void IsKeepableNewNote_DeclinesNotesAPlayerCouldNotSeeOrErase(string text, bool keep)
+    {
+        Assert.Equal(keep, Underworld.automapnote.IsKeepableNewNote(text));
+    }
+
+    [Fact]
+    public void Serialize_SpacesOnlyNoteFromASave_IsWrittenBackUnchanged()
+    {
+        // The port will not create one, but DOS does, and dropping it on save would lose
+        // data from someone else's file. Four spaces is what real DOS writes.
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("    ", 129, 46));
+
+        byte[] result = note.Serialize();
+
+        Assert.Equal(54, result.Length);
+        Assert.Equal(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x00 }, result[0..5]);
+        Assert.Equal(129, result[0x32] | (result[0x33] << 8));
+        Assert.Equal(46, result[0x34] | (result[0x35] << 8));
     }
 }
