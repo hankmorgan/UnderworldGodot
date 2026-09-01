@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -332,4 +333,111 @@ public class SaveGameOrchestratorTests : IDisposable
         SaveGame.Save(3, "second");
         Assert.Equal(Encoding.ASCII.GetBytes("second"), File.ReadAllBytes(descPath));
     }
+    // ---- issue #74: the slot is replaced as a unit ---------------------------------------
+
+    /// <summary>Working files left beside a slot, which a finished save must not leave.</summary>
+    private string[] LeftoversBeside(int slot)
+    {
+        return System.IO.Directory.GetFileSystemEntries(_tempRoot)
+            .Select(System.IO.Path.GetFileName)
+            .Where(x => x.StartsWith($"SAVE{slot}.", StringComparison.Ordinal))
+            .ToArray();
+    }
+
+    [Fact]
+    public void Save_LeavesNoWorkingFilesBehind()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+
+        SaveGame.Save(1, "first");
+
+        // No journal, no staging directory, no backup.
+        Assert.Empty(LeftoversBeside(1));
+        Assert.True(File.Exists(Path.Combine(_tempRoot, "SAVE1", "LEV.ARK")));
+    }
+
+    [Fact]
+    public void Save_OverAnOccupiedSlot_KeepsAFileTheGameDidNotWrite()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+        SaveGame.Save(1, "first");
+        File.WriteAllText(Path.Combine(_tempRoot, "SAVE1", "NOTES.TXT"), "mine");
+
+        SaveGame.Save(1, "second");
+
+        // DOS leaves such files alone, measured by driving UW.EXE, so swapping a fresh
+        // directory in without carrying them across would be a regression.
+        Assert.Equal("mine", File.ReadAllText(Path.Combine(_tempRoot, "SAVE1", "NOTES.TXT")));
+        Assert.Equal("second", File.ReadAllText(Path.Combine(_tempRoot, "SAVE1", "DESC")));
+        Assert.Empty(LeftoversBeside(1));
+    }
+
+    [Fact]
+    public void Save_TwiceToTheSameSlot_LeavesOnlyTheSecond()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+
+        SaveGame.Save(1, "first");
+        long firstLen = new FileInfo(Path.Combine(_tempRoot, "SAVE1", "LEV.ARK")).Length;
+        SaveGame.Save(1, "second");
+
+        // The second save runs recovery first, then replaces the slot again.
+        Assert.Equal("second", File.ReadAllText(Path.Combine(_tempRoot, "SAVE1", "DESC")));
+        Assert.Equal(firstLen, new FileInfo(Path.Combine(_tempRoot, "SAVE1", "LEV.ARK")).Length);
+        Assert.Empty(LeftoversBeside(1));
+    }
+
+    [Fact]
+    public void Save_DoesNotDisturbAnotherSlot()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+        SaveGame.Save(2, "two");
+
+        SaveGame.Save(1, "one");
+
+        Assert.Equal("two", File.ReadAllText(Path.Combine(_tempRoot, "SAVE2", "DESC")));
+        Assert.Empty(LeftoversBeside(2));
+    }
+
+    [Fact]
+    public void Save_ThatFailsPartWay_LeavesThePreviousSaveIntact()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+        SaveGame.Save(1, "good save");
+        var before = Directory.GetFiles(Path.Combine(_tempRoot, "SAVE1"))
+            .ToDictionary(Path.GetFileName, File.ReadAllBytes);
+
+        // Make the third file fail. BGlobalWriter iterates the globals it is given, so a null
+        // array throws after DESC and PLAYER.DAT have been written. This is issue #74 itself:
+        // writing straight into the slot got that far and left the slot holding the new DESC
+        // and the new PLAYER.DAT beside the old LEV.ARK, listed under a name that would not
+        // load.
+        bglobal.bGlobals = null;
+
+        Assert.ThrowsAny<Exception>(() => SaveGame.Save(1, "doomed"));
+
+        // The previous save is untouched, byte for byte across every file. This is the whole
+        // point of the issue.
+        foreach (var kv in before)
+        {
+            Assert.Equal(kv.Value, File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", kv.Key)));
+        }
+        Assert.Equal(before.Count,
+            Directory.GetFiles(Path.Combine(_tempRoot, "SAVE1")).Length);
+
+        // The journal and the abandoned staging directory are still there, because they are
+        // what tells the next run there is something to tidy.
+        Assert.NotEmpty(LeftoversBeside(1));
+
+        // And the next read clears them, since every reader resolves the slot through recovery.
+        string dir = SlotTransaction.SlotDirectory(_tempRoot, 1);
+        Assert.Equal("good save", File.ReadAllText(Path.Combine(dir, "DESC")));
+        Assert.Empty(LeftoversBeside(1));
+    }
+
 }

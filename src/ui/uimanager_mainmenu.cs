@@ -222,7 +222,7 @@ namespace Underworld
 			{
 				for (int i = 1; i <= 4; i++)
 				{
-					var path = Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
+					var path = Path.Combine(SlotTransaction.SlotDirectory(UWClass.BasePath, i), "DESC");
 					if (SaveDescription.TryReadSlot(path, out string savename))
 					{
 						EnableDisable(SaveGamesNames[i - 1], true);
