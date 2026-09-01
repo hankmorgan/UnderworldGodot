@@ -80,6 +80,24 @@ public partial class SfxStreamPlayer : Node
         _renderBuffer = new short[FramesPerTick * 2];
         _frames = new Vector2[FramesPerTick];
 
+        // Resolve the path before the player and the thread exist. Path.Combine throws if
+        // BasePath is null, which is what happens when the settings could not be read, and a
+        // throw after the generator was playing and the producer thread was running would leave
+        // both going against a construction that had already failed. The chip, the sink and the
+        // buffers above are already built by this point, and _ExitTree is what takes those down.
+        //
+        // SFX is currently UW1-only (the TVFX engine targets UW.AD; the UW2
+        // path falls back to .voc files which we don't yet wire).
+        //if (UWClass._RES == UWClass.GAME_UW1)
+       // {
+            if (string.IsNullOrWhiteSpace(UWClass.BasePath))
+            {
+                GD.PushError("SfxStreamPlayer: no game path is configured. SFX disabled.");
+                return;
+            }
+            string soundDir = Path.Combine(UWClass.BasePath, "SOUND");
+        //}
+
         var generator = new AudioStreamGenerator
         {
             MixRate = SampleRate,
@@ -99,15 +117,12 @@ public partial class SfxStreamPlayer : Node
         };
         _audioThread.Start();
 
-        // SFX is currently UW1-only (the TVFX engine targets UW.AD; the UW2
-        // path falls back to .voc files which we don't yet wire). Initialising
-        // SoundEffects here means the singleton + scene-tree timing matches
-        // MusicStreamPlayer's lifecycle.
-        //if (UWClass._RES == UWClass.GAME_UW1)
-       // {
-            string soundDir = Path.Combine(UWClass.BasePath, "SOUND");
-            SoundEffects.Initialize(uwsettings.instance.synth, soundDir);
-        //}
+        // Published last, once there is something behind it. SoundEffects.Initialize makes this
+        // node reachable from SoundEffects.Play, so doing it earlier would mean a failure while
+        // building the player or starting the thread left callers able to enqueue against a
+        // producer that never ran. The thread itself does not read any SoundEffects state, so
+        // it is safe already running.
+        SoundEffects.Initialize(uwsettings.instance.synth, soundDir);
     }
 
     /// <summary>
