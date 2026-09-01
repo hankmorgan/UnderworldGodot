@@ -236,9 +236,10 @@ The real-time synthesis approach was inspired by [Kweepa](https://github.com/Kwe
 
 ## Code Contributions
 Additional code has been directly contributed by the following. Thanks to these contributors for their efforts.
-* Peter Cummuskey <github.com/Tzrlk>
-* Shortbeard <github.com/ShortBeard>
-* Abedegno https://github.com/abedegno
+* Peter Cummuskey <https://<github.com/Tzrlk>
+* Shortbeard <https://github.com/ShortBeard>
+* Abedegno <https://github.com/abedegno>
+* mattfojtik <https://github.com/mattfojtik>
 
 ### Referenced code projects
 AdlMidi.NET

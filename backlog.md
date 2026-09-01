@@ -87,7 +87,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Different mouse cursors for interaction modes
 - [ ] Study Food degradation mechanic (does this actually exist?)
 - [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause npcs/objects in motion.
-- [ ] UW2 Combat swing speed
+- [ ] UW2 Combat swing speed -> this is possibly correct behaviour.
 - [ ] Telefrag - Apparently this can happen when player is teleported into same position as another object. Never seen in the wild.
 - [ ] crushing damage when player pushed against ceiling. (this happens in the guardians trap)
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
@@ -97,7 +97,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] forcefields in prison tower do not extend to the ground
 - [ ] [uw2] troll in combat tries to throw a snowball (possible animation bug)
 - [ ] Items given to player that are not moved from trade area vanish
-- [ ] Doors open to 90degree angles
+- [ ] Doors open to 90degree angles. Should be at more of a 100 degree angle.
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Handle extraction/opening of gog.com game.gog files.
