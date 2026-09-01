@@ -90,6 +90,19 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Releases the texture-valued global shader parameters on the way out.
+        ///
+        /// The root leaves the tree before the engine finalises C# and long before it clears
+        /// the renderer's globals, so this is early enough for every exit route: the Quit menu
+        /// item, closing the window and --quit-after all tear the tree down through here.
+        /// See PaletteLoader.ReleaseTextureShaderGlobals and issue #78.
+        /// </summary>
+        public override void _ExitTree()
+        {
+            PaletteLoader.ReleaseTextureShaderGlobals();
+        }
+
+        /// <summary>
         /// Reports the failure in the engine default font, which is the only text this scene
         /// can still draw. No theme override is set, deliberately.
         /// </summary>

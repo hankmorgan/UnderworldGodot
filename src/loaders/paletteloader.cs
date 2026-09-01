@@ -184,6 +184,38 @@ namespace Underworld
             //     defaultValue:  (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
         }
 
+        /// <summary>
+        /// Names of the global shader parameters that hold a texture. Kept beside the
+        /// GlobalShaderParameterAdd calls above so the two lists cannot drift apart.
+        /// </summary>
+        private static readonly string[] TextureGlobals =
+        {
+            "uipalette", "simpleshade", "smoothpalette", "xfer",
+        };
+
+        /// <summary>
+        /// Drop the texture-valued global shader parameters.
+        ///
+        /// These four are the only globals holding an object reference; the rest are bools and
+        /// a float. On Godot 4.3 the engine finalises the C# language before it clears the
+        /// renderer's globals, and CSharpLanguage::finalize() there does not free instance
+        /// bindings, so clearing them afterwards unreferences a RefCounted through a stale
+        /// binding and hits CRASH_COND(!rc_owner). Releasing them while C# is still alive
+        /// leaves the engine's own pass with nothing to unreference.
+        ///
+        /// This does not fix issue #78 on its own. The same fault also occurs via
+        /// AudioServer::~AudioServer, which nothing on our side can reach. It removes the
+        /// renderer route only, and is a no-op on 4.4 and later, where the engine frees the
+        /// bindings itself.
+        /// </summary>
+        public static void ReleaseTextureShaderGlobals()
+        {
+            foreach (string name in TextureGlobals)
+            {
+                RenderingServer.GlobalShaderParameterRemove(name);
+            }
+        }
+
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)
         {
             int[] auxpal = new int[16];
