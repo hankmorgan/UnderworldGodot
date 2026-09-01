@@ -22,6 +22,11 @@ namespace Underworld
         public bool FontsReady { get; private set; }
         public string FontError { get; private set; }
 
+        private bool _quitStarted;
+        private long _quitAfterFrame = -1;
+        private bool _autoAcceptQuitWasSet;
+        private bool _previousAutoAcceptQuit;
+
         private static readonly Dictionary<string, string> PlaceholderPaths = new()
         {
             { "FONT4X5P", "res://resources/fonts/FONT4X5P.tres" },
@@ -85,8 +90,155 @@ namespace Underworld
 
         public override void _Ready()
         {
-            if (FontsReady) return;
-            ShowFontError();
+            // AutoAcceptQuit belongs to the SceneTree, not to this scene, so the previous
+            // value has to go back when this root leaves. The game can return to its
+            // launcher, and leaving the tree refusing quits with our handler gone would
+            // stop the window close button working entirely.
+            var tree = GetTree();
+            if (tree != null)
+            {
+                _previousAutoAcceptQuit = tree.AutoAcceptQuit;
+                tree.AutoAcceptQuit = false;
+                _autoAcceptQuitWasSet = true;
+            }
+            _quitAfterFrame = ParseQuitAfter();
+
+            if (!FontsReady) ShowFontError();
+        }
+
+        public override void _Process(double delta)
+        {
+            // --quit-after tears the tree down on its own deadline, which is too late to
+            // drain audio. Start early enough that the drain finishes first.
+            if (_quitAfterFrame >= 0 && !_quitStarted &&
+                (long)GetTree().GetFrame() >= _quitAfterFrame)
+            {
+                RequestQuit();
+            }
+        }
+
+        public override void _Notification(int what)
+        {
+            if (what == NotificationWMCloseRequest) RequestQuit();
+        }
+
+        /// <summary>
+        /// Quits after letting the AudioServer let go of our stream playbacks.
+        ///
+        /// On Godot 4.3 the engine finalises C# before it destroys the AudioServer, and its
+        /// CSharpLanguage::finalize does not free instance bindings, so a playback the server
+        /// still owns is unreferenced through a stale binding and hangs the process. Stop()
+        /// only marks the playback for deletion, so the audio thread and a later main-thread
+        /// AudioServer.update() both have to run before the wrappers can be disposed. See #78.
+        /// </summary>
+        public void RequestQuit(int exitCode = 0)
+        {
+            if (_quitStarted) return;
+            _quitStarted = true;
+            DrainAudioThenQuit(exitCode);
+        }
+
+        private async void DrainAudioThenQuit(int exitCode)
+        {
+            // Captured before the first await: the continuation can resume after this node
+            // has left the tree, and GetTree() would then return null or throw. Quitting has
+            // to happen whatever else fails, because AutoAcceptQuit is false.
+            SceneTree tree = GetTree();
+            try
+            {
+                // Held across the awaits. Both nodes clear their static Instance in
+                // _ExitTree, so if this root is freed mid-drain the release below would
+                // find nothing and the wrappers would never be disposed.
+                var music = MusicStreamPlayer.Instance;
+                var sfx = Sfx.SfxStreamPlayer.Instance;
+
+                // Phase one has to succeed before the drain wait means anything: the wait
+                // exists to let the server collect a playback that Stop() has detached, and
+                // a producer that missed its join has not detached one yet. Retry first,
+                // then drain, so the two never collapse into the same frame.
+                bool stopped = Stop(music) & Stop(sfx);
+                for (int attempt = 0; !stopped && attempt < 3; attempt++)
+                {
+                    var retry = tree.CreateTimer(0.1, true, false, true);
+                    await ToSignal(retry, SceneTreeTimer.SignalName.Timeout);
+                    // A short join on retries: the 100ms wait above already gave the
+                    // producer time, and blocking another half second per node per attempt
+                    // would freeze quitting for seconds.
+                    stopped = Stop(music, 50) & Stop(sfx, 50);
+                }
+
+                // Real time for the audio thread to mix the playback out, then main-thread
+                // frames for AudioServer.update() to collect it.
+                var timer = tree.CreateTimer(0.25, true, false, true);
+                await ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
+                await ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+                await ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+
+                if (!stopped)
+                {
+                    GD.PushError("Audio producers did not stop; leaving their objects alone.");
+                }
+
+                else
+                {
+                    if (music != null && GodotObject.IsInstanceValid(music))
+                    {
+                        music.ReleaseGodotAudioBindings();
+                    }
+                    if (sfx != null && GodotObject.IsInstanceValid(sfx))
+                    {
+                        sfx.ReleaseGodotAudioBindings();
+                    }
+                }
+
+                await ToSignal(tree, SceneTree.SignalName.ProcessFrame);
+            }
+            catch (Exception ex)
+            {
+                GD.PushError($"Audio shutdown failed while quitting: {ex.Message}. Quitting anyway.");
+            }
+            finally
+            {
+                try
+                {
+                    tree.Quit(exitCode);
+                }
+                catch (Exception ex)
+                {
+                    GD.PushError($"Quit failed: {ex.Message}. Terminating.");
+                    OS.Kill(OS.GetProcessId());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test hook. Godot consumes --quit-after itself, so it never reaches
+        /// OS.GetCmdlineArgs and cannot be intercepted. This drives the same RequestQuit
+        /// path the Quit menu item and the window close button use.
+        /// </summary>
+        /// <summary>Runs phase one on a node that may already have left the tree.</summary>
+        private static bool Stop(Node node, int joinMs = 500)
+        {
+            if (node == null || !GodotObject.IsInstanceValid(node)) return true;
+            return node is MusicStreamPlayer m
+                ? m.BeginGodotAudioShutdown(joinMs)
+                : ((Sfx.SfxStreamPlayer)node).BeginGodotAudioShutdown(joinMs);
+        }
+
+        private static long ParseQuitAfter()
+        {
+            // A user argument rather than an environment variable, so nothing a packaged or
+            // launcher-managed build happens to inherit can quit the game on its own. Godot
+            // consumes --quit-after itself, so it never reaches a script and the drain
+            // cannot be exercised through it.
+            //   Godot --path . res://scenes/Underworld.tscn -- --uwtest-quit-after 300
+            string[] args = OS.GetCmdlineUserArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--uwtest-quit-after" && i + 1 < args.Length &&
+                    long.TryParse(args[i + 1], out long n)) return n;
+            }
+            return -1;
         }
 
         /// <summary>
@@ -99,6 +251,11 @@ namespace Underworld
         /// </summary>
         public override void _ExitTree()
         {
+            if (_autoAcceptQuitWasSet)
+            {
+                var tree = GetTree();
+                if (tree != null) tree.AutoAcceptQuit = _previousAutoAcceptQuit;
+            }
             PaletteLoader.ReleaseTextureShaderGlobals();
         }
 
