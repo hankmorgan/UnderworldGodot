@@ -17,17 +17,235 @@ namespace Underworld
         /// </summary>
         public static int OpenedContainerIndex = -1;
 
+        // Inventory pointer / drag state (DOS paperdoll drag-and-drop).
+        static bool inventoryPointerDown;
+        static bool inventoryDragActive;
+        static MouseButton inventoryPointerButton;
+        static string inventoryPressSlotName;
+        static Vector2 inventoryPressPos;
+        static int inventoryPressObjIndex;
+        static int inventoryPressSlotId;
+        const float InventoryDragThresholdPx = 5f;
+
+        /// <summary>
+        /// UW1: left or right drag. UW2: right drag only (left drag does nothing).
+        /// </summary>
+        static bool CanInventoryDrag(MouseButton button)
+        {
+            if (button == MouseButton.Right)
+            {
+                return true;
+            }
+            if (button == MouseButton.Left)
+            {
+                return UWClass._RES != UWClass.GAME_UW2;
+            }
+            return false;
+        }
+
+        static void ClearInventoryPointerState()
+        {
+            inventoryPointerDown = false;
+            inventoryDragActive = false;
+            inventoryPressSlotName = null;
+            inventoryPressObjIndex = -1;
+            inventoryPressSlotId = -1;
+        }
+
+        static void BeginInventoryPointerDown(string slotname, MouseButton button, Vector2 position)
+        {
+            inventoryPointerDown = true;
+            inventoryDragActive = false;
+            inventoryPointerButton = button;
+            inventoryPressSlotName = slotname;
+            inventoryPressPos = position;
+            inventoryPressObjIndex = GetObjAtSlot(slotname);
+            inventoryPressSlotId = CurrentSlot;
+        }
+
+        /// <summary>
+        /// After moving past the drag threshold, mark the gesture as a drag.
+        /// Pickup only happens when the button is allowed to drag (UW1 L/R, UW2 R).
+        /// UW2 left-drag is therefore a no-op (not a click).
+        /// </summary>
+        static void TryStartInventoryDrag(Vector2 position)
+        {
+            if (!inventoryPointerDown || inventoryDragActive)
+            {
+                return;
+            }
+            if (inventoryPressPos.DistanceTo(position) < InventoryDragThresholdPx)
+            {
+                return;
+            }
+
+            inventoryDragActive = true;
+
+            if (!CanInventoryDrag(inventoryPointerButton))
+            {
+                return;
+            }
+
+            // Already holding something (e.g. from world Get): just mark drag for place-on-release.
+            if (playerdat.ObjectInHand != -1)
+            {
+                return;
+            }
+            if (inventoryPressObjIndex <= 0)
+            {
+                return;
+            }
+            if (inventoryPressSlotName == "OpenedContainer")
+            {
+                return;
+            }
+
+            var obj = playerdat.InventoryObjects[inventoryPressObjIndex];
+            if (obj == null)
+            {
+                return;
+            }
+            if (InConversation && obj.majorclass == 2 && obj.minorclass == 0 && obj.classindex != 0xF)
+            {
+                AddToMessageScroll(
+                    stringToAdd: GameStrings.GetString(
+                        1,
+                        GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
+                    option: 2,
+                    mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                return;
+            }
+            switch (inventoryPressSlotName)
+            {
+                case "RightShoulder":
+                case "LeftShoulder":
+                case "RightHand":
+                case "LeftHand":
+                    if (obj.index != OpenedContainerIndex && OpenedContainerIndex != -1)
+                    {
+                        var match = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: obj.index,
+                            itemIndex: OpenedContainerIndex,
+                            objList: playerdat.InventoryObjects,
+                            SkipNext: true);
+                        if (match != null)
+                        {
+                            Debug.Print("attempt to pickup container while it or sub-object is opened");
+                            return;
+                        }
+                    }
+                    break;
+            }
+            if (obj.index == OpenedContainerIndex)
+            {
+                return; // don't drag the container currently being viewed
+            }
+
+            CurrentSlot = inventoryPressSlotId;
+            PickupObjectFromSlot(obj);
+        }
+
+        static void PlaceHeldItemAtSlot(string slotname)
+        {
+            GetObjAtSlot(slotname); // sets CurrentSlot
+            if (CurrentSlot == 0 && playerdat.ObjectInHand != 1 && TryEatInteraction())
+            {
+                return;
+            }
+
+            if (slotname == "OpenedContainer")
+            {
+                MoveObjectInHandOutOfOpenedContainer(playerdat.ObjectInHand);
+                return;
+            }
+
+            var objIndex = GetObjAtSlot(slotname);
+            if (objIndex > 0)
+            {
+                UseObjectsTogether(playerdat.ObjectInHand, objIndex);
+            }
+            else
+            {
+                PickupToEmptySlot(playerdat.ObjectInHand);
+            }
+        }
+
+        static void DropHeldItemIntoWorld()
+        {
+            if (playerdat.ObjectInHand == -1)
+            {
+                return;
+            }
+            // Drop vs throw uses these positions in motion.InitPlayerProjectileValues().
+            // Mirror ClickOnViewPort so release height/heading match the cursor.
+            var mouse = instance.GetViewport().GetMousePosition();
+            ViewPortMouseXPos = mouse.X;
+            ViewPortMouseYPos = mouse.Y;
+
+            var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+            var itemid = objToThrow.item_id;
+            if (pickup.DropObjectByPlayer(objToThrow, true))
+            {
+                playerdat.ObjectInHand = -1;
+                instance.mousecursor.SetCursorToCursor();
+                pickup.DropSpecialCases(itemid);
+            }
+        }
+
+        /// <summary>
+        /// Slot under the cursor for drag-drop. Release events often arrive on the
+        /// press control, so placement must not trust that control's bind name.
+        /// </summary>
+        static string FindInventorySlotUnderMouse()
+        {
+            if (instance == null)
+            {
+                return null;
+            }
+            var mouse = instance.GetViewport().GetMousePosition();
+
+            // Overlapping input hitboxes first, then visible art.
+            if (ControlContainsMouse(instance.ArmourInput, mouse)) return "Armour";
+            if (ControlContainsMouse(instance.LeggingsInput, mouse)) return "Leggings";
+            if (ControlContainsMouse(instance.GlovesInput1, mouse)
+                || ControlContainsMouse(instance.GlovesInput2, mouse)) return "Gloves";
+            if (ControlContainsMouse(instance.RightRingInput, mouse)) return "RightRing";
+            if (ControlContainsMouse(instance.LeftRingInput, mouse)) return "LeftRing";
+
+            if (ControlContainsMouse(instance.Helm, mouse)) return "Helm";
+            if (ControlContainsMouse(instance.Boots, mouse)) return "Boots";
+            if (ControlContainsMouse(instance.RightShoulder, mouse)) return "RightShoulder";
+            if (ControlContainsMouse(instance.LeftShoulder, mouse)) return "LeftShoulder";
+            if (ControlContainsMouse(instance.RightHand, mouse)) return "RightHand";
+            if (ControlContainsMouse(instance.LeftHand, mouse)) return "LeftHand";
+            if (ControlContainsMouse(instance.OpenedContainer, mouse)) return "OpenedContainer";
+
+            if (instance.Backpack != null)
+            {
+                for (int i = 0; i < instance.Backpack.Length; i++)
+                {
+                    if (ControlContainsMouse(instance.Backpack[i], mouse))
+                    {
+                        return $"Back{i}";
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        static bool ControlContainsMouse(Control control, Vector2 mouse)
+        {
+            return control != null
+                && control.IsVisibleInTree()
+                && control.GetGlobalRect().HasPoint(mouse);
+        }
+
         private static void InteractWithEmptySlot()
         {
-            //there is no object in the slot.
-            switch (InteractionMode)
+            if (playerdat.ObjectInHand != -1)
             {
-                case InteractionModes.ModePickup:
-                case InteractionModes.ModeTalk:
-                    {
-                        PickupToEmptySlot(playerdat.ObjectInHand);
-                        break;
-                    }
+                PickupToEmptySlot(playerdat.ObjectInHand);
             }
         }
 
@@ -190,246 +408,128 @@ namespace Underworld
 
 
         /// <summary>
-        /// 
+        /// Empty-handed inventory click (no drag). Matches DOS: action on release.
+        /// Use = L/R Use; Look UW1 = L Use/R Look, UW2 = L/R Look;
+        /// other modes = L Use, R Look.
+        /// Does not change interaction mode.
         /// </summary>
-        /// <param name="slotname"></param>
-        /// <param name="objAtSlot"></param>
-        /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, uwObject objAtSlot, bool isLeftClick)
         {
             if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
-            {//stop while typing in progress
+            {
                 return;
             }
-            if (InteractionMode == InteractionModes.ModeAttack)
+            // Block inventory only during an active combat swing (weapon drawn, not Ready).
+            // Sheathed / no-mode must still allow Use/Look clicks.
+            if (InteractionMode == InteractionModes.ModeAttack
+                && playerdat.play_drawn == 1
+                && combat.stage != combat.CombatStages.Ready)
             {
-                if (combat.stage != combat.CombatStages.Ready)
-                {
-                    return;
-                }
+                return;
             }
 
-            if (CurrentSlot == 0) //HELM
+            if (slotname == "OpenedContainer")
             {
-                //try the eat interation.
-                if (playerdat.ObjectInHand != 1)
-                {
-                    if (TryEatInteraction())
-                    {
-                        return; //food has been consumed. exit function.
-                    }
-                }
+                container.Close(
+                    index: objAtSlot.index,
+                    objList: playerdat.InventoryObjects);
+                return;
             }
 
+            if (ShouldUseInventoryObjectOnClick(isLeftClick))
+            {
+                UseInventoryObject(objAtSlot);
+            }
+            else
+            {
+                look.LookAt(objAtSlot.index, playerdat.InventoryObjects, false);
+            }
+        }
+
+        /// <summary>
+        /// Empty-handed inventory click: whether this button Uses (vs Looks).
+        /// </summary>
+        static bool ShouldUseInventoryObjectOnClick(bool isLeftClick)
+        {
             switch (InteractionMode)
             {
-                case InteractionModes.ModeAttack:
                 case InteractionModes.ModeUse:
-                    if (slotname != "OpenedContainer")
-                    {
-                        if (isLeftClick)
-                        {
-                            if (useon.CurrentItemBeingUsed != null)
-                            {
-                                useon.UseOn(
-                                    ObjectUsed: objAtSlot,
-                                    srcObject: useon.CurrentItemBeingUsed,
-                                    WorldObject: true);
-                            }
-                            else
-                            {
-                                use.Use(
-                                    ObjectUsed: objAtSlot,
-                                    UsingObjectOrCharacter: playerdat.playerObject,
-                                    objList: playerdat.InventoryObjects,
-                                    WorldObject: false);
-                            }
-                        }
-                        else
-                        {
-                            //do pickup
-                            //try and pickup
-                            InteractionModeToggle(InteractionModes.ModePickup);
-                            PickupObjectFromSlot(objAtSlot);
-                        }
-                    }
-                    else
-                    {
-                        //close up opened container.
-                        container.Close(
-                            index: objAtSlot.index,
-                            objList: playerdat.InventoryObjects);
-                    }
-                    break;
+                    return true;
                 case InteractionModes.ModeLook:
-                    if (slotname != "OpenedContainer")
-                    {
-                        if (isLeftClick)
-                        {
-                            look.LookAt(objAtSlot.index, playerdat.InventoryObjects, false);
-                        }
-                        else
-                        {
-                            InteractionModeToggle(InteractionModes.ModeUse);
-                            if (useon.CurrentItemBeingUsed != null)
-                            {
-                                useon.UseOn(
-                                    ObjectUsed: objAtSlot,
-                                    srcObject: useon.CurrentItemBeingUsed,
-                                    WorldObject: true);
-                            }
-                            else
-                            {
-                                use.Use(
-                                    objAtSlot,
-                                    playerdat.playerObject,
-                                    objList: playerdat.InventoryObjects,
-                                    WorldObject: false);
-                            }
-
-                        }
-
-                    }
-                    else
-                    {
-                        //close up opened container.
-                        container.Close(
-                            index: objAtSlot.index,
-                            objList: playerdat.InventoryObjects);
-                    }
-                    break;
-
-                case InteractionModes.ModeTalk://same as pickup except no use
-                case InteractionModes.ModePickup:
-                    if (slotname == "OpenedContainer")
-                    {
-                        if ((playerdat.ObjectInHand != -1) && (!isLeftClick))
-                        {
-                            MoveObjectInHandOutOfOpenedContainer(playerdat.ObjectInHand);
-                        }
-                        else
-                        {
-                            //close up opened container when no obj in hand or when leftclicking
-                            container.Close(
-                                index: objAtSlot.index,
-                                objList: playerdat.InventoryObjects);
-                        }
-                    }
-                    else
-                    {
-                        if (playerdat.ObjectInHand != -1)
-                        {
-                            //do a use interaction on the object already there. 
-                            UseObjectsTogether(playerdat.ObjectInHand, objAtSlot.index);
-                        }
-                        else
-                        {
-                            if (!uimanager.InConversation)
-                            {
-                                if (isLeftClick)
-                                {
-                                    //try and pickup
-                                    switch (slotname)
-                                    {
-                                        case "RightShoulder":
-                                        case "LeftShoulder":
-                                        case "RightHand":
-                                        case "LeftHand":
-                                            if (objAtSlot.index != OpenedContainerIndex)
-                                            {
-                                                if ((OpenedContainerIndex == -1))
-                                                {
-                                                    PickupObjectFromSlot(objAtSlot);
-                                                }
-                                                else
-                                                {
-                                                    //check if the opened container is not in the object chain of the object list
-                                                    var match = objectsearch.FindMatchInObjectChain(ListHeadIndex: objAtSlot.index, itemIndex: OpenedContainerIndex, objList: playerdat.InventoryObjects, SkipNext: true);
-                                                    if (match == null)
-                                                    {
-                                                        PickupObjectFromSlot(objAtSlot);
-                                                    }
-                                                    else
-                                                    {
-                                                        Debug.Print("attempt to pickup container while it or sub-object is opened");
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                        default:
-                                            if (objAtSlot.index != OpenedContainerIndex)
-                                            {
-                                                PickupObjectFromSlot(objAtSlot);
-                                            }
-                                            break;
-                                    }
-
-                                }
-                                else
-                                {
-                                    //use the object at that slot
-                                    use.Use(
-                                        ObjectUsed: objAtSlot,
-                                        UsingObjectOrCharacter: playerdat.playerObject,
-                                        objList: playerdat.InventoryObjects,
-                                        WorldObject: false);
-                                }
-                            }
-                            else
-                            {//click on a slot in a conversation
-                                if (isLeftClick)
-                                {
-                                    //left click pickup in conversation
-                                    //var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0))
-                                    {
-                                        AddToMessageScroll(
-                                            stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
-                                            option: 2,
-                                            mode: MessageDisplay.MessageDisplayMode.TemporaryMessage
-                                            );
-                                    }
-                                    else
-                                    {
-                                        //try and pickup if not a container
-                                        PickupObjectFromSlot(objAtSlot);
-                                    }
-                                }
-                                else
-                                {//check if container.
-                                    //var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex != 0xF))
-                                    {//containers, browse into
-                                        use.Use(
-                                            objAtSlot,
-                                            playerdat.playerObject,
-                                            objList: playerdat.InventoryObjects,
-                                            WorldObject: false);
-                                    }
-                                    else
-                                    {
-                                        if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex == 0xF))
-                                        {//runebag. ignore.
-
-                                        }
-                                        else
-                                        {//all other objects look at
-                                            look.PrintLookDescription(
-                                                obj: objAtSlot,
-                                                objList: playerdat.InventoryObjects,
-                                                OutputConvo: true,
-                                                lorecheckresult: look.LoreCheck(objAtSlot));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case InteractionModes.ModeOptions:
-                    break;//donothing.
+                    // UW2 Look mode: both buttons Look. UW1: left Use, right Look.
+                    return (UWClass._RES != UWClass.GAME_UW2) && isLeftClick;
                 default:
-                    Debug.Print("Unimplemented inventory use verb-object combination"); break;
+                    // None / Talk / Get / Combat / Options: left Use, right Look.
+                    return isLeftClick;
+            }
+        }
+
+        static void UseInventoryObject(uwObject objAtSlot)
+        {
+            if (useon.CurrentItemBeingUsed != null)
+            {
+                useon.UseOn(
+                    ObjectUsed: objAtSlot,
+                    srcObject: useon.CurrentItemBeingUsed,
+                    WorldObject: false);
+            }
+            else
+            {
+                use.Use(
+                    ObjectUsed: objAtSlot,
+                    UsingObjectOrCharacter: playerdat.playerObject,
+                    objList: playerdat.InventoryObjects,
+                    WorldObject: false);
+            }
+        }
+
+        /// <summary>
+        /// Conversation inventory clicks keep trade-oriented behaviour (pickup / open / look).
+        /// </summary>
+        static void InteractWithObjectInSlotConversation(uwObject objAtSlot, bool isLeftClick)
+        {
+            if (playerdat.ObjectInHand != -1)
+            {
+                UseObjectsTogether(playerdat.ObjectInHand, objAtSlot.index);
+                return;
+            }
+
+            if (isLeftClick)
+            {
+                if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0))
+                {
+                    AddToMessageScroll(
+                        stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
+                        option: 2,
+                        mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                }
+                else
+                {
+                    PickupObjectFromSlot(objAtSlot);
+                }
+            }
+            else
+            {
+                if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex != 0xF))
+                {
+                    use.Use(
+                        objAtSlot,
+                        playerdat.playerObject,
+                        objList: playerdat.InventoryObjects,
+                        WorldObject: false);
+                }
+                else if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex == 0xF))
+                {
+                    // runebag: ignore
+                }
+                else
+                {
+                    look.PrintLookDescription(
+                        obj: objAtSlot,
+                        objList: playerdat.InventoryObjects,
+                        OutputConvo: true,
+                        lorecheckresult: look.LoreCheck(objAtSlot));
+                }
             }
         }
 

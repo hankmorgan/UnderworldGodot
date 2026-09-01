@@ -1,4 +1,6 @@
+using System.Collections;
 using Godot;
+using Peaky.Coroutines;
 
 namespace Underworld
 {
@@ -88,6 +90,9 @@ namespace Underworld
 		public MessageDisplay convo = new();
 
 		public static bool MessageScrollIsTemporary = false;
+		public static int TemporaryMessageId = 0;
+		static MessageScrollLine[] temporaryMessageBackup;
+		static bool temporaryMessageClickDown = false;
 
 		public static bool CursorOverMessageScroll = false; //Used to determine where cursor is when clicking conversation options
 
@@ -179,6 +184,8 @@ namespace Underworld
 					{
 						//back up lines
 						var backup = BackupLines(instance.scroll.Lines, 5);
+						temporaryMessageBackup = backup;
+						var temporaryMessageId = ++TemporaryMessageId;
 						MessageScrollIsTemporary = true;
 						instance.scroll.Clear();
 						_ = Peaky.Coroutines.Coroutine.Run(
@@ -187,7 +194,7 @@ namespace Underworld
 							);
 
 						_ = Peaky.Coroutines.Coroutine.Run(
-							instance.scroll.RestoreLinesAfterWait(backup, 2f),
+							RestoreTemporaryMessageAfterWait(backup, 2f, temporaryMessageId),
 							main.instance
 							);
 						break;
@@ -211,6 +218,74 @@ namespace Underworld
 					uimanager.StartDragonAnimation(1);
 				}
 			}
+		}
+
+		public static bool HandleTemporaryMessageClick(InputEventMouseButton mouseButton)
+		{
+			if (!MessageScrollIsTemporary && !temporaryMessageClickDown)
+			{
+				return false;
+			}
+
+			if (mouseButton.Pressed)
+			{
+				if (MessageScrollIsTemporary)
+				{
+					CancelTemporaryMessage();
+				}
+				temporaryMessageClickDown = true;
+			}
+			else if (temporaryMessageClickDown)
+			{
+				temporaryMessageClickDown = false;
+			}
+			return true;
+		}
+
+		public static void CancelTemporaryMessage()
+		{
+			if (!MessageScrollIsTemporary)
+			{
+				return;
+			}
+
+			TemporaryMessageId++;
+			RestoreMessageScrollLines(temporaryMessageBackup);
+			temporaryMessageBackup = null;
+			MessageScrollIsTemporary = false;
+		}
+
+		static void RestoreMessageScrollLines(MessageScrollLine[] linesToRestore)
+		{
+			if (linesToRestore == null)
+			{
+				return;
+			}
+
+			for (int i = 0; i <= instance.scroll.Lines.GetUpperBound(0); i++)
+			{
+				instance.scroll.Lines[i] = new MessageScrollLine(
+					linesToRestore[i].OptionNo,
+					linesToRestore[i].LineText);
+			}
+			instance.scroll.UpdateMessageDisplay();
+		}
+
+		static IEnumerator RestoreTemporaryMessageAfterWait(
+			MessageScrollLine[] linesToRestore,
+			float waittime,
+			int temporaryMessageId)
+		{
+			yield return new WaitForSeconds(waittime);
+
+			if (!MessageScrollIsTemporary || temporaryMessageId != TemporaryMessageId)
+			{
+				yield break;
+			}
+
+			RestoreMessageScrollLines(linesToRestore);
+			temporaryMessageBackup = null;
+			MessageScrollIsTemporary = false;
 		}
 
 		public static MessageScrollLine[] BackupLines(MessageScrollLine[] toBackup, int size)
