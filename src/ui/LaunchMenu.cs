@@ -37,7 +37,8 @@ public partial class LaunchMenu : Control
 	public TextEdit SynthPath;
 
 	/// <summary>
-	/// Shows why an installation was rejected. Carries no font override on purpose: the
+	/// Shows why the game could not be started, whether the installation was rejected or
+	/// the scene failed to load. Carries no font override on purpose: the
 	/// game's fonts are built from the player's own data, so the one moment this label is
 	/// needed is the moment those fonts could not be loaded.
 	/// </summary>
@@ -70,6 +71,18 @@ public partial class LaunchMenu : Control
 			}
 		}
 
+		// Start loading the main scene as soon as practicable. This happens before the focus
+		// switch below, which returns early on an unrecognised selection: leaving the preload
+		// after it meant that branch skipped the request, and a later valid launch would then
+		// call LoadThreadedGet for a request that was never made.
+		var error = ResourceLoader.LoadThreadedRequest(NextScene, "PackedScene", true);
+		if (error != Error.Ok)
+		{
+			// Only on a genuine failure. Reporting unconditionally logged
+			// "Ok while preloading main scene." on every normal startup.
+			GD.PushError($"{Enum.GetName(error)} while preloading main scene.");
+		}
+
 		// Set the initial focus selection.
 		switch (UWClass._RES)
 		{
@@ -85,10 +98,6 @@ public partial class LaunchMenu : Control
 				GD.PushError("Invalid game path selection: ", UWClass._RES);
 				return;
 		}
-
-		// Start loading the main scene as soon as practicable.
-		var error = ResourceLoader.LoadThreadedRequest(NextScene, "PackedScene", true);
-		GD.PushError($"{Enum.GetName(error)} while preloading main scene.");
 
 	}
 
@@ -261,7 +270,7 @@ public partial class LaunchMenu : Control
 
 		// Check the selected installation here rather than after the transition, because
 		// the game scene cannot display a legible message about fonts that failed to load.
-		// TryValidate also refuses demo mode, so no separate demo branch is needed.
+		// TryValidate no longer refuses the demo outright: it checks the demo's own fonts.
 		if (!InstallationValidator.TryValidate(UWClass._RES, UWClass.BasePath, out string reason))
 		{
 			GD.PushError("Cannot start: " + reason);
@@ -270,14 +279,59 @@ public partial class LaunchMenu : Control
 		}
 		if (LaunchError != null) LaunchError.Text = "";
 
-		// Save only once the selection is known to work. Saving first would persist a
-		// configuration that was rejected a line later.
+		// Save only once the installation selection is known to validate. Saving first
+		// would persist a configuration that was rejected a line later. A scene that then
+		// fails to load does not invalidate the selection, so this stays before the handoff.
 		_uwSettings.Save();
 
 		// Switch scenes to start the game.
-		var scene = (PackedScene)ResourceLoader.LoadThreadedGet(NextScene);
-		GetTree().ChangeSceneToPacked(scene);
+		//
+		// LoadThreadedRequest only starts the load. It returns Ok even for a path that does
+		// not exist, so a scene that cannot be loaded says nothing until here, where the get
+		// waits if it has to and hands back an empty result. Casting that gives null, and
+		// ChangeSceneToPacked(null) returns ErrInvalidParameter, which used to be discarded
+		// and left the player looking at the launcher with no explanation.
+		//
+		// `as` rather than a hard cast on purpose: a resource of the wrong type then takes
+		// the same reported path instead of throwing.
+		var scene = ResourceLoader.LoadThreadedGet(NextScene) as PackedScene;
+		if (scene == null)
+		{
+			HandleLaunchFailure("The game could not be loaded.");
+			return;
+		}
 
+		var change = GetTree().ChangeSceneToPacked(scene);
+		if (change != Error.Ok)
+		{
+			HandleLaunchFailure($"The game could not be started ({Enum.GetName(change)}).");
+		}
+	}
+
+	/// <summary>
+	/// Puts a failure where the player will see it, not only in the log, the way a rejected
+	/// installation is already reported, and rearms the preload. Named Handle rather than
+	/// Report because that second part is a state change, not just a message.
+	///
+	/// Also reissues the preload. LoadThreadedGet consumes the request whether or not it
+	/// succeeded, so without this a second attempt would find nothing outstanding and fail
+	/// with InvalidResource rather than retrying properly.
+	///
+	/// The message deliberately carries no ThreadLoadStatus. That status is a snapshot taken
+	/// before the get, and the get can wait for a load that then fails, so quoting it can
+	/// tell the player the load is still in progress when it has already failed. Godot logs
+	/// the real reason itself.
+	/// </summary>
+	private void HandleLaunchFailure(string reason)
+	{
+		GD.PushError(reason);
+		if (LaunchError != null) { LaunchError.Text = reason; }
+
+		var rearm = ResourceLoader.LoadThreadedRequest(NextScene, "PackedScene", true);
+		if (rearm != Error.Ok)
+		{
+			GD.PushError($"{Enum.GetName(rearm)} while rearming the preload, so a retry will not work.");
+		}
 	}
 
 	public void _on_sound_options_item_selected(int index)
