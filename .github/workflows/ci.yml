@@ -89,15 +89,16 @@ jobs:
       # line and this harness keys off that. A run that prints no verdict is a failure,
       # because it died before deciding.
       #
-      # SKIP is expected here and is not a failure: three of these need the shipped .SYS
-      # fonts, which CI has no licence to carry. They report SKIP and start protecting the
-      # branch the moment game data is available.
+      # SKIP is expected here and is not a failure: several of these need the shipped game
+      # data, which CI has no licence to carry. They report SKIP and start protecting the
+      # branch the moment game data is available. Until then CI proves those scenes load and
+      # run, not that their assertions hold.
       - name: Godot tests
         run: |
           chmod +x "$GODOT"
           rc=0
           for scene in font_render_test font_placement_test cursor_placement_test font_boot_test font_failure_test \
-                       font_resize_test font_demo_boot_test launcher_validation_test; do
+                       font_resize_test font_demo_boot_test launcher_validation_test ordinal_fit_test; do
             out="/tmp/$scene.log"
             timeout 180 xvfb-run -a "$GODOT" --rendering-driver opengl3 \
               --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true
