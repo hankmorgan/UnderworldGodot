@@ -32,7 +32,10 @@ public partial class SfxStreamPlayer : Node
 
     private OplChip _chip;
     private AudioStreamPlayer _player;
+    private AudioStreamGenerator _generator;
     private AudioStreamGeneratorPlayback _playback;
+    private bool _producerStopped;
+    private bool _bindingsReleased;
     private short[] _renderBuffer;
     private Vector2[] _frames;
 
@@ -98,14 +101,14 @@ public partial class SfxStreamPlayer : Node
             string soundDir = Path.Combine(UWClass.BasePath, "SOUND");
         //}
 
-        var generator = new AudioStreamGenerator
+        _generator = new AudioStreamGenerator
         {
             MixRate = SampleRate,
             BufferLength = BufferLengthSec,
         };
         _player = new AudioStreamPlayer();
         AddChild(_player);
-        _player.Stream = generator;
+        _player.Stream = _generator;
         _player.Play();
         _playback = (AudioStreamGeneratorPlayback)_player.GetStreamPlayback();
 
@@ -175,11 +178,61 @@ public partial class SfxStreamPlayer : Node
         }
     }
 
+    /// <summary>
+    /// Stops the producer and returns the playback to the AudioServer. See
+    /// MusicStreamPlayer.BeginGodotAudioShutdown and issue #78 for why disposal is deferred.
+    /// </summary>
+    public bool BeginGodotAudioShutdown(int joinMs = 500)
+    {
+        if (_producerStopped) return true;
+
+        _audioThreadRunning = false;
+        if (_audioThread != null && !_audioThread.Join(joinMs))
+        {
+            // The producer drives the chip and the playback; disposing either while it is
+            // still running would be a use after dispose.
+            GD.PushError($"SFX producer did not stop within {joinMs} ms; retrying before release.");
+            return false;
+        }
+        _chip?.Dispose();
+        _chip = null;
+
+        if (_player != null && GodotObject.IsInstanceValid(_player))
+        {
+            _player.Stop();
+            _player.Stream = null;
+        }
+
+        _producerStopped = true;
+        return true;
+    }
+
+    /// <summary>Disposes the audio wrappers once the server has collected the playback.</summary>
+    public void ReleaseGodotAudioBindings()
+    {
+        // Never retries phase one here. Stopping the player and releasing its wrappers in
+        // the same call is the ordering that hangs; the caller retries phase one and only
+        // then lets the server drain before calling this.
+        if (_bindingsReleased || !_producerStopped) return;
+        _bindingsReleased = true;
+
+        if (_player != null && GodotObject.IsInstanceValid(_player))
+        {
+            _player.QueueFree();
+            _player = null;
+        }
+        _playback?.Dispose();
+        _playback = null;
+        _generator?.Dispose();
+        _generator = null;
+    }
+
     public override void _ExitTree()
     {
-        _audioThreadRunning = false;
-        _audioThread?.Join(500);
-        _chip?.Dispose();
+        // Stop only. Releasing the wrappers here would be the same-frame ordering that
+        // leaves the playback in the server's list; UnderworldRoot releases them on the
+        // quit path once the server has had time to collect it.
+        BeginGodotAudioShutdown();
         if (Instance == this) Instance = null;
     }
 }
