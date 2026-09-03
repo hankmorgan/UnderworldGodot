@@ -168,11 +168,17 @@ namespace Underworld
 
                                         if ((enchant.SpellMinorClass & 8) == 0)
                                         {
-                                            AttackScore += (1 + enchant.SpellMinorClass & 0x7);
+                                            // (minor & 7) + 1, not (1 + minor) & 7. C# binds + tighter
+                                            // than &, so the original lost the whole bonus at minor 7:
+                                            // DOS adds 8 there, this added 0. UW.EXE 0x254FD masks with
+                                            // `and ax,7` and only then `inc ax`. See issue #102.
+                                            AttackScore += (enchant.SpellMinorClass & 0x7) + 1;
                                         }
                                         else
                                         {
-                                            AttackDamage += (1 + enchant.SpellMinorClass & 0x7);
+                                            // Same precedence trap as the accuracy arm above. DOS masks
+                                            // then increments in both, so minor 15 adds 8 here, not 0.
+                                            AttackDamage += (enchant.SpellMinorClass & 0x7) + 1;
                                         }
                                         break;
                                     }
