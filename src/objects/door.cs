@@ -77,15 +77,28 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// The angle a door sits at for one animation state.
+        ///
+        /// DOS shifts the state number into a 16 bit angle space, `state << 12` in
+        /// RenderDoor_seg032_2DCA_C56 (UW.EXE 0x2FD9F), where 0x10000 is a full turn. One
+        /// state is therefore 0x1000/0x10000 of a turn, 22.5 degrees, and that is fixed
+        /// regardless of how many states the door type has.
+        ///
+        /// This used to be (PI/2) / NoOfFrames, which is the same 22.5 degrees for the four
+        /// state portcullis but only 18 for a five state door, leaving it 22.5 degrees short
+        /// of DOS at full open. See issue #99.
+        /// </summary>
+        private const double RadiansPerDoorState = Math.PI / 8;
+
         public static float GetRadiansForIndex(uwObject obj, int index, int doordir)
         {
-            var unit = (Math.PI / 2) / NoOfFrames(obj);
             var dir = 1;
             if (doordir == 1)
             {
                 dir = -1;
             }
-            return (float)(dir * index * unit);
+            return (float)(dir * index * RadiansPerDoorState);
         }
 
         public static float GetHeightForIndex(uwObject obj, int index)
