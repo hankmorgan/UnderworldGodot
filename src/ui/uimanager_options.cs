@@ -742,6 +742,11 @@ namespace Underworld
         /// </summary>
         public const string UnusedSlotPlaceholder = "<not used yet>";
 
+        /// <summary>
+        /// DOS's \6 escape, which the save description list is drawn under. See issue #82.
+        /// </summary>
+        private const int SaveDescriptionEscape = 6;
+
         private static readonly SaveDescriptionPrompt SaveDescription_Prompt = new();
         private static LineEdit SaveDescriptionField;
 
@@ -1030,6 +1035,9 @@ namespace Underworld
 
         static void listsaves()
         {
+            // DOS lists these under a \6 heading and leaves the colour set, so every
+            // description inherits it: 0xD4 in UW1, 0x48 in UW2. The port passed 2, which is
+            // \2, a flat black in both games. See issue #82.
             string[] romannumerals = new string[] { "I", "II", "III", "IV" };
             instance.scroll.Clear();
             for (int i = 1; i <= 4; i++)
@@ -1038,11 +1046,13 @@ namespace Underworld
                 if (SaveDescription.TryReadSlot(path, out string savename))
                 {
                     AddToMessageScroll(
-                        $"{romannumerals[i - 1]}- {GameStringFormat.EscapeBbcode(savename)}", colour: 2);
+                        $"{romannumerals[i - 1]}- {GameStringFormat.EscapeBbcode(savename)}",
+                        colour: SaveDescriptionEscape);
                 }
                 else
                 {
-                    AddToMessageScroll($"{romannumerals[i - 1]}- {UnusedSlotPlaceholder}", colour: 2);
+                    AddToMessageScroll($"{romannumerals[i - 1]}- {UnusedSlotPlaceholder}",
+                        colour: SaveDescriptionEscape);
                 }
             }
         }
