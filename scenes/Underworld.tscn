@@ -2113,7 +2113,7 @@ scroll_active = false
 
 [node name="VIT" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
-offset_left = 16.0
+offset_left = -4.0
 offset_top = 177.0
 offset_right = 136.0
 offset_bottom = 242.0
@@ -2125,7 +2125,7 @@ scroll_active = false
 
 [node name="MANA" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
-offset_left = 16.0
+offset_left = -4.0
 offset_top = 204.0
 offset_right = 136.0
 offset_bottom = 269.0
@@ -2137,7 +2137,7 @@ scroll_active = false
 
 [node name="EXP" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
-offset_left = 16.0
+offset_left = -4.0
 offset_top = 232.0
 offset_right = 136.0
 offset_bottom = 297.0
