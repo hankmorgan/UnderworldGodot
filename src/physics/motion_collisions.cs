@@ -279,6 +279,13 @@ namespace Underworld
                         // seg030_2B26_FA0 is a bare jmp to seg030_2B26_FD3, which calls
                         // seg030_2B26_788 and returns. Nothing restores the momentum, and
                         // nothing saves it either, so var6 is read on the UW2 path alone.
+                        //
+                        // The condition itself is NOT faithful and is left as it was found.
+                        // DOS restores when (C & 3) == 3 and bit 2 of C is SET (test ...,4
+                        // then jnz to the restore at seg031_2CFA_10ED), and it SKIPS the
+                        // restore when bit 0x800 of E is set (test ...,800h then jnz to
+                        // seg031_2CFA_10F9). Both read inverted below. UW2 only, so it is
+                        // not fixed here.
                         if (
                             (_RES == GAME_UW2)
                             &&
