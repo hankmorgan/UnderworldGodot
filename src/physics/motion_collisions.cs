@@ -78,7 +78,12 @@ namespace Underworld
             }
             else
             {//seg031_2CFA_E28:
-                var volume = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
+                // 0x32, not 32. DOS divides by 32h in both games: mov bx,32h then
+                // idiv bx, at seg030_2B26_D98 in UW1 and seg031_2CFA_E43 in UW2. The
+                // other two constants in this expression were transcribed as 0xA and 40,
+                // so this one looks like a hex digit that lost its prefix. It makes the
+                // mass term of the collision sound volume louder than DOS by a third.
+                var volume = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 0x32) - 40);//now reused as volume?/
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
                 UWsoundeffects.PlaySoundEffectAtCoordinate(effectNo: 0xF, packedX: MotionParams.x_0 >> 5, packedY: MotionParams.y_2 >> 5, volDelta: volume);
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
