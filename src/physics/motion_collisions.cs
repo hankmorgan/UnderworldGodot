@@ -127,14 +127,22 @@ namespace Underworld
 
                         var6 = MotionParams.momentum_14;
 
+                        // UW2 only. UW1's DoCollision_seg030_2B26_C93 goes from
+                        // test si,4 / jnz seg030_2B26_DFF straight into the damped
+                        // arithmetic below. There is no exact reflection anywhere in it,
+                        // so a UW1 bounce always damps. The TODO that used to sit here
+                        // guessed as much; it is confirmed. See #105.
                         if (
-                            (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
-                            ||
-                            (MotionParams.unk_16_relatedtoPitch == 0xF)
+                            (_RES == GAME_UW2)
+                            &&
+                            (
+                                (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
+                                ||
+                                (MotionParams.unk_16_relatedtoPitch == 0xF)
+                            )
                         )
                         {
                             //Bouncing_seg031_2CFA_EE2:
-                            //TODO: it looks like this code is not present in UW1. Determine if this will cause issues?
                             MotionParams.unk_a_pitch = (short)-MotionParams.unk_a_pitch;
                         }
                         else
@@ -154,8 +162,12 @@ namespace Underworld
                             }
                         }
 
-                        //seg031_2CFA_F63:
+                        // seg031_2CFA_F63, UW2 only. UW1 reaches the var3 test directly:
+                        // seg030_2B26_E86 is cmp [bp+var_3],0 with nothing before it, so
+                        // there is no index or handler test and no speed reduction.
                         if (
+                            (_RES == GAME_UW2)
+                            &&
                             (MotionParams.index_20 != 1)
                             &&
                             ((SpecialMotionHandler.table01 & 0x1000) == 0x1000)
@@ -258,14 +270,20 @@ namespace Underworld
                             }
                         }
 
-                        //seg031_2CFA_10CA:
-
+                        // seg031_2CFA_10CA, UW2 only. UW1 has no equivalent block: its
+                        // seg030_2B26_FA0 is a bare jmp to seg030_2B26_FD3, which calls
+                        // seg030_2B26_788 and returns. Nothing restores the momentum, and
+                        // nothing saves it either, so var6 is read on the UW2 path alone.
                         if (
+                            (_RES == GAME_UW2)
+                            &&
+                            (
                             (((MotionCalcArray.UnkC_terrain_base & 3) == 3) && ((MotionCalcArray.UnkC_terrain_base & 0xC & 4) != 4))
                             ||
                             (((MotionCalcArray.UnkC_terrain_base & 3) == 3) && ((MotionCalcArray.UnkC_terrain_base & 0xC & 4) == 4) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
                             ||
                             (((MotionCalcArray.UnkC_terrain_base & 3) != 3) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
+                            )
                             )
                         {
                             MotionParams.momentum_14 = (short)var6;
