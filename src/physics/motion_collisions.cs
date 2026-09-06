@@ -50,9 +50,15 @@ namespace Underworld
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
                 MotionParams.tilestate25 = 2;
+                // The volume differs as well as the effect. UW1 hardcodes effect 5 and
+                // passes (mass - 600) / 32h as the volume, at seg030_2B26_D61. UW2 picks
+                // the effect from the mass and passes a volume of zero, push 0 at
+                // Plsaysound_seg031_2CFA_E06. The port took UW2's zero for both.
+                int landingVolume = 0;
                 if (_RES != GAME_UW2)
                 {
                     soundeffect = 5;
+                    landingVolume = (si_mass - 600) / 0x32;
                 }
                 else
                 {
@@ -74,7 +80,7 @@ namespace Underworld
                 }
 
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, 0);
+                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, landingVolume);
             }
             else
             {//seg031_2CFA_E28:
@@ -210,14 +216,21 @@ namespace Underworld
                                                     //seg031_2CFA_108C
                                                     if ((MotionCalcArray.UnkE_base & 0x20) == 0)
                                                     {//seg031_2CFA_109E:
-                                                        if ((MotionCalcArray.UnkE_base & 0x40) == 0)
-                                                        {
-                                                            MotionParams.tilestate25 = 1;
-                                                        }
-                                                        else
+                                                        // UW1 has three outcomes here, not
+                                                        // four. seg030_2B26_F72 tests 10h
+                                                        // then 20h and falls through to
+                                                        // tilestate 1 at seg030_2B26_F96.
+                                                        // There is no 40h test and no
+                                                        // tilestate 8 anywhere in the UW1
+                                                        // routine. UW2 adds both.
+                                                        if ((_RES == GAME_UW2) && ((MotionCalcArray.UnkE_base & 0x40) != 0))
                                                         {
                                                             //seg031_2CFA_10AA:
                                                             MotionParams.tilestate25 = 8;
+                                                        }
+                                                        else
+                                                        {
+                                                            MotionParams.tilestate25 = 1;
                                                         }
                                                     }
                                                     else
@@ -266,8 +279,11 @@ namespace Underworld
                                             }
                                         }
                                     }
-                                    //seg031_2CFA_10B8:
-                                    if (UWMotionParamArray.dseg_67d6_26A4 == 0)
+                                    // seg031_2CFA_10B8, UW2 only. UW1 jumps straight to
+                                    // seg030_2B26_FD3 from every tilestate store, and
+                                    // nothing after seg030_2B26_D08 writes the speed field
+                                    // at all.
+                                    if ((_RES == GAME_UW2) && (UWMotionParamArray.dseg_67d6_26A4 == 0))
                                     {
                                         MotionParams.speed_12 = 0;
                                     }
