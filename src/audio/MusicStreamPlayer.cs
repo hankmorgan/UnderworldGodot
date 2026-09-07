@@ -36,7 +36,10 @@ public partial class MusicStreamPlayer : Node
 	private ISynthEngine _synth;
 	private XmiPlayer _xmiPlayer;
 	private AudioStreamPlayer _player;
+	private AudioStreamGenerator _generator;
 	private AudioStreamGeneratorPlayback _playback;
+	private bool _producerStopped;
+	private bool _bindingsReleased;
 
 	// Pre-allocated buffers for the producer thread
 	private short[] _renderBuffer;
@@ -101,7 +104,7 @@ public partial class MusicStreamPlayer : Node
 
 		_xmiPlayer = new XmiPlayer(_synth, SampleRate);
 
-		var generator = new AudioStreamGenerator
+		_generator = new AudioStreamGenerator
 		{
 			MixRate = SampleRate,
 			BufferLength = BufferLengthSec,
@@ -109,7 +112,7 @@ public partial class MusicStreamPlayer : Node
 
 		_player = new AudioStreamPlayer();
 		AddChild(_player);
-		_player.Stream = generator;
+		_player.Stream = _generator;
 		_player.Play();
 
 		_playback = (AudioStreamGeneratorPlayback)_player.GetStreamPlayback();
@@ -228,10 +231,26 @@ public partial class MusicStreamPlayer : Node
 	/// disposes the XmiPlayer and synth. Join timeout is 500 ms — the loop
 	/// sleeps at most 100 ms so this is comfortable headroom.
 	/// </summary>
-	public override void _ExitTree()
+	/// <summary>
+	/// Stops the producer and hands the playback back to the AudioServer, without yet
+	/// disposing the C# wrappers. Stop() only marks the server-side playback for deletion:
+	/// the audio thread has to mix it out and a later main-thread AudioServer.update() has to
+	/// collect it, so the caller must let real time and several frames pass before calling
+	/// <see cref="ReleaseGodotAudioBindings"/>. See issue #78.
+	/// </summary>
+	public bool BeginGodotAudioShutdown(int joinMs = 500)
 	{
+		if (_producerStopped) return true;
+
 		_audioThreadRunning = false;
-		_audioThread?.Join(500);
+		if (_audioThread != null && !_audioThread.Join(joinMs))
+		{
+			// The producer holds the synth and pushes into the playback, so disposing
+			// anything now would be a use after dispose. Leaving it all alone risks the
+			// shutdown hang instead, which is the lesser fault of the two.
+			GD.PushError($"Music producer did not stop within {joinMs} ms; retrying before release.");
+			return false;
+		}
 
 		lock (_playerLock)
 		{
@@ -239,6 +258,48 @@ public partial class MusicStreamPlayer : Node
 			_xmiPlayer = null;
 		}
 		_synth?.Dispose();
+		_synth = null;
+
+		if (_player != null && GodotObject.IsInstanceValid(_player))
+		{
+			_player.Stop();
+			_player.Stream = null;
+		}
+
+		_producerStopped = true;
+		return true;
+	}
+
+	/// <summary>
+	/// Disposes the audio wrappers once the server has let go of the playback. Doing this
+	/// before the server has collected it leaves a binding attached to an object the server
+	/// still owns, which is the state that hangs teardown on Godot 4.3.
+	/// </summary>
+	public void ReleaseGodotAudioBindings()
+	{
+		// Never retries phase one here. Stopping the player and releasing its wrappers in
+		// the same call is the ordering that hangs; the caller retries phase one and only
+		// then lets the server drain before calling this.
+		if (_bindingsReleased || !_producerStopped) return;
+		_bindingsReleased = true;
+
+		if (_player != null && GodotObject.IsInstanceValid(_player))
+		{
+			_player.QueueFree();
+			_player = null;
+		}
+		_playback?.Dispose();
+		_playback = null;
+		_generator?.Dispose();
+		_generator = null;
+	}
+
+	public override void _ExitTree()
+	{
+		// Stop only. Releasing the wrappers here would be the same-frame ordering that
+		// leaves the playback in the server's list; UnderworldRoot releases them on the
+		// quit path once the server has had time to collect it.
+		BeginGodotAudioShutdown();
 		if (Instance == this) Instance = null;
 	}
 

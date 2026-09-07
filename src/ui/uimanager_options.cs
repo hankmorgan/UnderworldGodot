@@ -590,7 +590,25 @@ namespace Underworld
                             switch (extra_arg_0)
                             {
                                 case 2://confirm quit yes
-                                    GetTree().Quit();
+                                    // Through the root so audio is handed back to the
+                                    // AudioServer before the tree goes. Quitting straight
+                                    // from here hangs the process on Godot 4.3. See #78.
+                                    var uwroot = UnderworldRoot.Find(this);
+                                    if (uwroot != null)
+                                    {
+                                        uwroot.RequestQuit();
+                                    }
+                                    else
+                                    {
+                                        // Unreachable while the uiManager sits under the
+                                        // scene root. Saying so is the point: quitting
+                                        // straight from here brings the hang back, so a
+                                        // hierarchy change that breaks Find must be loud.
+                                        GD.PushError(
+                                            "No UnderworldRoot above the options UI, so quitting "
+                                          + "without handing audio back. See issue #78.");
+                                        GetTree().Quit();
+                                    }
                                     break;
                                 case 3://cancel quit
                                     ReturnToTopOptionsMenu();
