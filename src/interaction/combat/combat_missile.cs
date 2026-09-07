@@ -115,9 +115,11 @@ namespace Underworld
                 //sound effect at player position
                 UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectHit1, pan: 0x40, velocityOffset: 0);
             }
-            else
+            else if (!objectHit.IsStatic)
             {
-                //sound effect at hit position.
+                // Mobile defenders only. DOS tests this before playing, so a missile
+                // striking a static object is silent in both games: UW.EXE 0x259A0 calls
+                // the mobile test and skips the sound on a zero result. See issue #108.
                 UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectHit2, objectHit, 0);
             }
             AttackerAppliesFinalDamage(
