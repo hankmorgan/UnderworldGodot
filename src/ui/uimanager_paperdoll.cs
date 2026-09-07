@@ -156,10 +156,10 @@ namespace Underworld
                 case 3: SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject)); break;
                 case 4: SetBoots(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.BootsObject)); break;
                 //Set arms and shoulders
-                case 5: SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject)); break;
-                case 6: SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject)); break;
-                case 7: SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject)); break;
-                case 8: SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject)); break;
+                case 5: SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), qty:uwObject.GetObjectQuantity(playerdat.RightShoulderObject)); break;
+                case 6: SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), qty:uwObject.GetObjectQuantity(playerdat.LeftShoulderObject)); break;
+                case 7: SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), qty:uwObject.GetObjectQuantity(playerdat.RightHandObject)); break;
+                case 8: SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), qty:uwObject.GetObjectQuantity(playerdat.LeftHandObject)); break;
                 //set rings
                 case 9: SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject)); break;
                 case 10: SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject)); break;

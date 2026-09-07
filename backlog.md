@@ -97,7 +97,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] forcefields in prison tower do not extend to the ground
 - [ ] [uw2] troll in combat tries to throw a snowball (possible animation bug)
 - [ ] Items given to player that are not moved from trade area vanish
-- [ ] Doors open to 90degree angles. Should be at more of a 100 degree angle.
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Handle extraction/opening of gog.com game.gog files.
@@ -109,6 +108,9 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Check if Summon Monster spell (cast from scroll found in Nidges quarters in the Seers area of UW1) works. Spell 8-4.
 - [ ] NPCs pop into existance a few frames after the game loads
 - [ ] The hallucination effect is not vanilla underworld.
+- [ ] Adding a non-rune object to the rune bag will not print the "only runes allowed in runebag message". The object is still rejected.
+- [ ] Swapping a object with a stack in the paperdoll will incorrectly prompt for a quantity value instead of just swapping the full stack without player intervention.
+- [ ] Picking up a stack from the paperdoll does not hide the mouse cursor.
 
 
 ## Blocked
