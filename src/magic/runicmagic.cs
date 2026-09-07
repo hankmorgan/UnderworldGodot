@@ -241,7 +241,7 @@ namespace Underworld
             var spell = CurrentSpell();
             if (spell != null)
             {
-                if ((spell.TestIfPlayerCanCastSpell()) | (true))//force this to be true for test and development
+                if (spell.TestIfPlayerCanCastSpell())//force this to be true for test and development
                 {
                     //apply mana cost
                     playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);

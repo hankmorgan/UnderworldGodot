@@ -112,10 +112,10 @@ namespace Underworld
             }
 
             ////////////////////////MANA Animations//////////////////////////////////
-            if (TargetManaFlaskLevel == 0)
-            {
-                Debug.Print("no mana");
-            }
+            // if (TargetManaFlaskLevel == 0)
+            // {
+            //     Debug.Print("no mana");
+            // }
 
             if ((TargetManaFlaskLevel > CurrentManaFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
