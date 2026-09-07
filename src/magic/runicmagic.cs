@@ -263,12 +263,14 @@ namespace Underworld
             uint last = (uint)LastSpellCastClock_dseg_5c99_16E3;
             if (last > now)
             {
-                // DOS cannot reach a stored clock later than the current one, because
-                // ResetMap_ovr109_2AB zeroes it at ovr109_4A7 whenever the map is reset.
-                // The port holds this in a static that outlives a game, so loading an
-                // earlier save after casting would leave a stamp in the future and block
-                // casting until the clock caught up, which could be hours of game time.
-                // Treating that as elapsed arrives where DOS's reset arrives.
+                // DOS cannot reach a stored clock later than the current one. ovr109_43C
+                // zeroes it, and that runs on a game restore, reached through stub109_61
+                // from RestoreGame_ovr140_44B, and on death through
+                // DeathEndGame_ovr109_4FB. The port holds this in a static that outlives a
+                // game, so loading an earlier save after casting would leave a stamp in
+                // the future and refuse every cast until the clock caught up, which could
+                // be hours of game time. Treating that as elapsed arrives where DOS's
+                // reset arrives, without a hook the port does not have.
                 return true;
             }
             return now >= (long)last + SpellCastDelay_dseg_5c99_16E2;
@@ -280,10 +282,15 @@ namespace Underworld
         /// then stores the 32 bit clock. UW2 runs the same sequence with 0x80 in place of
         /// 0x40, at ovr123_58E.
         ///
-        /// The clock advances 256 units per second, so the floor is a quarter of a second
-        /// in UW1 and half a second in UW2, and each circle above the player's level adds
-        /// four units. The byte arithmetic is kept because it is what DOS does; it does
-        /// not wrap for any level and circle the games can actually reach.
+        /// In full the delay is 8 * circle - 4 * level + 0x40, so each circle adds eight
+        /// units and each character level takes away four. The clock advances 256 units a
+        /// second, which puts the floor at a quarter of a second in UW1 and half in UW2.
+        ///
+        /// The byte width is deliberate and is not a detail. Once the level passes
+        /// 2 * circle + 16 the true value would go negative, and the byte wraps it to a
+        /// large one instead: a level 19 character casting a first circle spell waits 252
+        /// units, near a full second, rather than none at all. DOS does the same, so the
+        /// arithmetic is kept in bytes throughout rather than widened.
         /// </summary>
         static void StartSpellCastInterval(int spellCircle)
         {
@@ -297,18 +304,24 @@ namespace Underworld
 
         public static void CastRunicSpell()
         {
+            if (!SpellCastIntervalHasElapsed())
+            {
+                // Refused. DOS plays effect 0x15 at the avatar with pan 0x40 and leaves,
+                // at ovr119_3EE. The test sits ahead of everything else, before DOS has
+                // even read the runes, so a refused attempt sounds the same whether or not
+                // the runes make a spell. That is why this is ahead of the lookup.
+                UWsoundeffects.PlaySoundEffectAtAvatar(effectno: 0x15, pan: 0x40, velocityOffset: 0);
+                if (_RES == GAME_UW2)
+                {
+                    // UW2 says so as well, at ovr123_3F8: push 0Bh then
+                    // PrintStringFromBlock1. UW1 has no message, only the sound.
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x0B));
+                }
+                return;
+            }
             var spell = CurrentSpell();
             if (spell != null)
             {
-                if (!SpellCastIntervalHasElapsed())
-                {
-                    // Refused. DOS plays effect 0x15 at the avatar with pan 0x40 and
-                    // leaves, at ovr119_3EE. This gate sits ahead of every other test in
-                    // DOS, before it has even read the runes, so it goes ahead of them
-                    // here too.
-                    UWsoundeffects.PlaySoundEffectAtAvatar(effectno: 0x15, pan: 0x40, velocityOffset: 0);
-                    return;
-                }
                 if (spell.TestIfPlayerCanCastSpell())
                 {
                     //apply mana cost
