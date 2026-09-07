@@ -259,8 +259,19 @@ namespace Underworld
         /// </summary>
         static bool SpellCastIntervalHasElapsed()
         {
-            long due = (uint)LastSpellCastClock_dseg_5c99_16E3 + SpellCastDelay_dseg_5c99_16E2;
-            return (uint)playerdat.ClockValue >= due;
+            uint now = (uint)playerdat.ClockValue;
+            uint last = (uint)LastSpellCastClock_dseg_5c99_16E3;
+            if (last > now)
+            {
+                // DOS cannot reach a stored clock later than the current one, because
+                // ResetMap_ovr109_2AB zeroes it at ovr109_4A7 whenever the map is reset.
+                // The port holds this in a static that outlives a game, so loading an
+                // earlier save after casting would leave a stamp in the future and block
+                // casting until the clock caught up, which could be hours of game time.
+                // Treating that as elapsed arrives where DOS's reset arrives.
+                return true;
+            }
+            return now >= (long)last + SpellCastDelay_dseg_5c99_16E2;
         }
 
         /// <summary>
