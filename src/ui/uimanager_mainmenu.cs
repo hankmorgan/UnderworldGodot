@@ -9,6 +9,20 @@ namespace Underworld
 {
 	public partial class uimanager : Node2D
 	{
+		/// <summary>
+		/// Font colour for the main menu save list and the loading message, into palette 2.
+		///
+		/// DOS sets these through its font colour global immediately before drawing. Selected
+		/// UW1 0xA2 at UW.EXE 0x7FA77, unselected 0xAA at 0x7FA89; UW2 0x07 at UW2.EXE
+		/// 0x98B97 and 0xCD at 0x98BA9. The loading message uses the selected colour in both,
+		/// UW1 0x7FA77's value again at 0x802EE and UW2's at 0x993F9.
+		///
+		/// Palette 2 because the main menu loads it before drawing (the 6A 02 argument in
+		/// MainMenu_ovr138_248 at 0x7FC3F). Palette 0 holds different colours at these
+		/// indices, so reading them from 0 gives a plausible but wrong shade.
+		/// </summary>
+		const int MainMenuPalette = 2;
+
 		byte PaletteIndexSaveGameSelected
 		{
 			get
@@ -23,6 +37,19 @@ namespace Underworld
 				}
 
 			}
+		}
+
+		/// <summary>
+		/// The loading message takes the same colour DOS gives the highlighted save slot:
+		/// the write at UW.EXE 0x802EE is the same index as 0x7FA77, and UW2.EXE 0x993F9
+		/// matches 0x98B97. The scene carried a hardcoded green that is in no palette.
+		/// </summary>
+		private void SetLoadingLabelColour()
+		{
+			if (LoadingLabel == null) { return; }
+			LoadingLabel.Set(
+				"theme_override_colors/font_color",
+				PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
 		}
 
 		byte PaletteIndexSaveGameUnSelected
@@ -85,7 +112,7 @@ namespace Underworld
 			//Set the font for the save games.
 			foreach (var sgn in SaveGamesNames)
 			{
-				sgn.Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				sgn.Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
 			}
 
 			//MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
@@ -249,10 +276,12 @@ namespace Underworld
 			if (UWClass._RES == UWClass.GAME_UW2)
 			{
 				LoadingLabel.Text = GameStrings.GetString(1, 273);
+				SetLoadingLabelColour();
 			}
 			else
 			{
 				LoadingLabel.Text = GameStrings.GetString(1, 257);
+				SetLoadingLabelColour();
 			}
 			yield return 0;
 		}
@@ -391,10 +420,10 @@ namespace Underworld
 			if (@event is InputEventMouse eventMouse)
 			{
 				//Set the font for the save games.
-				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
-				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
 			}
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
@@ -410,10 +439,10 @@ namespace Underworld
 			if (@event is InputEventMouse eventMouse)
 			{
 				//Set the font for the save games.
-				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
-				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
 			}
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
@@ -431,10 +460,10 @@ namespace Underworld
 			if (@event is InputEventMouse eventMouse)
 			{
 				//Set the font for the save games.
-				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
-				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
 			}
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
@@ -452,10 +481,10 @@ namespace Underworld
 			if (@event is InputEventMouse eventMouse)
 			{
 				//Set the font for the save games.
-				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+				SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+				SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[MainMenuPalette].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
 			}
 
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)

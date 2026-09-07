@@ -424,11 +424,25 @@ namespace Underworld
             // }
         }
 
+        /// <summary>
+        /// DOS's colour for the encumbrance figure, into the gameplay palette.
+        ///
+        /// UW1 writes 0xE0 through its font colour global in UpdateWeightDisplay_ovr121_1827
+        /// (UW.EXE 0x7B7FA, C4 1E D4 23 26 C6 07 E0). UW2 writes 0x88 in
+        /// UpdateWeightCapacityOnScreen_ovr125_1935 (UW2.EXE 0x90518). The label had no
+        /// colour at all and fell back to Godot's white. See issue #82.
+        /// </summary>
+        private static byte WeightCapacityColourIndex =>
+            UWClass._RES == UWClass.GAME_UW2 ? (byte)0x88 : (byte)0xE0;
+
         public static void RefreshWeightDisplay()
         {
             // Called from playerdat inventory paths that also run headlessly.
             if (uimanager.instance == null) { return; }
             uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();
+            uimanager.instance.WeightCapacity.Set(
+                "theme_override_colors/font_color",
+                PaletteLoader.Palettes[0].ColorAtIndex(WeightCapacityColourIndex, false, false));
             Debug.Print($"player weight capacity is now {playerdat.WeightCapacity}");
         }
 

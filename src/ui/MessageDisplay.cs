@@ -11,20 +11,29 @@ namespace Underworld
     /// </summary>
     public class MessageDisplay
     {
-        string DefaultSay
+        /// <summary>
+        /// DOS's seven message scroll escape colours, \0 to \6, as palette 0 indices.
+        ///
+        /// UW1 writes them as consecutive immediates through its font colour global in the
+        /// scroll parser, UW.EXE 0x3976E through 0x397AA. UW2 looks them up in a table at
+        /// UW2.EXE 0x69407, bytes 75 68 01 02 21 50 48.
+        ///
+        /// Three of these used to be hardcoded hex here, which is why they drifted: #883E14
+        /// for \1 where DOS has (132,68,32) in UW1 and (124,64,36) in UW2, so it did not vary
+        /// by game at all; white for \3 where DOS has (252,252,252); and 0x76 for \0 in UW2
+        /// where the table says 0x75. Only the black for \2 was right.
+        /// </summary>
+        private static readonly byte[] ScrollColoursUw1 = { 0x2E, 0x26, 0xF1, 0x60, 0xB4, 0xC4, 0xD4 };
+        private static readonly byte[] ScrollColoursUw2 = { 0x75, 0x68, 0x01, 0x02, 0x21, 0x50, 0x48 };
+
+        /// <summary>The colour for one of DOS's scroll escapes, falling back to \0.</summary>
+        public static string ScrollColour(int escape)
         {
-            get
-            {
-                if (UWClass._RES == UWClass.GAME_UW2)
-                {
-                    return PaletteLoader.ToBBCode(0, 0x76);
-                }
-                else
-                {
-                    return PaletteLoader.ToBBCode(0, 0x2e);
-                }
-            }
+            var table = UWClass._RES == UWClass.GAME_UW2 ? ScrollColoursUw2 : ScrollColoursUw1;
+            if (escape < 0 || escape >= table.Length) { escape = 0; }
+            return PaletteLoader.ToBBCode(0, table[escape]);
         }
+
         public enum MessageDisplayMode
         {
             NormalMode = 0,
@@ -72,22 +81,7 @@ namespace Underworld
         private IEnumerator AddLineWithMore(string newText, int Option, int Colour = 0)
         {
             if (newText.Trim() == "") { yield return 0; }
-            switch (Colour)
-            {
-                case ConversationVM.PC_SAY:
-                    newText = $"[color=#883E14]{newText}[/color]";
-                    break;
-                case ConversationVM.PRINT_SAY:
-                    newText = $"[color=black]{newText}[/color]";
-                    break;
-                case ConversationVM.UI_SAY:
-                    newText = $"[color=white]{newText}[/color]";
-                    break;
-                case ConversationVM.NPC_SAY:
-                default:
-                    newText = $"[color={DefaultSay}]{newText}[/color]";  //#331C13
-                    break;
-            }
+            newText = $"[color={ScrollColour(Colour)}]{newText}[/color]";
             if (LinePtr <= Lines.GetUpperBound(0))
             {
                 Lines[LinePtr++].SetLine(newText, Option);
