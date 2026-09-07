@@ -1056,7 +1056,7 @@ namespace Underworld
                         {
                             if ((arg0 & 0x20) == 0)
                             {
-                                return 8;// on snow/ice. (Todo check what happens here in UW1)
+                                return 8;// on snow/ice. should not occur in UW1.
                             }
                             else
                             {
