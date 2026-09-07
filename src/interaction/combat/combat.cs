@@ -324,7 +324,10 @@ namespace Underworld
                 if (DefendingCharacter.index == 1)
                 {
                     //sound is based on body part/armour piece hit
-                    var var5slot = BodyPartHit + 1;
+                    // Masked to two bits, as DOS does: inc al then and al,3 at
+                    // seg022_230E_C9D in UW1 and seg024_24E9_DC5 in UW2. PickBodyHitPoint
+                    // returns 0 to 3, so a hit on part 3 asks for slot 0, not slot 4.
+                    var var5slot = (BodyPartHit + 1) & 3;
                     var ObjectInSlot = playerdat.GetInventorySlotObject(var5slot);
                     if (ObjectInSlot != null)
                     {
@@ -345,7 +348,12 @@ namespace Underworld
                     }
                     else
                     {
-                        var7 = 1;
+                        // Nothing in the slot classifies as 0 in both games, not 1. DOS
+                        // tests the returned object for null and jumps straight to the
+                        // zero: seg022_230E_CBF into seg022_230E_D0E in UW1, and
+                        // seg024_24E9_DE5 into seg024_24E9_E33 in UW2. It is the same
+                        // value an unarmoured slot would reach through the leather list.
+                        var7 = 0;
                     }
                 }
                 else
