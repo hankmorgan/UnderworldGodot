@@ -460,7 +460,7 @@ namespace Underworld
                                 case 3:
                                 case 4://try and restore game
                                     {
-                                        var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{extra_arg_0}", "LEV.ARK");
+                                        var path = System.IO.Path.Combine(SlotTransaction.SlotDirectory(UWClass.BasePath, (int)extra_arg_0), "LEV.ARK");
                                         if (System.IO.File.Exists(path))
                                         {
                                             JourneyOnwards($"SAVE{extra_arg_0}");
@@ -802,7 +802,7 @@ namespace Underworld
         /// </summary>
         private static void BeginSaveDescription(int slot)
         {
-            var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{slot}", "DESC");
+            var descPath = System.IO.Path.Combine(SlotTransaction.SlotDirectory(UWClass.BasePath, slot), "DESC");
             string existing = SaveDescription.TryReadSlot(descPath, out string stored)
                 ? stored
                 : UnusedSlotPlaceholder;
@@ -1034,7 +1034,7 @@ namespace Underworld
             instance.scroll.Clear();
             for (int i = 1; i <= 4; i++)
             {
-                var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
+                var path = System.IO.Path.Combine(SlotTransaction.SlotDirectory(UWClass.BasePath, i), "DESC");
                 if (SaveDescription.TryReadSlot(path, out string savename))
                 {
                     AddToMessageScroll(

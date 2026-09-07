@@ -20,42 +20,80 @@ namespace Underworld
             // cannot store has to fail while that is all still untouched.
             byte[] descriptionBytes = SaveDescription.Encode(description);
 
-            string saveDir = Path.Combine(UWClass.BasePath, $"SAVE{slot}");
-            Directory.CreateDirectory(saveDir);
+            // Read the base path once and hand it to the transaction. SlotTransaction is kept
+            // free of UWClass so it can be tested against a temporary directory.
+            string basePath = UWClass.BasePath;
 
-            // Detach the player from its tile's object chain FIRST so the
-            // pdat stash (which copies LevelObjects[1] bytes into pdat) sees
-            // a clean .next = 0 player rather than the chain-inserted
-            // next = <previous head> that PlacePlayerInTile produced during
-            // play. DOS expects the player object to have next = 0.
-            DetachPlayerFromCurrentTile();
-            StashLiveStateToPdat();
-            ApplySlot1Markers();
+            // The slot is replaced as a unit: everything is built in a staging directory and
+            // swapped in, so a failure part way leaves the previous save whole rather than a
+            // mixture of old and new files. See issue #74 and SlotTransaction.
+            SlotTransaction.Replace(basePath, slot, RequiredFiles(), staging =>
+            {
+                // Detach the player from its tile's object chain FIRST so the
+                // pdat stash (which copies LevelObjects[1] bytes into pdat) sees
+                // a clean .next = 0 player rather than the chain-inserted
+                // next = <previous head> that PlacePlayerInTile produced during
+                // play. DOS expects the player object to have next = 0.
+                //
+                // All of this lives inside the callback, and the restore finishes before it
+                // returns. Two reasons. The detach used to happen outside the try, so a throw
+                // in it or in the stash or the markers left the player detached and never put
+                // back. And restoring after the swap would mean a throw there reporting a
+                // failure over a save that had already landed.
+                bool detached = false;
+                try
+                {
+                    detached = DetachPlayerFromCurrentTile();
+                    StashLiveStateToPdat();
+                    ApplySlot1Markers();
 
-            // DOS UW.EXE never writes the player (slot 1) into a tile's
-            // indexObjectList — it tracks player position separately via the
-            // mouse/motion path. The port's PlacePlayerInTile intentionally
-            // inserts slot 1 at the chain head for in-game collision, and
-            // without this detach step the serialised LEV.ARK contains a
-            // tile whose first-object-in-chain points at slot 1, which DOS
-            // treats as an invalid object list ("problems in object list"
-            // error, render bails out with wall/floor/ceiling textures
-            // missing).
-            try
+                    // DOS UW.EXE never writes the player (slot 1) into a tile's
+                    // indexObjectList — it tracks player position separately via the
+                    // mouse/motion path. The port's PlacePlayerInTile intentionally
+                    // inserts slot 1 at the chain head for in-game collision, and
+                    // without this detach step the serialised LEV.ARK contains a
+                    // tile whose first-object-in-chain points at slot 1, which DOS
+                    // treats as an invalid object list ("problems in object list"
+                    // error, render bails out with wall/floor/ceiling textures
+                    // missing).
+                    WriteAllSaveFiles(staging, descriptionBytes);
+                }
+                finally
+                {
+                    // Re-insert slot 1 so in-memory game state stays consistent
+                    // if the user keeps playing after saving. The post-detach
+                    // tile.indexObjectList already holds the previous chain
+                    // head (sans slot 1), so head-inserting slot 1 restores the
+                    // PlacePlayerInTile invariant — no saved-head value needed.
+                    if (detached) { ReattachPlayerToCurrentTile(); }
+                    //Set the player back to being an adventurer
+                    playerdat.playerObject.item_id = 127;
+                }
+            });
+        }
+
+        /// <summary>
+        /// What a complete slot has to contain before it may replace the one already there.
+        ///
+        /// DESC is allowed to be empty: DOS writes a zero length DESC for an empty description
+        /// and the slot still counts as occupied. The level archives are not, because a zero
+        /// byte archive is a write that failed. SCD.ARK is UW2 only, and matters most of all:
+        /// ScdArkWriter.Serialize returns an empty array when its source is missing, so without
+        /// this a UW2 save would commit a zero byte SCD.ARK as if it were finished.
+        /// </summary>
+        private static SlotRequirements RequiredFiles()
+        {
+            var content = UWClass._RES == UWClass.GAME_UW2
+                ? new[] { "PLAYER.DAT", "LEV.ARK", "SCD.ARK" }
+                : new[] { "PLAYER.DAT", "LEV.ARK" };
+            return new SlotRequirements
             {
-                WriteAllSaveFiles(saveDir, descriptionBytes);
-            }
-            finally
-            {
-                // Re-insert slot 1 so in-memory game state stays consistent
-                // if the user keeps playing after saving. The post-detach
-                // tile.indexObjectList already holds the previous chain
-                // head (sans slot 1), so head-inserting slot 1 restores the
-                // PlacePlayerInTile invariant — no saved-head value needed.
-                ReattachPlayerToCurrentTile();
-                //Set the player back to being an adventurer                
-                playerdat.playerObject.item_id = 127;
-            }
+                // BGLOBALS.DAT joins DESC in being allowed to be empty. BGlobalWriter writes
+                // one record per conversation global, so a game with none serialises to zero
+                // bytes, which is a correct file rather than a failed write.
+                MustExist = new[] { "DESC", "BGLOBALS.DAT" },
+                MustHaveContent = content,
+            };
         }
 
         private static void WriteAllSaveFiles(string saveDir, byte[] descriptionBytes)
@@ -88,25 +126,33 @@ namespace Underworld
         /// to slot 1's old .next (or leaves it alone if slot 1 was mid-chain
         /// with the parent's .next rewritten). slot 1's .next is then cleared.
         /// </summary>
-        private static void DetachPlayerFromCurrentTile()
+        /// <returns>
+        /// Whether the player was actually taken out of a chain. The caller only puts it back
+        /// if it was: the removal reports failure when slot 1 was not in this tile's list, and
+        /// head-inserting it regardless would add the player to a chain it had never been in,
+        /// or splice another tile's chain into this one through the cleared next pointer.
+        /// </returns>
+        private static bool DetachPlayerFromCurrentTile()
         {
             if (UWTileMap.current_tilemap == null ||
                 UWTileMap.current_tilemap.LevelObjects == null ||
                 UWTileMap.current_tilemap.LevelObjects[1] == null)
             {
-                return;
+                return false;
             }
             int tx = motion.playerMotionParams.x_0 >> 8;
             int ty = motion.playerMotionParams.y_2 >> 8;
-            if (!UWTileMap.ValidTile(tx, ty)) return;
+            if (!UWTileMap.ValidTile(tx, ty)) { return false; }
             var tile = UWTileMap.current_tilemap.Tiles[tx, ty];
-            ObjectRemover_OLD.RemoveObjectFromLinkedList(
+            bool removed = ObjectRemover_OLD.RemoveObjectFromLinkedList(
                 tile.indexObjectList, 1,
                 UWTileMap.current_tilemap.LevelObjects,
                 tile.Ptr + 2);
+            if (!removed) { return false; }
             // Clear slot 1's next so a freshly loaded save has a clean player
             // slot with no dangling chain pointer.
             UWTileMap.current_tilemap.LevelObjects[1].next = 0;
+            return true;
         }
 
         /// <summary>
