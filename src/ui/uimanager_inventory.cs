@@ -672,8 +672,11 @@ namespace Underworld
                         int runeid = source.item_id - 232;
                         playerdat.SetRune(runeid, true);
                         playerdat.ObjectInHand = -1; instance.mousecursor.SetCursorToCursor();
+                        ObjectCreator.Consume(source, false);
+                        return;
                     }
                 }
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_can_only_put_runes_in_the_rune_bag_));
                 return;
             }
 

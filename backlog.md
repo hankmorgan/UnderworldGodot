@@ -54,7 +54,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] PlacePlayerInTile lighting and Pressure Triggers.
 - [ ] SCD.RemoveObject. Check animationoverlay logic
 - [ ] Castleschedule - add check that npc location/destination is not in front of Player before transporting NPC
-- [ ] Teleportation. Depreciate JustTeleported and Coroutine.
 - [ ] TriggerObjectLink. RemoveTriggerChain
 - [ ] ValidObjectForSlot. Needs to respect objects.dat
 - [ ] Automap note writing. Ensure nulls at end of string.
@@ -67,12 +66,11 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] LevelChangeEvents. "Calm" Npcs on exit level.
 - [ ] UW2 Repacker figure out how to handle var10?
 - [ ] UW2 Repacker outofspace update write pointers
-- [ ] Kill all Loths undead when changing level 
+- [ ] Kill all Loths undead when changing level -> looks like the standard scd.ark code handles this properly but there is also hard coded kill event in LevelChangeEvents which is possibly a failsafe (deathwarping out of the map does not require this failsafe)
 - [ ] integrate repacker with UW2 saving.
 - [ ] Look at SCD.ARK structure and updating
 - [ ] equipment damage in combat
 - [ ] Implement removeobject with culling check
-- [ ] Divide by Zero OPDIV when talked to by the first guard in Killorn
 - [ ] UI to quick launch save games at initial launch screen.
 - [ ] Pillar Size & Positioning
 - [ ] TFLATs (buttons and signs) positioning closer to walls and not extrude over corners
@@ -93,16 +91,15 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
 - [ ] UW2 First guardian cutscene is missing text.
-- [ ] Stats display sometimes cuts off hp numbers. Eg 56/78 hp renders as 56/7
 - [ ] Missile impact flash may appear in wrong tile. combathitx and combathity are not being set correctly by MissileImpact()
 - [ ] UW2 character portraits are wrong in some cases. Some instances are fixed via hard coding but other examples remain. Eg futurian. Seems to be an issue with how the art files are loaded as some portrait slots are empty.
 - [ ] Check if Summon Monster spell (cast from scroll found in Nidges quarters in the Seers area of UW1) works. Spell 8-4.
 - [ ] NPCs pop into existance a few frames after the game loads
 - [ ] The hallucination effect is not vanilla underworld.
-- [ ] Adding a non-rune object to the rune bag will not print the "only runes allowed in runebag message". The object is still rejected.
 - [ ] Swapping a object with a stack in the paperdoll will incorrectly prompt for a quantity value instead of just swapping the full stack without player intervention.
 - [ ] Picking up a stack from the paperdoll does not hide the mouse cursor.
 - [ ] Starting an arena fight with Dorstag places the player into collision with Dorstag.
+- [ ] Entering tile 31,5 causes invalidtilebyptr null result at seg032_BB4 - TestVisionIntoDarkness_seg032_AF5(). reproducable in the UW2 ethereal void when moving so. likely combination of a level with a particular vision radius that extends outside the normal bounds of the data. 
 
 
 ## Blocked

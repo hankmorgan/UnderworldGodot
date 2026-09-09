@@ -14,7 +14,7 @@ namespace Underworld
                 }
                 else
                 {
-                    return PaletteLoader.ToBBCode(9,0x49);                }
+                    return PaletteLoader.ToBBCode(3,0x49);                }
             }
         }
          
@@ -48,8 +48,8 @@ namespace Underworld
             }
             else
             {
-                instance.ChargenNameInput.Modulate=PaletteLoader.Palettes[9].ColorAtIndex((byte)0x49, false, false) ;
-                instance.ChargenNameBG.Modulate=PaletteLoader.Palettes[9].ColorAtIndex((byte)0x49, false, false) ;
+                instance.ChargenNameInput.Modulate=PaletteLoader.Palettes[3].ColorAtIndex((byte)0x49, false, false) ;
+                instance.ChargenNameBG.Modulate=PaletteLoader.Palettes[3].ColorAtIndex((byte)0x49, false, false) ;
             }
 
 
