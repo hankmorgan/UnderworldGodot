@@ -20,8 +20,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] QBERT. return to the pyramid via moongate and unable to return back through the same gate
 - [ ] Slide the UW2 panels rather than rotate them.
 - [ ] Cursor pivots are at centre of art rather than bottom left corner on map for quills
-- [ ] Picking up and other interaction mode changes. -> Solution is likely to track Action separate from interaction mode.
-- [ ] drag&drop objects on paperdoll.
 - [ ] camera will eventually bob underneath the surface when swimming. (more a problem that the world underneath is rendered, rather than showing blackness.
 - [ ] some objects will appear underneath slopes (this might be a rendering diff vs vanilla)
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
@@ -74,7 +72,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Check vanilla behaviour of scd.movenpc_inrange
 - [ ] integrate repacker with UW2 saving.
 - [ ] Look at SCD.ARK structure and updating
-- [ ] Healing fountain restores too much health in uw1
 - [ ] equipment damage in combat
 - [ ] Implement removeobject with culling check
 - [ ] Divide by Zero OPDIV when talked to by the first guard in Killorn
@@ -83,7 +80,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] TFLATs (buttons and signs) positioning closer to walls and not extrude over corners
 - [ ] LB does not release you from jail if you had attacked him (is he getting stuck somewhere?)
 - [ ] Different mouse cursors for interaction modes
-- [ ] Study Food degradation mechanic (does this actually exist?)
 - [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause npcs/objects in motion.
 - [ ] UW2 Combat swing speed -> this is possibly correct behaviour.
 - [ ] Telefrag - Apparently this can happen when player is teleported into same position as another object. Never seen in the wild.
@@ -91,10 +87,9 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
 - [ ] World number calcs in UW2 may be incorrect.
 - [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
-- [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
 - [ ] forcefields in prison tower do not extend to the ground
-- [ ] [uw2] troll in combat tries to throw a snowball (possible animation bug)
-- [ ] Items given to player that are not moved from trade area vanish
+- [ ] [uw2] troll in combat tries to throw a snowball (possible animation bug) See the troll in the prison tower.
+- [ ] Items given to player that are not moved from trade area vanish (not always reproducable.)
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Handle extraction/opening of gog.com game.gog files.
