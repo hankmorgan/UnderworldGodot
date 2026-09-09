@@ -708,7 +708,7 @@ namespace Underworld
             if (ValidObjectForSlot(CurrentSlot, source))
             {
                 var backup = playerdat.ObjectInHand;
-                PickupObjectFromSlot(target);
+                PickupObjectFromSlot(objAtSlot: target, forceFullQty: true);
                 PickupToEmptySlot(backup);
                 UpdateInventoryDisplay();
             }
@@ -718,7 +718,7 @@ namespace Underworld
             playerdat.PlayerStatusUpdate();
         }
 
-        public static void PickupObjectFromSlot(uwObject objAtSlot)
+        public static void PickupObjectFromSlot(uwObject objAtSlot, bool forceFullQty = false)
         {
             if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while another in progress
@@ -726,7 +726,7 @@ namespace Underworld
             }
             //var obj = playerdat.InventoryObjects[objAtSlot];
 
-            if (objAtSlot.ObjectQuantity > 1)
+            if ((objAtSlot.ObjectQuantity > 1) && (forceFullQty == false))
             {//object is a quantity, prompty for pickup size and then complete pickup
                 //prompt for quantity in coroutine.
                 _ = Coroutine.Run(

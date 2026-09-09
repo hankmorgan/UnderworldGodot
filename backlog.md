@@ -96,8 +96,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Check if Summon Monster spell (cast from scroll found in Nidges quarters in the Seers area of UW1) works. Spell 8-4.
 - [ ] NPCs pop into existance a few frames after the game loads
 - [ ] The hallucination effect is not vanilla underworld.
-- [ ] Swapping a object with a stack in the paperdoll will incorrectly prompt for a quantity value instead of just swapping the full stack without player intervention.
-- [ ] Picking up a stack from the paperdoll does not hide the mouse cursor.
+- [ ] Picking up a stack from the paperdoll does not hide/disable the mouse cursor when waiting for qty to be typed.
 - [ ] Starting an arena fight with Dorstag places the player into collision with Dorstag.
 
 
