@@ -11,11 +11,11 @@ namespace Underworld
         static int movenpc_inrange(byte[] currentblock, int eventOffset)
         {
             RunCodeOnObjects_SCD(
-                methodToCall: movenpc_inrange, 
+                methodToCall: movenpc_inrange,
                 mode: currentblock[eventOffset + 6],
-                filter: currentblock[eventOffset + 7], 
-                loopAll: true, 
-                currentblock: currentblock, 
+                filter: currentblock[eventOffset + 7],
+                loopAll: true,
+                currentblock: currentblock,
                 eventOffset: eventOffset);
             return 0;
         }
@@ -27,23 +27,43 @@ namespace Underworld
             var startY = paramsarray[9];
             var endX = paramsarray[10];
             var endY = paramsarray[11];
-            var finalX = obj.quality;
-            var finalY = obj.owner;
-            for (int y = startY; y < endY; y++)
+
+            var y = startY;
+            var x = startX;
+
+        ovr113_747:
+            if (endY >= y)
             {
-                for (int x = startX; x < endX; x++)
+                x = startX;
+
+            ovr113_73d:
+
+                if (endX >= x)
                 {
-                    //Debug.Print($"Move {obj.a_name} into {x},{y}");
+                    //ovr113_726
                     if (npc.moveNPCToTile(obj, x, y))
                     {
-                        y++;//this spot is okay but vanilla behaviour is to keep trying on the next row until all possibilities are done.
-                        finalX = (short)x; 
-                        finalY = (short)y;//correct to do this after y++ Blog will walk towards tile.                        
+                        //ovr113_746
+                        y++;
+                        goto ovr113_747;
+                    }
+                    else
+                    {                        
+                        x++;
+                        goto ovr113_73d;
                     }
                 }
+                else
+                {
+                    goto ovr113_747;
+                }
             }
-            obj.quality = (short)finalX;
-            obj.owner = (short)finalY;
+            else
+            {
+                //ovr113_752
+                obj.quality = (short)x;
+                obj.owner = (short)y;
+            }
         }
     }//end class
 }//end namesace

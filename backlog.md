@@ -14,7 +14,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Palette on death cutscene is breaking when exiting to main menu
 - [ ] clickable movement buttons in uw1 located above the compass.
 - [ ] mouse based movement using 3d window.
-- [ ] Spells can be cast without wait interval
 - [ ] water sound. stop sounding after leaving water.
 - [ ] QBERT. Handle teleporting on top of moongates that are already there. -> Possibly placed object collision
 - [ ] QBERT. return to the pyramid via moongate and unable to return back through the same gate
@@ -69,7 +68,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] UW2 Repacker figure out how to handle var10?
 - [ ] UW2 Repacker outofspace update write pointers
 - [ ] Kill all Loths undead when changing level 
-- [ ] Check vanilla behaviour of scd.movenpc_inrange
 - [ ] integrate repacker with UW2 saving.
 - [ ] Look at SCD.ARK structure and updating
 - [ ] equipment damage in combat
@@ -104,6 +102,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Adding a non-rune object to the rune bag will not print the "only runes allowed in runebag message". The object is still rejected.
 - [ ] Swapping a object with a stack in the paperdoll will incorrectly prompt for a quantity value instead of just swapping the full stack without player intervention.
 - [ ] Picking up a stack from the paperdoll does not hide the mouse cursor.
+- [ ] Starting an arena fight with Dorstag places the player into collision with Dorstag.
 
 
 ## Blocked
