@@ -50,9 +50,15 @@ namespace Underworld
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
                 MotionParams.tilestate25 = 2;
+                // The volume differs as well as the effect. UW1 hardcodes effect 5 and
+                // passes (mass - 600) / 32h as the volume, at seg030_2B26_D61. UW2 picks
+                // the effect from the mass and passes a volume of zero, push 0 at
+                // Plsaysound_seg031_2CFA_E06. The port took UW2's zero for both.
+                int landingVolume = 0;
                 if (_RES != GAME_UW2)
                 {
                     soundeffect = 5;
+                    landingVolume = (si_mass - 600) / 0x32;
                 }
                 else
                 {
@@ -74,11 +80,16 @@ namespace Underworld
                 }
 
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, 0);
+                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, landingVolume);
             }
             else
             {//seg031_2CFA_E28:
-                var volume = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
+                // 0x32, not 32. DOS divides by 32h in both games: mov bx,32h then
+                // idiv bx, at seg030_2B26_D98 in UW1 and seg031_2CFA_E43 in UW2. The
+                // other two constants in this expression were transcribed as 0xA and 40,
+                // so this one looks like a hex digit that lost its prefix. It makes the
+                // mass term of the collision sound volume louder than DOS by a third.
+                var volume = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 0x32) - 40);//now reused as volume?/
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
                 UWsoundeffects.PlaySoundEffectAtCoordinate(effectNo: 0xF, packedX: MotionParams.x_0 >> 5, packedY: MotionParams.y_2 >> 5, volDelta: volume);
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
@@ -127,14 +138,22 @@ namespace Underworld
 
                         var6 = MotionParams.momentum_14;
 
+                        // UW2 only. UW1's DoCollision_seg030_2B26_C93 goes from
+                        // test si,4 / jnz seg030_2B26_DFF straight into the damped
+                        // arithmetic below. There is no exact reflection anywhere in it,
+                        // so a UW1 bounce always damps. The TODO that used to sit here
+                        // guessed as much; it is confirmed. See #105.
                         if (
-                            (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
-                            ||
-                            (MotionParams.unk_16_relatedtoPitch == 0xF)
+                            (_RES == GAME_UW2)
+                            &&
+                            (
+                                (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
+                                ||
+                                (MotionParams.unk_16_relatedtoPitch == 0xF)
+                            )
                         )
                         {
                             //Bouncing_seg031_2CFA_EE2:
-                            //TODO: it looks like this code is not present in UW1. Determine if this will cause issues?
                             MotionParams.unk_a_pitch = (short)-MotionParams.unk_a_pitch;
                         }
                         else
@@ -154,8 +173,12 @@ namespace Underworld
                             }
                         }
 
-                        //seg031_2CFA_F63:
+                        // seg031_2CFA_F63, UW2 only. UW1 reaches the var3 test directly:
+                        // seg030_2B26_E86 is cmp [bp+var_3],0 with nothing before it, so
+                        // there is no index or handler test and no speed reduction.
                         if (
+                            (_RES == GAME_UW2)
+                            &&
                             (MotionParams.index_20 != 1)
                             &&
                             ((SpecialMotionHandler.table01 & 0x1000) == 0x1000)
@@ -193,14 +216,21 @@ namespace Underworld
                                                     //seg031_2CFA_108C
                                                     if ((MotionCalcArray.UnkE_base & 0x20) == 0)
                                                     {//seg031_2CFA_109E:
-                                                        if ((MotionCalcArray.UnkE_base & 0x40) == 0)
-                                                        {
-                                                            MotionParams.tilestate25 = 1;
-                                                        }
-                                                        else
+                                                        // UW1 has three outcomes here, not
+                                                        // four. seg030_2B26_F72 tests 10h
+                                                        // then 20h and falls through to
+                                                        // tilestate 1 at seg030_2B26_F96.
+                                                        // There is no 40h test and no
+                                                        // tilestate 8 anywhere in the UW1
+                                                        // routine. UW2 adds both.
+                                                        if ((_RES == GAME_UW2) && ((MotionCalcArray.UnkE_base & 0x40) != 0))
                                                         {
                                                             //seg031_2CFA_10AA:
                                                             MotionParams.tilestate25 = 8;
+                                                        }
+                                                        else
+                                                        {
+                                                            MotionParams.tilestate25 = 1;
                                                         }
                                                     }
                                                     else
@@ -249,8 +279,11 @@ namespace Underworld
                                             }
                                         }
                                     }
-                                    //seg031_2CFA_10B8:
-                                    if (UWMotionParamArray.dseg_67d6_26A4 == 0)
+                                    // seg031_2CFA_10B8, UW2 only. UW1 jumps straight to
+                                    // seg030_2B26_FD3 from every tilestate store, and
+                                    // nothing after seg030_2B26_D08 writes the speed field
+                                    // at all.
+                                    if ((_RES == GAME_UW2) && (UWMotionParamArray.dseg_67d6_26A4 == 0))
                                     {
                                         MotionParams.speed_12 = 0;
                                     }
@@ -258,14 +291,27 @@ namespace Underworld
                             }
                         }
 
-                        //seg031_2CFA_10CA:
-
+                        // seg031_2CFA_10CA, UW2 only. UW1 has no equivalent block: its
+                        // seg030_2B26_FA0 is a bare jmp to seg030_2B26_FD3, which calls
+                        // seg030_2B26_788 and returns. Nothing restores the momentum, and
+                        // nothing saves it either, so var6 is read on the UW2 path alone.
+                        //
+                        // The condition itself is NOT faithful and is left as it was found.
+                        // DOS restores when (C & 3) == 3 and bit 2 of C is SET (test ...,4
+                        // then jnz to the restore at seg031_2CFA_10ED), and it SKIPS the
+                        // restore when bit 0x800 of E is set (test ...,800h then jnz to
+                        // seg031_2CFA_10F9). Both read inverted below. UW2 only, so it is
+                        // not fixed here.
                         if (
+                            (_RES == GAME_UW2)
+                            &&
+                            (
                             (((MotionCalcArray.UnkC_terrain_base & 3) == 3) && ((MotionCalcArray.UnkC_terrain_base & 0xC & 4) != 4))
                             ||
                             (((MotionCalcArray.UnkC_terrain_base & 3) == 3) && ((MotionCalcArray.UnkC_terrain_base & 0xC & 4) == 4) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
                             ||
                             (((MotionCalcArray.UnkC_terrain_base & 3) != 3) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
+                            )
                             )
                         {
                             MotionParams.momentum_14 = (short)var6;
