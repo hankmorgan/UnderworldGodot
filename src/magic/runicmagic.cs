@@ -236,12 +236,93 @@ namespace Underworld
                 );
         }
 
+        /// <summary>
+        /// The interval DOS makes the player wait before the next cast, dseg_5c99_16E2 in
+        /// UW1. Held as a byte because the arithmetic that fills it is byte arithmetic.
+        /// </summary>
+        static byte SpellCastDelay_dseg_5c99_16E2 = 0;
+
+        /// <summary>
+        /// The game clock at the last cast that counted, dseg_5c99_16E3 and 16E5 as a
+        /// 32 bit pair. DOS keeps this in a global rather than in PLAYER.DAT, so it does
+        /// not survive a save and begins at zero, which is what a fresh static gives.
+        /// </summary>
+        static int LastSpellCastClock_dseg_5c99_16E3 = 0;
+
+        /// <summary>
+        /// DOS refuses a cast until the interval from the previous one has run out.
+        /// PlayerAttemptsSpellCast_ovr119_399 does it at ovr119_3CE: it widens the delay
+        /// byte, adds it to the stored clock as a 32 bit value, then compares the player
+        /// clock at PlayerDataPTR+0xCE against the result with ja, jb and jnb, so the
+        /// comparison is unsigned and a cast is allowed the moment the clock reaches the
+        /// threshold. See issue #104.
+        /// </summary>
+        static bool SpellCastIntervalHasElapsed()
+        {
+            uint now = (uint)playerdat.ClockValue;
+            uint last = (uint)LastSpellCastClock_dseg_5c99_16E3;
+            if (last > now)
+            {
+                // DOS cannot reach a stored clock later than the current one. ovr109_43C
+                // zeroes it, and that runs on a game restore, reached through stub109_61
+                // from RestoreGame_ovr140_44B, and on death through
+                // DeathEndGame_ovr109_4FB. The port holds this in a static that outlives a
+                // game, so loading an earlier save after casting would leave a stamp in
+                // the future and refuse every cast until the clock caught up, which could
+                // be hours of game time. Treating that as elapsed arrives where DOS's
+                // reset arrives, without a hook the port does not have.
+                return true;
+            }
+            return now >= (long)last + SpellCastDelay_dseg_5c99_16E2;
+        }
+
+        /// <summary>
+        /// Sets the interval and stamps the clock, as DOS does at ovr119_55C:
+        /// shl al,1 then sub al,[bx+3Dh] then shl al,2 then add al,40h, all in a byte,
+        /// then stores the 32 bit clock. UW2 runs the same sequence with 0x80 in place of
+        /// 0x40, at ovr123_58E.
+        ///
+        /// In full the delay is 8 * circle - 4 * level + 0x40, so each circle adds eight
+        /// units and each character level takes away four. The clock advances 256 units a
+        /// second, which puts the floor at a quarter of a second in UW1 and half in UW2.
+        ///
+        /// The byte width is deliberate and is not a detail. Once the level passes
+        /// 2 * circle + 16 the true value would go negative, and the byte wraps it to a
+        /// large one instead: a level 19 character casting a first circle spell waits 252
+        /// units, near a full second, rather than none at all. DOS does the same, so the
+        /// arithmetic is kept in bytes throughout rather than widened.
+        /// </summary>
+        static void StartSpellCastInterval(int spellCircle)
+        {
+            byte al = (byte)(spellCircle << 1);
+            al = (byte)(al - playerdat.play_level);
+            al = (byte)(al << 2);
+            al = (byte)(al + (_RES == GAME_UW2 ? 0x80 : 0x40));
+            SpellCastDelay_dseg_5c99_16E2 = al;
+            LastSpellCastClock_dseg_5c99_16E3 = playerdat.ClockValue;
+        }
+
         public static void CastRunicSpell()
         {
+            if (!SpellCastIntervalHasElapsed())
+            {
+                // Refused. DOS plays effect 0x15 at the avatar with pan 0x40 and leaves,
+                // at ovr119_3EE. The test sits ahead of everything else, before DOS has
+                // even read the runes, so a refused attempt sounds the same whether or not
+                // the runes make a spell. That is why this is ahead of the lookup.
+                UWsoundeffects.PlaySoundEffectAtAvatar(effectno: 0x15, pan: 0x40, velocityOffset: 0);
+                if (_RES == GAME_UW2)
+                {
+                    // UW2 says so as well, at ovr123_3F8: push 0Bh then
+                    // PrintStringFromBlock1. UW1 has no message, only the sound.
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x0B));
+                }
+                return;
+            }
             var spell = CurrentSpell();
             if (spell != null)
             {
-                if (spell.TestIfPlayerCanCastSpell())//force this to be true for test and development
+                if (spell.TestIfPlayerCanCastSpell())
                 {
                     //apply mana cost
                     playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);
@@ -249,6 +330,14 @@ namespace Underworld
                     Debug.Print($"{spell.spellname}");
                     //do the skill check
                     var chkresult = playerdat.SkillCheck(playerdat.Casting, spell.SpellLevel * 3);
+                    // An ordinary failed incantation does not start the interval. DOS
+                    // tests the skill result at ovr119_518 with jnz and leaves on zero,
+                    // which is Fail, before reaching the code that stamps the clock. A
+                    // critical failure falls through into the backfire and does stamp it.
+                    if (chkresult != playerdat.SkillCheckResult.Fail)
+                    {
+                        StartSpellCastInterval(spell.SpellLevel);
+                    }
                     switch (chkresult)
                     {
                         case playerdat.SkillCheckResult.CritFail:
