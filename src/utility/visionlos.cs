@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public class VisionParams : Loader
     {
-        public static short[] cardinallookup_44A = new short[]{0, 16384, - 32768, -16384 };
+        public static short[] cardinallookup_44A = new short[] { 0, 16384, -32768, -16384 };
         public static short TilesDiscoveredForExpGain;
         static byte[] dseg_523 = new byte[] { 0x10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
@@ -132,8 +132,15 @@ namespace Underworld
             set
             {
                 _currenttile = value;
-                setAt16(_rawvisiondata, ptr + 9, (int)value.dosptr); //temp just to make debugging easier
-                setAt16(_rawvisiondata, ptr + 0xB, 0x7CFD);
+                if (value != null)
+                {
+                    setAt16(_rawvisiondata, ptr + 9, (int)value.dosptr); //store the dos offset(not really needed in port but this helps with side by side comparison with dos)
+                    setAt16(_rawvisiondata, ptr + 0xB, 0x7CFD);
+                }
+                else
+                {
+                    //Debug.Print("value is null");
+                }
             }
         }
 
@@ -270,7 +277,7 @@ namespace Underworld
             if ((playerdat.play_level >= 0) && (playerdat.play_level < 16))
             {
                 int finalgain = 0;
-               
+
                 if (_RES == GAME_UW2)
                 {
                     finalgain = ((1 + (playerdat.dungeon_level / 8)) * TilesDiscoveredForExpGain) / 0xA;
@@ -425,15 +432,15 @@ namespace Underworld
                 else
                 {
                     //Seg019_DA7
-                    if  (_RES == GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
-                        var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit67_unshifted(RenderingTile_2F7C));    
+                        var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit67_unshifted(RenderingTile_2F7C));
                     }
                     else
                     {
                         var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | (short)TerrainDatLoader.getTerrain(RenderingTile_2F7C.terrain));// GetTerrainDataBit67_unshifted(RenderingTile_2F7C));
                     }
-                    
+
                 }
 
                 //from here on there is a lot of code relating to rendering. 
@@ -447,11 +454,11 @@ namespace Underworld
                         {
                             if (bridge.invis == 0)
                             {
-                                var textureindex = (bridge.enchantment<<3) | (int)bridge.flags;
-                                if (textureindex<=2)
+                                var textureindex = (bridge.enchantment << 3) | (int)bridge.flags;
+                                if (textureindex <= 2)
                                 {
                                     var19AutoMapValueToSet |= (byte)(automaptileinfo.bridgedisplaytype << 4);
-                                }                                
+                                }
                             }
                         }
                         else
@@ -1245,6 +1252,10 @@ namespace Underworld
                     }
                     //seg032_BB4
                     si_vision.currentTile_2B67_9 = UWTileMap.GetTileByPTR((int)(si_vision.currentTile_2B67_9.Ptr + (dseg_432[2 + playerdat.CameraYawHeadingRelated_2B52 * 6] << 2)));
+                    if (si_vision.currentTile_2B67_9 == null)
+                    {
+                        return false;
+                    }
                     si_vision.dseg_2B6B_d += 0x42;
                     si_vision.CameraY_2b66_8 = 0;
                     di_vision.dseg_2B65_7++;

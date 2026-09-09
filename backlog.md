@@ -99,7 +99,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Swapping a object with a stack in the paperdoll will incorrectly prompt for a quantity value instead of just swapping the full stack without player intervention.
 - [ ] Picking up a stack from the paperdoll does not hide the mouse cursor.
 - [ ] Starting an arena fight with Dorstag places the player into collision with Dorstag.
-- [ ] Entering tile 31,5 causes invalidtilebyptr null result at seg032_BB4 - TestVisionIntoDarkness_seg032_AF5(). reproducable in the UW2 ethereal void when moving so. likely combination of a level with a particular vision radius that extends outside the normal bounds of the data. 
 
 
 ## Blocked
