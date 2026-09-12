@@ -567,7 +567,25 @@ public partial class main : Node3D
 
 		if (Input.IsKeyPressed(Key.J))//jump.
 		{
-			if (playerdat.TileState != 1)//ensure we are not swimming
+			// DOS guards both jump commands with the same pair of tests, at
+			// seg034_2F89_17E for the plain jump and again at seg034_2F89_1AF for the
+			// 6 and 7 input path:
+			//
+			//     test Player_MotionArray_tilestate_25_dseg_5c99_27A5,10h
+			//     jnz  short <no jump>
+			//     mov  bx,PlayerDataPTR_dseg_5c99_7270
+			//     cmp  byte ptr [bx+0B8h],1
+			//     jz   short <no jump>
+			//     mov  MotionCommand_dseg_5c99_75A,7
+			//
+			// It is an airborne exclusion, not a grounded test: bit 0x10 of the motion
+			// array's tilestate byte, which motion_calc.cs returns for a player who is
+			// jumping or on a bridge. There is no test of a grounded bit anywhere.
+			//
+			// The second test is the one already here. TileState holds the translated
+			// motion state that UpdateMotionStateAndSwimming writes, and 1 is the
+			// swimming value.
+			if ((motion.playerMotionParams.tilestate25 & 0x10) == 0 && playerdat.TileState != 1)
 			{
 				if (Input.IsKeyPressed(Key.Shift))
 				{
@@ -577,7 +595,6 @@ public partial class main : Node3D
 				else
 				{
 					//jump
-					//todo: Do a test that the player is grounded.
 					motion.MotionInputPressed = 7;
 				}
 			}
