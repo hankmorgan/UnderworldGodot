@@ -159,7 +159,7 @@ public partial class main : Node3D
 		cameraPitchGimbal_world.Fov = Math.Max(50, uwsettings.instance.FOV);
 		cameraPitchGimbal_sprites.Fov = cameraPitchGimbal_world.Fov;
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
-		
+
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = false;
@@ -261,8 +261,8 @@ public partial class main : Node3D
 			}
 			else
 			{
-				mat.SetShaderParameter("uwgame", (int)1);				
-			}			
+				mat.SetShaderParameter("uwgame", (int)1);
+			}
 		}
 	}
 
@@ -569,16 +569,22 @@ public partial class main : Node3D
 		{
 			if (playerdat.TileState != 1)//ensure we are not swimming
 			{
-				if (Input.IsKeyPressed(Key.Shift))
+				if ((playerdat.MagicalMotionAbilities & 0x14) == 0)//check that player is not subject to levitate or fly spells
 				{
-					//long jump
-					motion.MotionInputPressed = 6;
+					if (Input.IsKeyPressed(Key.Shift))
+					{
+						//long jump
+						motion.MotionInputPressed = 6;
+					}
+					else
+					{
+						//jump
+						motion.MotionInputPressed = 7;
+					}
 				}
 				else
 				{
-					//jump
-					//todo: Do a test that the player is grounded.
-					motion.MotionInputPressed = 7;
+					motion.MotionInputPressed = 0xC; //translate the jump into a fly up
 				}
 			}
 
