@@ -843,14 +843,14 @@ namespace Underworld
                     {
                         //apply effect
                         //set tiles to use texture 222
-                        var material = tileMapRender.mapTexturesWalls.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        var material = tileMapRender.mapTexturesFloors.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
                         material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTexturesFloors.LoadImageAt(222));
                     }
                     else
                     {
                         //remove effect
                         //set tiles to us texture 224
-                        var material = tileMapRender.mapTexturesWalls.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        var material = tileMapRender.mapTexturesFloors.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
                         material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTexturesFloors.LoadImageAt(224));
                     }
                 }
