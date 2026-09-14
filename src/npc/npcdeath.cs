@@ -583,7 +583,7 @@ namespace Underworld
         /// <param name="tybal"></param>
         public static void TybalDeath(uwObject tybal)
         {
-            Debug.Print("Play cutscene 2");
+            cutsplayer.PlayCutscene(2, null);
             //set quest variables
             var tmp = playerdat.GetQuest(37);
             tmp |= 4;
