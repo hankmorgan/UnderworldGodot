@@ -682,7 +682,7 @@ namespace Underworld
             critter.TargetTileX = 0;
             critter.TargetTileY = 0;
             critter.TargetZHeight = 0;
-            critter.UnkBit_0XD_Bit9 = 0;
+            critter.UnkBit_0XD_Bit9_StopHPRegen = 0;
             critter.IsPowerful = 0;
             critter.UnkBit_0XD_Bit11 = 0;
             critter.SpawnedCritter_0XD_Bit8 = 0;

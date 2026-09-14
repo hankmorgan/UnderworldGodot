@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using Godot;
 
 namespace Underworld
 {
@@ -368,6 +370,10 @@ namespace Underworld
 
         static uwObject MoveObjectToMobileObjectList_seg030_2BB7_B0C(uwObject toMove)
         {
+            if (!UWTileMap.ValidTile(toMove.tileX, toMove.tileY))
+            {
+                return toMove;
+            }
             //Debug.Print($"move {toMove.a_name} {toMove.index} from static to mobile");
             var tile = UWTileMap.current_tilemap.Tiles[toMove.tileX, toMove.tileY];
 

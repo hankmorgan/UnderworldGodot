@@ -577,7 +577,7 @@ namespace Underworld
                 var avghit = critterObjectDat.avghit(obj.item_id);
                 if (obj.npc_hp < avghit)
                 {
-                    if (obj.UnkBit_0XD_Bit9 == 0)
+                    if (obj.UnkBit_0XD_Bit9_StopHPRegen == 0)
                     {
                         obj.npc_hp += (byte)(avghit / 2);
                     }

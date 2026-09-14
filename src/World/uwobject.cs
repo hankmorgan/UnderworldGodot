@@ -648,7 +648,7 @@ namespace Underworld
             }
         }
 
-        public short UnkBit_0XD_Bit9
+        public short UnkBit_0XD_Bit9_StopHPRegen
         {
             get
             {

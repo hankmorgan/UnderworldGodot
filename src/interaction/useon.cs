@@ -162,6 +162,14 @@ namespace Underworld
                                     return smallblackrockgem.UseOn(objInHand, targetObject, WorldObject);
                             }
                         }
+                        else
+                        {
+                            switch(objInHand.classindex)
+                            {
+                                case 2: //orbrock
+                                    return OrbRock.UseOn(OrbObject: objInHand, targetObject: targetObject, WorldObject: WorldObject, playerUsing: true);
+                            }
+                        }
                         break;
                     }
                 case 2:// misc usables

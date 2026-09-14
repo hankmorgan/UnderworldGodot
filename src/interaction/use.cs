@@ -414,6 +414,8 @@ namespace Underworld
                         {
                             switch (ObjectUsed.classindex)
                             {
+                                case 2: //Orb Rock
+                                    return OrbRock.Use(obj: ObjectUsed, WorldObject: WorldObject, UsingObjectOrCharacter: UsingObjectOrCharacter);
                                 case 4://exploding book
                                     return explodingbook.Use(ObjectUsed, WorldObject);
                                 case 5://burning incense.
