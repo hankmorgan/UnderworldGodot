@@ -522,7 +522,7 @@ namespace Underworld
 		/// <param name="extra_arg_0"></param>
 		private void _paperdoll_gui_input(InputEvent @event, string extra_arg_0)
         {
-            if (playerdat.ParalyseTimer > 0 || playerdat.DreamingInVoid || MessageScrollIsTemporary)
+            if (playerdat.ParalyseTimer > 0 || playerdat.DreamingInVoid || MessageScrollIsTemporary || cutsplayer.IsPlaying)
             {
                 return;
             }
