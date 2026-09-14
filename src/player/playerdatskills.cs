@@ -201,7 +201,14 @@ namespace Underworld
         /// <param name="IncreasePlayMana"></param>
         public static void UpdateHPManaMax(bool IncreasePlayMana = true)
         {
-            max_mana = ((ManaSkill + 1) * INT) >> 3;
+            if ((_RES != GAME_UW2) && (dungeon_level == 7) && (isOrbDestroyed == false))
+            {
+                backup_mana = ((ManaSkill + 1) * INT) >> 3; //handles case where player increases mana while subject to Tybals mana drain effect.
+            }
+            else
+            {
+                max_mana = ((ManaSkill + 1) * INT) >> 3;    
+            }            
             max_hp = (30 + (STR * play_level) / 5);
             if (IncreasePlayMana)
             {
