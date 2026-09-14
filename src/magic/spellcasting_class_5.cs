@@ -23,7 +23,8 @@ namespace Underworld
             {
                 if (result)
                 {
-                    Debug.Print("Apply mana cost for sucessfully launched spell");
+                    playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - RunicMagic.PendingSpellCost);
+                    RunicMagic.PendingSpellCost = 0;
                 }
                 else
                 {

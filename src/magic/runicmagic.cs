@@ -11,6 +11,8 @@ namespace Underworld
     {
         public static RunicMagic[] SpellList;
 
+        public static int PendingSpellCost = 0;
+
         public int SpellIndex;
         public int RuneSequence;
         public int SpellMajorClass;
@@ -304,6 +306,10 @@ namespace Underworld
 
         public static void CastRunicSpell()
         {
+            if (SpellCasting.currentSpell != null)
+            {
+                return; //player is already casting something else.
+            }
             if (!SpellCastIntervalHasElapsed())
             {
                 // Refused. DOS plays effect 0x15 at the avatar with pan 0x40 and leaves,
@@ -325,7 +331,8 @@ namespace Underworld
                 if (spell.TestIfPlayerCanCastSpell())
                 {
                     //apply mana cost
-                    playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);
+                    //playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);
+                    PendingSpellCost = spell.ManaCost;
 
                     Debug.Print($"{spell.spellname}");
                     //do the skill check

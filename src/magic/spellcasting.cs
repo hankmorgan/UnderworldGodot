@@ -21,6 +21,7 @@ namespace Underworld
         public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool CastOnEquip)
         {
             bool PlayerCast = caster == playerdat.playerObject;
+            bool applyCost = true;//unless otherwise specified a cost is applied now in this function.
             Debug.Print($"{caster.a_name} is casting {majorclass},{minorclass}");
             if (_RES==GAME_UW1)
             {
@@ -60,6 +61,7 @@ namespace Underworld
                         {
                             currentSpell = new RunicMagic(majorclass,minorclass);
                             uimanager.instance.mousecursor.SetCursorToCursor(9);
+                            applyCost = false;
                         }
                         else
                         {//cast by an object, eg spell trap. fire off immediately
@@ -101,6 +103,12 @@ namespace Underworld
                 case 14://cutscene spells.
                     cutsplayer.PlayCutscene(CutsceneNo: minorclass, callBackMethod: null);
                     break;
+            }
+
+            if ((applyCost) && (PlayerCast))
+            {
+                playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - RunicMagic.PendingSpellCost);
+                RunicMagic.PendingSpellCost = 0;
             }
             playerdat.PlayerStatusUpdate();
         } 
