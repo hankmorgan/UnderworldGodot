@@ -1123,7 +1123,7 @@ namespace Underworld
         }
 
 
-        static void AttackGoalSearchForTarget(uwObject critter, ref int xhome, ref int yhome, int arg4)
+        static void AttackGoalSearchForTarget(uwObject critter, ref int xhome, ref int yhome, int arg4_dist)
         {
             if ((xhome != critter.TargetTileX) && (yhome != critter.TargetTileY))
             {
@@ -1175,11 +1175,11 @@ namespace Underworld
             {
                 //seg007_17A2_D68:
                 //This chain of logic is fairly complex. Bet I made a mistake here.
-                if ((arg4 <= 1) || ((arg4 > 1) && (arg4 * arg4 >= currentGTargSquaredDistanceByTiles)))
+                if ((arg4_dist <= 1) || ((arg4_dist > 1) && (arg4_dist * arg4_dist >= currentGTargSquaredDistanceByTiles)))
                 {//seg007_17A2_D80:
-                    if ((((arg4 * arg4) << 3) << 3) >= currentGTargSquaredDistanceByCoordinates)
+                    if ((((arg4_dist * arg4_dist) << 3) << 3) >= currentGTargSquaredDistanceByCoordinates)
                     {
-                        if (arg4 > 1)
+                        if (arg4_dist > 1)
                         {
                             return;
                         }
@@ -2440,7 +2440,22 @@ namespace Underworld
             if (IsNPCActive_dseg_67d6_2234)
             {
                 var RangeAttackStarted = false;
-                var var4 = 4;
+                var var4_dist = 4;
+                        
+                if(_RES != GAME_UW2)
+                {
+                    if (playerdat.dungeon_level == 7) //tybals lair
+                    {
+                        if (playerdat.isOrbDestroyed == false)
+                        {
+                            if (critterObjectDat.faction(critter.item_id) == 0x13) //mages. Force mage characters to not use their magic attacks?
+                            {
+                                var4_dist = 1;
+                            }
+                        }
+                    }
+                }
+
                 var siDist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargYVector);
                 var xDist = currObjQualityX - currObj_XHome;
                 var yDist = currObjOwnerY - currObj_YHome;
@@ -2539,11 +2554,11 @@ namespace Underworld
                     //seg007_17A2_97D: 
                     if (critterObjectDat.isCaster(critter.item_id))
                     {
-                        AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, var4);
+                        AttackGoalSearchForTarget(critter: critter, xhome: ref currentGTargXHome, yhome: ref currentGTargYHome, arg4_dist: var4_dist);
                     }
                     else
                     {
-                        AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, 1);
+                        AttackGoalSearchForTarget(critter: critter, xhome: ref currentGTargXHome, yhome: ref currentGTargYHome, arg4_dist: 1);
                     }
                 }
             }
