@@ -7,7 +7,8 @@
   - [Current features](#current-features)
   - [Getting Started](#getting-started)
     - [Getting Started Development Environment](#getting-started-development-environment)
-  - [UWsettings.json](#uwsettingsjson)
+      - [macOS notes](#macos-notes)
+  - [settings.json](#settingsjson)
   - [Controls](#controls)
     - [Modes](#modes)
     - [Cheats](#cheats)
@@ -44,7 +45,7 @@ This project is largely based on the previous reverse engineering work undertake
 ## Before you begin.
 This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway. Think of it as a interactive map viewer with a lot of game logic implemented
 
-Requires game files for either UW1 or UW2. GOG versions need to be extracted using a zip extracter (eg 7-Zip) from the game.gog file
+Requires game files for either UW1 or UW2. See [settings.json](#settingsjson) for where to point the game at them.
 
 ## Current features
 * Map loading
@@ -112,33 +113,67 @@ See [https://github.com/hankmorgan/UnderworldGodot/releases]() for latest builds
 
 See [https://godotengine.org/](https://godotengine.org/) for engine runtime downloads.
 
-1. Clone the repository
-2. Install .Net 9.0 (https://dotnet.microsoft.com/en-us/download).
-3. Install the Godot engine (version 4.3.0)  https://godotengine.org/ and run it.
+1. Install [Git LFS](https://git-lfs.com/) and run ``git lfs install`` once.
+    > [!IMPORTANT]
+    > Do this *before* cloning. Some assets are stored in LFS, and without it they arrive as small text pointer files. The symptom is the project failing to import with ``Not a PNG file`` / ``Error importing 'res://resources/textcursor.png'``. If you already cloned without it, ``git lfs pull`` fixes an existing checkout.
+2. Clone the repository
+3. Install .Net 9.0 (https://dotnet.microsoft.com/en-us/download).
+4. Install the Godot engine (version 4.3.0)  https://godotengine.org/ and run it. Use the **.NET/mono** build, not the standard one.
     > [!NOTE]
     > Either make sure you have a ``GODOT`` environment variable pointing to the godot executable, or manage your godot version automatically with [`godotenv`](https://github.com/chickensoft-games/GodotEnv).
     > Just run ``dotnet tool run godotenv godot install 4.3-stable`` and ``dotnet tool run godotenv godot env setup`` then restart your shell and everything should be ready to go.
-4. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file.
-5. Godot project will open at ``LaunchScene.tscn``.
+5. Save a file called ``settings.json`` in the Godot user data folder. See below for the location and format of the file.
+6. Godot project will open at ``scenes/Launch.tscn``.
     > [!IMPORTANT]
     > Make sure you run BUILD on the project before continuing.
-6. Run. It might work
+7. Run. It might work
 
 This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can alos just be compiled and ran from there.
 
-## UWsettings.json
+#### macOS notes
 
-Enter optional paths for each game. Select the folder with the .exe file.
-If using the gog versions extract the file ``game.gog`` using a tool like 7-zip and point to that folder.
+Builds and runs on Apple Silicon; the renderer uses Vulkan through MoltenVK.
+
+If you install .NET with Homebrew, be aware that ``dotnet@9`` is keg-only, so it is not linked
+into ``PATH`` and Godot will not find the SDK on its own:
+
+```sh
+brew install dotnet@9
+export DOTNET_ROOT="$(brew --prefix dotnet@9)/libexec"
+export PATH="$(brew --prefix dotnet@9)/bin:$PATH"
+```
+
+Put those two exports in your shell profile so the Godot editor and the ``godot`` CLI both pick
+them up.
+
+## settings.json
+
+The game reads its configuration from ``settings.json`` in the Godot user data folder. The
+launcher also writes this file, so you can set the paths from the UI instead of by hand.
+
+| OS | Location |
+| --- | --- |
+| Windows | ``%APPDATA%\Godot\app_userdata\Underworld\settings.json`` |
+| macOS | ``~/Library/Application Support/Godot/app_userdata/Underworld/settings.json`` |
+| Linux | ``~/.local/share/godot/app_userdata/Underworld/settings.json`` |
+
+Enter optional paths for each game. Select the folder with the .exe file - that is, the one
+containing the ``DATA``, ``CRIT``, ``CUTS`` and ``SOUND`` subfolders.
+
+> [!NOTE]
+> If your copy keeps the game data in a disc image or archive, unpack it first and point at
+> the folder inside. The GOG releases, for instance, ship a ``game.gog`` file that is really
+> an ISO image, so a zip extractor (eg 7-Zip) or any tool that mounts ISOs will open it.
 
 To select maps to load.
-1. Choose the game mode by editing the gametoload param in the file ``uwsettings.json``. This file should be located in the same path as Godot or a built exe, or in recent version at %AppData%\Roaming\Godot\app_userdata\Underworld
+1. Choose the game mode by editing the gametoload param.
    1.  UW1 or UW2 are the valid values.
 2. Enter the level number. Values start at 0.
 3. Other values
-   1. Light level- Shading in a range 0-7. Value is ignored
-   2. levarkfolder - Change from ``DATA`` to ``SAVE1`` to ``SAVE4`` to load savegames.
-   3. Shader - Default shader used. Value is ignored
+   1. FOV - Camera field of view in degrees. Values below 50 are clamped to 50.
+   2. showcolliders - Draw collision shapes, for debugging.
+   3. shaderbandsize - Size of the palette shading bands.
+   4. synth / synthpath - Music synth engine and its data folder. See [Music](#music).
 
 ```json
 {
@@ -146,11 +181,15 @@ To select maps to load.
     "pathuw2": "C:\\Games\\UW2",
     "gametoload": "UW2",
     "level": 0,
-    "lightlevel" : 7,
-    "levarkfolder" : "DATA",
-    "shader" : "UWSHADER"
+    "FOV": 75.0,
+    "showcolliders": false,
+    "shaderbandsize": 8,
+    "synth": "soundfont",
+    "synthpath": ""
 }
 ```
+
+On macOS and Linux use ordinary forward-slash paths, eg ``"pathuw1": "/home/you/Games/UW1"``.
 
 
 ## Controls
