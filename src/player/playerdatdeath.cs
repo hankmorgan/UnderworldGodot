@@ -226,9 +226,9 @@ namespace Underworld
             }
             if (LBritish != null)
             {
-                npc.moveNPCToTile(LBritish, 42, 34);
-                LBritish.quality = 0x28;
-                LBritish.owner = 0x27;
+                npc.moveNPCToTile(critter: LBritish, destTileX: 40, destTileY: 35); //vanilla is 42,34
+                LBritish.quality = 40; //0x28;
+                LBritish.owner = 38; //0x27;
                 LBritish.npc_goal = 1;
             }
 
