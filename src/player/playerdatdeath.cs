@@ -211,7 +211,7 @@ namespace Underworld
             
             SetQuest(112, 1);//avatar has been fighting.
             
-            uimanager.AddToMessageScroll(GameStrings.GetString(9, 4));//you awaken in jail.
+            //uimanager.AddToMessageScroll(GameStrings.GetString(9, 4));//you awaken in jail message is printed by a text_string trap
 
             //Find LB and move him to outside the jail doorway.
             uwObject LBritish = null;
