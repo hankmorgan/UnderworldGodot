@@ -53,7 +53,7 @@ namespace Underworld
                             {
                                 if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
                                 {
-                                    talk.Talk(ObjectUsed, WorldObject);
+                                    talk.Talk(ObjectUsed: ObjectUsed, WorldObject: WorldObject);
                                     return true;
                                 }
                             }
@@ -61,32 +61,32 @@ namespace Underworld
                         }
                     case 2:
                         {
-                            result = UseMajorClass2(ObjectUsed, WorldObject);
+                            result = UseMajorClass2(ObjectUsed: ObjectUsed, WorldObject: WorldObject);
                             break;
                         }
                     case 3:
                         {
-                            result = UseMajorClass3(ObjectUsed, WorldObject);
+                            result = UseMajorClass3(ObjectUsed: ObjectUsed, WorldObject: WorldObject);
                             break;
                         }
                     case 4:
                         {
-                            result = UseMajorClass4(ObjectUsed, UsingObjectOrCharacter, WorldObject);
+                            result = UseMajorClass4(ObjectUsed: ObjectUsed, UsingObjectOrCharacter: UsingObjectOrCharacter, WorldObject: WorldObject);
                             break;
                         }
                     case 5:
                         {
-                            result = UseMajorClass5(ObjectUsed, WorldObject);
+                            result = UseMajorClass5(ObjectUsed: ObjectUsed, WorldObject: WorldObject, UsingObjectOrCharacter: UsingObjectOrCharacter);
                             break;
                         }
                     case 6:
                         {
-                            result = UseMajorClass6(ObjectUsed, UsingObjectOrCharacter, WorldObject);
+                            result = UseMajorClass6(ObjectUsed: ObjectUsed, UsingObjectOrCharacter: UsingObjectOrCharacter, WorldObject: WorldObject);
                             break;
                         }
                     case 7:
                         {
-                            result = UseMajorClass7(ObjectUsed, WorldObject);
+                            result = UseMajorClass7(ObjectUsed: ObjectUsed, WorldObject: WorldObject);
                             break;
                         }
                 }
@@ -526,14 +526,13 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass5(uwObject ObjectUsed, bool WorldObject)
+        public static bool UseMajorClass5(uwObject ObjectUsed, bool WorldObject, uwObject UsingObjectOrCharacter)
         {
             switch (ObjectUsed.minorclass)
             {
                 case 0: // Doors
                     {
-                        return door.Use(ObjectUsed);
-
+                        return door.Use(obj: ObjectUsed, PlayerUse: UsingObjectOrCharacter == playerdat.playerObject);
                     }
                 case 1: //3d models
                     {

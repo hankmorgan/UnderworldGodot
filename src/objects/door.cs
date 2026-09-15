@@ -168,12 +168,15 @@ namespace Underworld
             uwobject.instance = this;
         }
 
-        public static bool Use(uwObject obj)
+        public static bool Use(uwObject obj, bool PlayerUse)
         {
             //var d = (door)obj.instance;
             if (a_lock.GetIsLocked(obj) && (!isOpen(obj)))
             {//door is locked and closed
-                uimanager.AddToMessageScroll("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
+                if (PlayerUse)
+                {
+                    uimanager.AddToMessageScroll("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");    
+                }                
             }
             else
             {   //door unlocked. toggle it's state
