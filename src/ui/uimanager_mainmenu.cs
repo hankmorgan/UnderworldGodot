@@ -392,6 +392,12 @@ namespace Underworld
 			//turn off moongate sucking effect (uw1 endgame)
 			playerdat.MoongateSucking = false;
 
+			//if a screenshake has been stored. Apply a brief shake on game load
+			if ((playerdat.TileState & 0x20) != 0)
+			{
+				playerdat.Shake20_Duration_73F = 5;
+			}
+
 			//set up rendering detail.
 			RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
 			RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);

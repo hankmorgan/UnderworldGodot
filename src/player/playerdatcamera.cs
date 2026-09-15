@@ -30,9 +30,9 @@ namespace Underworld
         public static short CameraRollModifier_dseg_67d6_33D4;//changes the camera angle that is set by PlayerHeadingRelated33D8, 
 
         //These are used in shaking and are used to calculate the camera modifiers
-        public static byte Shake20_Duration_73F;
-        public static byte Shake40_Duration_740;
-        public static byte Shake80_Duration_741; //not used in UW1
+        public static sbyte Shake20_Duration_73F;
+        public static sbyte Shake40_Duration_740;
+        public static sbyte Shake80_Duration_741; //not used in UW1
 
         //Used to calulate the angle for npc sprites
         public static short CameraYawHeadingRelated_2B52=0;

@@ -990,16 +990,16 @@ namespace Underworld
             switch (TypeOfShake)
             {
                 case 0x20:
-                    playerdat.Shake20_Duration_73F = duration;
+                    playerdat.Shake20_Duration_73F = (sbyte)duration;
                     break;
                 case 0x40:
-                    playerdat.Shake40_Duration_740 = duration;
+                    playerdat.Shake40_Duration_740 = (sbyte)duration;
                     break;
                 case 0x80:
                     if (_RES == GAME_UW2)
                     {
                         //UW2 only form of shaking
-                        playerdat.Shake80_Duration_741 = duration;
+                        playerdat.Shake80_Duration_741 = (sbyte)duration;
                         break;
                     }
                     return;
@@ -1102,7 +1102,7 @@ namespace Underworld
                         //shake40,
                         var tmp = playerdat.Shake40_Duration_740;
                         playerdat.Shake40_Duration_740--;
-                        if (tmp == 0)
+                        if (tmp <= 0)
                         {
                             //seg35_BAB
                             //end shake
@@ -1121,7 +1121,7 @@ namespace Underworld
                     {
                         var tmp = playerdat.Shake20_Duration_73F;
                         playerdat.Shake20_Duration_73F--;
-                        if (tmp == 0)
+                        if (tmp <= 0)
                         {
                             //seg35_BF2
                             //turn off shake
@@ -1141,7 +1141,7 @@ namespace Underworld
                     {
                         var tmp = playerdat.Shake80_Duration_741;
                         playerdat.Shake80_Duration_741--;
-                        if (tmp == 0)
+                        if (tmp <= 0)
                         {
                             //seg35_C2D
                             //turn off shake
