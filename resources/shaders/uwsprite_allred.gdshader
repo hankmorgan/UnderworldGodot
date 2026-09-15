@@ -73,7 +73,7 @@ void fragment() {
 
 		switch(camera_layers)
 		{
-			case 2u: //world without xfer
+			case 2u: //draw world but exclude the 5 xfer.dat colours, This gives us the colour behind the transparency. The xfer will be applied in the viewport_combination shader when the matching pixel on camera 6 is set
 			{
 				int r = int( round (rgba.r * 255.0) );
 				//ivec3 indexfer = ivec3(round(rgba.rgb * 255.0));
@@ -87,7 +87,7 @@ void fragment() {
 				}
 				else
 				{
-					//passthrough the data.
+					//passthrough the colours.
 					ALBEDO.r = rgba.r;	
 					ALBEDO.g = maptouse;				
 					ALBEDO.b = rgba.b;
@@ -96,7 +96,7 @@ void fragment() {
 				break;
 			}
 
-			case 6u: // world with xfer
+			case 6u: // world with xfer. Draw the world without modifying any colours.
 			{	
 				ALBEDO.r = rgba.r;	
 				ALBEDO.g = maptouse;				

@@ -7,7 +7,7 @@ global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat
 uniform int uwgame;
 
 void fragment() {
-    // Sample the color from both viewports
+    // Sample the color from both input viewports
     vec4 texWorld = texture(viewport_1, UV);//world
     vec4 texXfer = texture(viewport_2, UV);//xfers
     vec4 finalcolor;
@@ -18,13 +18,14 @@ void fragment() {
     //Get the uv distance offset within the shades.dat image
     float maptouse = texWorld.g; //0.0;// dist/cutoffdistance;
     
-    float row = 0.0; //the row inthe 5x256 xfer image
+    float row = 0.0; //the row inthe 5x256 xfer.dat image
     //rows map as follows
     //uw1 0 = shadows(251), 1= ?, 2 = white(252), 3 =? , 4 = green(?), 5 = blue(?)
     //uw2 0 = red, 1 =red(249), 2 = green, 3 = blue(251), 4 = white(252) 5 = shadows(253).
 
     if ((indexfer.r>=249) && (indexfer.r<=253))
     {
+        //Find the correct colour lookup into xfer.dat
         switch(uwgame)
         {
             case 2:
@@ -90,11 +91,13 @@ void fragment() {
 
     if ( ((indexfer.r>=249) && (indexfer.r<=253) && (uwgame == 2)) || ((indexfer.r>=251) && (indexfer.r<=252) && (uwgame == 1)))
     {
+        //apply the xfer colours
         vec4 shade = texture(xfer, vec2(float(indexworld.r) / 255.0, row/5.0));
         finalcolor.r = shade.r;     
     }
     else
     {
+        //apply regular colours
         finalcolor = texWorld;
     }	
 

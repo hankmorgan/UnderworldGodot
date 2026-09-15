@@ -27,8 +27,22 @@ global uniform bool renderwalls;
 global uniform bool renderfloors;
 global uniform bool renderceilings;
 
+
+// tileFlags - indicates the tile surface that is being rendered on the infolayer
+//        public const int fCEIL = 128;
+//        public const int fSELF = 64;
+//        public const int fNORTH = 32;
+//        public const int fSOUTH = 16;
+//        public const int fEAST = 8;
+//        public const int fWEST = 4;
+//        public const int fFLOOR = 2;        
+//        public const int fBOTTOM = 1;
 uniform int tileflags;
+
+//The lower bits of the objects index. Used to identify the object in the info layer
 uniform int objectindex_lowerbytes;
+
+// the upper bits of the objects index. Used to identify the object in the info layer
 uniform int objectindex_upperbytes;
 
 void vertex() {
@@ -53,6 +67,7 @@ void fragment() {
 		{
 			//object info layer. 
 			//contains tile information. (eg x,y and surface) or object index in the case of 3d models.
+			//Used for pixel perfect raycasts.
 			
 			vec4 simple = texture(simpleshade, vec2(dist/cutoffdistance, 0.0));
 			int shadelevel = ivec3(round(simple.rgb * 255.0)).r;
@@ -62,9 +77,9 @@ void fragment() {
 			}
 			else
 			{
-				ALBEDO.r = float(tileflags)/255.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
-				ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // or tileX
-				ALBEDO.b = float(objectindex_upperbytes)/255.0;   // or tileY
+				ALBEDO.r = float(tileflags)/255.0;// tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling. In game when this value >0 then I know I'm looking at this wall surface.
+				ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // this is either the objectindex bytes or tileX value. If tileflags is set it's tile, otherwise objectindex.
+				ALBEDO.b = float(objectindex_upperbytes)/255.0;   // this is either the objectindex bytes or tileY value. If tileflags is set it's tile, otherwise objectindex.
 			}
 		}
 		else
@@ -73,6 +88,7 @@ void fragment() {
 			//Get the red channel original data.
 			vec4 rgba;// = texture(texture_albedo, UV);
 
+			//Check for low detail modes.
 			if ((!renderwalls) && (((tileflags >= 4) && (tileflags<=64)) || (tileflags == 0)))
 			{
 				rgba = lowdetail;
@@ -99,12 +115,10 @@ void fragment() {
 			
 			//Get the uv distance offset within the shades.dat image
 			float maptouse = dist/cutoffdistance;
-			
-			//lookup shades.dat data which is stored in smoothpalette using the uv	
-			//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
-			rgba.g = maptouse;
-			//apply		
-			ALBEDO = rgba.rgb; //finalcolour.rgb;
+
+			rgba.g = maptouse; // green will indicate for the next shader what shading value in the lighting palettes to use for this pixel.
+		
+			ALBEDO = rgba.rgb; // This shader output becomes an input into viewport_combination.gdshader
 		}
 
 	}
