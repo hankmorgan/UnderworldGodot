@@ -297,7 +297,7 @@ namespace Underworld
 			playerdat.previousLightLevel = -1;
 			playerdat.currentfolder = folder;
 			playerdat.LoadPlayerDat(datafolder: folder);
-
+			playerdat.PositionPlayerCamera(DoLineOfSight: false);
 			// //Common launch actions
 			UWTileMap.LoadTileMap(
 					newLevelNo: playerdat.dungeon_level - 1,
@@ -313,7 +313,7 @@ namespace Underworld
 			playerdat.playerObject.link = 0;//prevents infinite loops.
 			playerdat.playerObject.tileX = playerdat.playerObject.npc_xhome;
 			playerdat.playerObject.tileY = playerdat.playerObject.npc_yhome;
-
+			
 			if (folder.ToUpper() == "DATA")
 			{
 				//default start locations.
@@ -407,7 +407,7 @@ namespace Underworld
 			RenderingServer.GlobalShaderParameterSet("simpleshade", (Texture)shade.shadesdata[playerdat.lightlevel].simpleshade);
 
 			uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
-			playerdat.PositionPlayerCamera();
+			
 		}
 
 		private void _on_create_character_gui_input(InputEvent @event)

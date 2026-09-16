@@ -63,7 +63,7 @@ namespace Underworld
             uwobject = _uwobject;
             try
             {
-                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, CalculateFacingAngleToNPC(uwobject));
+                SetAnimSprite(animationNo: uwobject.npc_animation, frameNo: uwobject.AnimationFrame, relativeHeading: CalculateFacingAngleToNPC(uwobject));
             }
             catch (Exception ex)
             {
@@ -92,6 +92,7 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             //a_sprite.CreateConvexCollision();
+            n.SetAnimSprite(animationNo: obj.npc_animation, frameNo: obj.AnimationFrame, relativeHeading: CalculateFacingAngleToNPC(obj));
 
             if (ObjectCreator.printlabels)
             {
@@ -168,30 +169,6 @@ namespace Underworld
                 newmaterial.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);                
                 material = newmaterial;
             }
-            // if (material_xfer == null)
-            // {//create the initial material
-            //     var newmaterial = new ShaderMaterial();
-            //     newmaterial.Shader = textureshader;
-            //     newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
-            //     newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
-            //     newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-            //     newmaterial.SetShaderParameter("UseAlpha", true);
-            //     material_xfer = newmaterial;
-            // }
-
-            // if (material_objectinfo == null)
-            // {//create the initial material
-            //     var newmaterial = new ShaderMaterial();
-            //     newmaterial.Shader = textureshader;
-            //     newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
-            //     newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
-            //     newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-            //     newmaterial.SetShaderParameter("UseAlpha", true);
-            //     newmaterial.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
-            //     newmaterial.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
-            //     material_objectinfo = newmaterial;
-            // }
-
 
             //assign the params to the shader
             if (frameNo >= 8) { frameNo = 0; }
@@ -214,39 +191,6 @@ namespace Underworld
                     sprite.Mesh.Set("size", FrameSize);
                     sprite.Layers = main.LayerGeo | main.LayerObjectInfo | main.LayerXFER;                 
                 }
-
-                // //render xfer bits
-                // texture = crit.animSpritesxfer[anim.animIndices[frameNo]];
-                // FrameSize = new Vector2(
-                //     ArtLoader.NPCSpriteScale * texture.GetWidth(),
-
-                //     ArtLoader.NPCSpriteScale * texture.GetHeight()
-                //     );
-                // material_xfer.SetShaderParameter("texture_albedo", (Texture)texture);
-                // if (sprite_xfer != null)
-                // {
-                //     sprite_xfer.Position = sprite.Position;
-                //     sprite_xfer.Rotation = sprite.Rotation;
-                //     sprite_xfer.Mesh.Set("size", FrameSize);
-                //     sprite_xfer.Layers = main.LayerXFER;                 
-                // }
-
-                // //render objectinfo
-                // texture = crit.animSpritesinfo[anim.animIndices[frameNo]];
-                // FrameSize = new Vector2(
-                //     ArtLoader.NPCSpriteScale * texture.GetWidth(),
-                //     ArtLoader.NPCSpriteScale * texture.GetHeight()
-                //     );
-                // material_objectinfo.SetShaderParameter("texture_albedo", (Texture)texture);
-                
-                // if (sprite_objectinfo != null)
-                // {
-                //     sprite_objectinfo.Position = sprite.Position;
-                //     sprite_objectinfo.Rotation = sprite.Rotation;
-                //     sprite_objectinfo.Mesh.Set("size", FrameSize);
-                //     sprite_objectinfo.Layers = main.LayerObjectInfo;                 
-                // }
-
                 return frameNo;
             }
             else

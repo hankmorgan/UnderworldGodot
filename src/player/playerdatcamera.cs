@@ -35,10 +35,10 @@ namespace Underworld
         public static sbyte Shake80_Duration_741; //not used in UW1
 
         //Used to calulate the angle for npc sprites
-        public static short CameraYawHeadingRelated_2B52=0;
-        public static short CameraPointer2C=0;
+        public static short CameraYawHeadingRelated_2B52 = 0;
+        public static short CameraPointer2C = 0;
 
-        
+
         public static bool MoongateSucking = false;
         public static ushort MoonGateCameraYaw = 0;
         public static byte StepsTakenToMoongate = 0;
@@ -68,7 +68,7 @@ namespace Underworld
         /// This is most often used in do_trap_camera but theoreticial the camera can be attached to any object by changing a global pointer 
         /// to point away from the player object and aim at an object instead.
         /// </summary>
-        public static void PositionPlayerCamera()
+        public static void PositionPlayerCamera(bool DoLineOfSight = true)
         {
             if (CameraReference != null)
             {
@@ -91,7 +91,8 @@ namespace Underworld
                             yaw: PlayerCameraYaw_dseg_8294,
                             roll: PlayerCameraRoll_dseg_67d6_33D8,
                             pitch: PlayerCameraPitch_dseg_67d6_33D6,
-                            applyBob: CameraIsBobbing_dseg_67d6_33c6);
+                            applyBob: CameraIsBobbing_dseg_67d6_33c6,
+                            DoLineOfSight: DoLineOfSight);
 
                     }
                     else
@@ -108,7 +109,8 @@ namespace Underworld
                             yaw: (short)yaw,
                             roll: 0,
                             pitch: 0,
-                            applyBob: false);
+                            applyBob: false,
+                            DoLineOfSight: DoLineOfSight);
                     }
                 }
                 else
@@ -132,7 +134,8 @@ namespace Underworld
                     PositionCamera(
                         x: moonX, y: moonY, z: moonZ,
                         yaw: yaw, roll: roll, pitch: 0,
-                        applyBob: false);
+                        applyBob: false,
+                        DoLineOfSight: DoLineOfSight);
                 }
             }
             else
@@ -141,11 +144,12 @@ namespace Underworld
                 PositionCamera(
                     x: DoCameraX, y: DoCameraY, z: DoCameraZ,
                     yaw: DoCameraH, roll: DoCameraRoll, pitch: DoCameraPitch,
-                    applyBob: false);
+                    applyBob: false,
+                    DoLineOfSight: DoLineOfSight);
             }
         }
 
-        private static void PositionCamera(short x, short y, short z, short yaw, short roll, short pitch, bool applyBob)
+        private static void PositionCamera(short x, short y, short z, short yaw, short roll, short pitch, bool applyBob, bool DoLineOfSight)
         {
             if (applyBob)
             {
@@ -228,19 +232,20 @@ namespace Underworld
             }
 
             yaw = (short)(yaw - VisionParams.cardinallookup_44A[playerdat.CameraYawHeadingRelated_2B52]);
-           
-            //Set global values needed for visibility checks
-            LOS_x = (short)(x & 0xFF);
-            LOS_y = (short)(y & 0xFF);
+            if (DoLineOfSight)//check to handle initial load of game where map data is not yet loaded
+            {
+                //Set global values needed for visibility checks
+                LOS_x = (short)(x & 0xFF);
+                LOS_y = (short)(y & 0xFF);
 
-            VisionParams.SetRangeOfVisionParams(
-                camerax: x,
-                cameray: y,
-                camerayaw: yaw);
+                VisionParams.SetRangeOfVisionParams(
+                    camerax: x,
+                    cameray: y,
+                    camerayaw: yaw);
 
-            VisionParams.GetViewDistance();
-            VisionParams.FakeRender();
-
+                VisionParams.GetViewDistance();
+                VisionParams.FakeRender();
+            }
         }
 
 
