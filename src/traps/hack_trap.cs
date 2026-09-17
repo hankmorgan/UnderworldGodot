@@ -266,6 +266,11 @@ namespace Underworld
                         }
                         break;                        
                     }
+                case 31: // Hacktrap MovePitWarriors
+                    {
+                        Debug.Print("TODO move pit warriors");
+                        return true;
+                    }
                 case 32://qbert in UW2
                     {
                         if (_RES == GAME_UW2)

@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Http.Headers;
 using Godot;
 
 namespace Underworld
@@ -1586,9 +1586,42 @@ namespace Underworld
             }
         }
 
-        public static bool CheckIfInFrontOfPlayer(uwObject obj)
+
+        /// <summary>
+        /// Returns true if x/y is infront of player and within 8 tiles.
+        /// </summary>
+        /// <param name="xcoord"></param>
+        /// <param name="ycoord"></param>
+        /// <returns></returns>
+        public static bool CheckIfInFrontOfPlayer(int xcoord, int ycoord)
         {
-            return false;
+            var playerXCoord = (playerdat.playerObject.npc_xhome << 3) + playerdat.playerObject.xpos ;
+            var playerYCoord = (playerdat.playerObject.npc_yhome << 3) + playerdat.playerObject.ypos ;
+            if (!TileInfo.CheckIfOutsideRange(targetX: xcoord>>3, targetY: ycoord>>3, isPlayer: true, range: 8))
+            {
+                var di = Pathfind.GetVectorHeading(xcoord - playerXCoord, ycoord - playerYCoord);
+                var si = (playerdat.PlayerCameraYaw_dseg_8294 >> 0xD) & 0x7;
+
+                if (Math.Abs(di - si) < 2)
+                {
+                    return true;
+                }
+                else
+                {
+                    if (Math.Abs(di-si) <= 6)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }            
         }
 
         public static bool CheckIfObjectInValidSlot(uwObject obj, int slot)

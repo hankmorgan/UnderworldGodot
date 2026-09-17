@@ -9,7 +9,7 @@ namespace Underworld
         /// <summary>
         /// Castle default tileX for NPCs starting at nystrul (130);
         /// </summary>
-        static short[]CastleX = new short[]{42,
+        static short[] CastleX = new short[]{42,
                                         36,
                                         21,
                                         37,
@@ -25,7 +25,7 @@ namespace Underworld
                                         25
                                         };
 
-        static short[]CastleY = new short[]{43,
+        static short[] CastleY = new short[]{43,
                                         51,
                                         42,
                                         35,
@@ -112,16 +112,16 @@ namespace Underworld
             critter.owner = newY;
             critter.npc_goal = (byte)npc.npc_goals.npc_goal_goto_1;
 
-            //TODO: Check if current location is in front of player
-
-            //TODO: Check if destination is in front of player.
-
-            //TODO: If player cannot see destination or current location. Do the move.
-            
-            npc.moveNPCToTile(
-                critter: critter,
-                destTileX: newX, destTileY: newY);
-
+            //Check if current location and destination is not in front of player
+            if (!uwObject.CheckIfInFrontOfPlayer(xcoord: (critter.npc_xhome << 3) + critter.xpos, ycoord: (critter.npc_yhome << 3) + critter.ypos))
+            {
+                if (!uwObject.CheckIfInFrontOfPlayer(xcoord: (newX << 3) + 3, ycoord: (newY << 3) + 3))
+                {
+                    npc.moveNPCToTile(
+                        critter: critter,
+                        destTileX: newX, destTileY: newY);
+                }
+            }
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Underworld
                 {
                     case 0: //case0
                     case 1:
-                    case 2: 
+                    case 2:
                     case 11:
                         di_location = 0;//go to default location
                         break;
@@ -168,37 +168,37 @@ namespace Underworld
 
                 }
             }
-            
+
             //special cases for miranda and xclock, Lord British and strike, and Nystrul and xclock after murders.
             if (
-                (critter.npc_whoami == 0x88 && playerdat.GetXClock(1)!=0)
+                (critter.npc_whoami == 0x88 && playerdat.GetXClock(1) != 0)
                 ||
-                (critter.npc_whoami == 0x8E && playerdat.GetQuest(115)==1)
+                (critter.npc_whoami == 0x8E && playerdat.GetQuest(115) == 1)
                 ||
-                (critter.npc_whoami == 0x82 && playerdat.GetXClock(1)>=0xC)
+                (critter.npc_whoami == 0x82 && playerdat.GetXClock(1) >= 0xC)
                 )
-                {
-                    di_location = 0;//stay in place
-                }
-            
+            {
+                di_location = 0;//stay in place
+            }
+
 
             if (di_location == 0)
             {//when 0 go to the NPC default hangout location.
-                if (critter.npc_whoami==0xA8)
+                if (critter.npc_whoami == 0xA8)
                 {//special case for Syria
                     NewTileX = 0x2A; //guardroom/training room
                     NewTileY = 0x24;
                 }
                 else
                 {
-                    NewTileX = CastleX[critter.npc_whoami-130];
-                    NewTileY = CastleY[critter.npc_whoami-130];
+                    NewTileX = CastleX[critter.npc_whoami - 130];
+                    NewTileY = CastleY[critter.npc_whoami - 130];
                 }
             }
             else
             {
-                int locX1=0; int locX2=0; int locY1=0; int locY2=0;
-                switch(di_location)
+                int locX1 = 0; int locX2 = 0; int locY1 = 0; int locY2 = 0;
+                switch (di_location)
                 {
                     case 1://castle lobby
                         locX1 = 0x1B;
@@ -219,14 +219,14 @@ namespace Underworld
                         locY2 = 0x33;
                         break;
                     case 4://kitchens
-                        //Although the kitchens have co-ordinates defined NPCs will not actually move here
+                           //Although the kitchens have co-ordinates defined NPCs will not actually move here
                     default:
                         return;//remain at current position as set at start of function.
                 }
 
                 //Find random spot within the bounds of the locations.
-                NewTileX = (short)(locX1 + Rng.r.Next(locX2-locX1));
-                NewTileY = (short)(locY1 + Rng.r.Next(locY2-locY1));
+                NewTileX = (short)(locX1 + Rng.r.Next(locX2 - locX1));
+                NewTileY = (short)(locY1 + Rng.r.Next(locY2 - locY1));
                 if ((di_location == 2) && (NewTileX == 0x1F) && (NewTileY == 0x29))
                 {//fountain, special case for the fountain pedestal location.
                     NewTileX++;
