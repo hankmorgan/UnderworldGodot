@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 
@@ -69,7 +70,7 @@ namespace Underworld
                     }
                     else
                     {
-                        //NPC activation of triggers. This
+                        //NPC activation of triggers. This might be buggy
                         var CharacterObj = objList[character];
                         if (CharacterObj.majorclass == 1)
                         {
@@ -281,9 +282,66 @@ namespace Underworld
 
         }
 
-        public static void RunScheduledTriggerInTile_15_29(int xhome, int yhome)
+        /// <summary>
+        /// Runs a create object trigger linked to a scheduled triggered. Caused by player bringing CastleNPCs to the point of death. Spawns a powerful guard
+        /// </summary>
+        /// <param name="xArg"></param>
+        /// <param name="yArg"></param>
+        public static void RunScheduledTriggerInTile_15_29AndSpawnGuards(int xArg, int yArg)
         {
-            Debug.Print("Find schedule triggers in this hard coded tile and run it to create npcs");
+            Debug.Print("Spawning Powerful Guards. because you attacked Castle NPCs");
+            var tile = UWTileMap.current_tilemap.Tiles[0xF, 0x1D];
+            var scheduledtrigger = objectsearch.FindMatchInObjectChain(
+                ListHeadIndex: tile.indexObjectList, 
+                majorclass: 6, minorclass: 2, classindex: 0xC, 
+                objList: UWTileMap.current_tilemap.LevelObjects);
+            while (scheduledtrigger != null)
+            {
+                // var diX = (scheduledtrigger.quality << 3) + 3;
+                // var siY = (scheduledtrigger.owner << 3) + 3;
+                // var distX = diX - xArg;
+                //there are a series of distance checks here but these have no effect on the output of the code which will always goto ovr110_22F4
+                // if (Math.Abs(diX) <= 6)
+                // {
+                // if (Math.Abs(siY) <= 6)
+                // {
+                // if (checkifinfrontofplayer(diX, siY))
+               // {
+               // NOP                    
+                //}
+                    // }
+                // }
+                //OVR110_22F4
+                var linkedobject = UWTileMap.current_tilemap.LevelObjects[scheduledtrigger.link];
+                if (linkedobject == null)
+                {
+                    return;//should not happen
+                }
+                linkedobject = UWTileMap.current_tilemap.LevelObjects[linkedobject.link];
+                if (linkedobject != null)
+                {
+                    linkedobject.quality = (short)xArg;
+                    linkedobject.owner = (short)yArg;
+                    linkedobject.npc_goal = 1;
+                    linkedobject.SpawnedCritter_0XD_Bit8 = 1;
+                    linkedobject.IsPowerful = 1;
+                }
+                trigger.RunTrigger(
+                    character: 1, 
+                    ObjectUsed: null, 
+                    TriggerObject: scheduledtrigger, 
+                    triggerType: (int)triggerObjectDat.triggertypes.ALL, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);  //Vanilla uses character 0 to run trigger. this won't run in the current implementation of RunTrigger.
+
+                if (scheduledtrigger.next == 0)
+                {
+                    scheduledtrigger = null;
+                }
+                else
+                {
+                    scheduledtrigger = UWTileMap.current_tilemap.LevelObjects[scheduledtrigger.next];
+                }
+            }
         }
 
         /// <summary>

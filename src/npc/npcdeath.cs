@@ -172,7 +172,9 @@ namespace Underworld
                 //revive
                 var newhp = (critterObjectDat.avghit(critter.item_id) / 3) - 1;
                 critter.npc_hp = (byte)newhp;
-                trigger.RunScheduledTriggerInTile_15_29(critter.npc_xhome, critter.npc_yhome);
+                trigger.RunScheduledTriggerInTile_15_29AndSpawnGuards(
+                    xArg: critter.npc_xhome,
+                    yArg: critter.npc_yhome);
                 return false;//do not kill
             }
             else
@@ -424,7 +426,9 @@ namespace Underworld
                                         (critter.npc_yhome <= 0x27)
                                     )
                                     {
-                                        trigger.RunScheduledTriggerInTile_15_29(0x12, 0x28); //spawns guards??
+                                        trigger.RunScheduledTriggerInTile_15_29AndSpawnGuards(
+                                            xArg: 0x12, 
+                                            yArg: 0x28); //spawns guards.
                                     }
                                 }
                                 return true;
