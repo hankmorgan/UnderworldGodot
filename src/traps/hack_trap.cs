@@ -268,7 +268,7 @@ namespace Underworld
                     }
                 case 31: // Hacktrap MovePitWarriors
                     {
-                        Debug.Print("TODO move pit warriors");
+                        a_hack_trap_teleportpitwarriors.Activate();
                         return true;
                     }
                 case 32://qbert in UW2
@@ -447,6 +447,7 @@ namespace Underworld
                         if(_RES != GAME_UW2)
                         {
                             a_do_trap_endgame.Activate();
+                            return true;
                         }
                         break;
                     }
