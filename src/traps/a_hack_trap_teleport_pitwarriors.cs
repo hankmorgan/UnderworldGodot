@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
     /// <summary>
@@ -64,7 +66,7 @@ namespace Underworld
                         if (!uwObject.CheckIfInFrontOfPlayer(x, y))
                         {
 
-                            npc.moveNPCToTile(critter: fighter, destTileX: x, destTileY: y);  //this is bugged because the calcs give a world coordinate. not a tile x/y
+                            npc.moveNPCToTile(critter: fighter, destTileX: x>>3, destTileY: y>>3);  //in vanilla this is bugged because the calcs give a world coordinate. not a tile x/y. corrected by the >>3
                         }
                     }
                 }
@@ -73,7 +75,68 @@ namespace Underworld
 
         static int GetPitWarriorPositionOffset(int XCoord, int YCoord)
         {
-            return 0;
+            if (YCoord<=0)
+            {
+                //ovr167_13F
+                if (Math.Abs(XCoord) >= Math.Abs(YCoord))
+                {
+                    //ovr167_162
+                    if (XCoord<=0)
+                    {
+                        //ovr167_166
+                        return 7;
+                    }   
+                    else
+                    {
+                        return 4;
+                    }                
+                }
+                else
+                {
+                    //ovr167_156
+                    if (XCoord<=0)
+                    {
+                        //ovr167_156
+                        return 6;
+                    }
+                    else
+                    {
+                        //ovr167_15B
+                        return 5;
+                    }
+                }
+            }
+            else
+            {
+                if (Math.Abs(XCoord) >= Math.Abs(YCoord))
+                {
+                    //ovr167_12D
+                    if (XCoord >= 0)
+                    {
+                        //ovr167_136
+                        return 0;
+                    }
+                    else
+                    {
+                        //ovr167_131
+                        return 3;
+                    }
+                }
+                else
+                {
+                    //ovr167_11F
+                    if (XCoord >= 0)
+                    {
+                        //ovr167_128
+                        return 1;
+                    }
+                    else
+                    {
+                        //ovr167_123
+                        return 2;                        
+                    }
+                }
+            }
         }
     }//end class
 }//end namespace

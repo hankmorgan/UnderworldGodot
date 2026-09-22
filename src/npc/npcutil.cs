@@ -131,7 +131,7 @@ namespace Underworld
 
         public static bool moveNPCToTile(uwObject critter, int destTileX, int destTileY)
         {
-            Debug.Print($"Moving {critter.a_name} to {destTileX},{destTileY}");
+            Debug.Print($"Moving {critter.a_name} to {destTileX},{destTileY} from {critter.tileX}, {critter.tileY}");
             if (UWTileMap.ValidTile(destTileX, destTileY) && UWTileMap.ValidTile(critter.tileX, critter.tileY))
             {
                 var sourceTile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
