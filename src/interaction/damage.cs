@@ -302,12 +302,14 @@ namespace Underworld
                 {
                     a_lock.SetIsLocked(objToDestroy, false, 0);
                     door.OpenDoor(objToDestroy);
-                    return 1;
+                    
                 }
                 else
                 {
                     //TODO handle open doors getting destroyed.
+                    Debug.Print("Open door has been destroyed. This should unlink all lock objects linked to the door;");
                 }
+                return 1; // don't destroy the model
             }
             switch (objToDestroy.item_id)
             {
