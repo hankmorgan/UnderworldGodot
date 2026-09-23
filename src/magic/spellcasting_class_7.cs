@@ -777,7 +777,7 @@ namespace Underworld
                 {
                     var damagetoapply = (playerdat.Casting * 3) + 0x6E;
                     animo.SpawnAnimoAtTarget(target: target, subclassindex: 0, si_zpos: 2, tileX: target.tileX, tileY: target.tileY);
-                    return (damage.DamageObject(objToDamage: target, basedamage: damagetoapply, damagetype: 4, objList: objList, WorldObject: WorldObject, damagesource: 0) !=0); 
+                    return (damage.DamageObject(objToDamage: target, basedamage: damagetoapply, damagetype: 4, objList: objList, WorldObject: WorldObject, damagesource: 0) != false); 
                 }
                 else
                 {

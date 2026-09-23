@@ -30,7 +30,7 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
-        public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
+        public static bool DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
         {
             basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
@@ -56,7 +56,7 @@ namespace Underworld
                         WorldObject: WorldObject);
                 }
             }
-            return 0;
+            return false;
         }
 
 
@@ -66,7 +66,7 @@ namespace Underworld
         /// <param name="critter"></param>
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
-        static int DamageNPC(uwObject critter, int basedamage, int damagesource)
+        static bool DamageNPC(uwObject critter, int basedamage, int damagesource)
         {
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
@@ -193,12 +193,12 @@ namespace Underworld
                         {
                             UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, (critter.tileX << 3) + critter.xpos, (critter.tileY << 3) + critter.ypos, 0);
                         }
-                        return 1;
+                        return true;
                     }
                 }
             }
 
-            return 0;
+            return false;
         }
 
         static bool DamageOtherObjectTypes(uwObject objToDamage, int basedamage, int damagesource)
@@ -288,12 +288,12 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
         /// <returns>1 if debris is set</returns>
-        public static int ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject)
+        public static bool ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject)
         {
             int Debris = -2;
             if ((!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY)) && (WorldObject))
             {
-                return 0;
+                return false;
             }
             if (objToDestroy.OneF0Class == 0x14)
             {
@@ -309,7 +309,7 @@ namespace Underworld
                     //TODO handle open doors getting destroyed.
                     Debug.Print("Open door has been destroyed. This should unlink all lock objects linked to the door;");
                 }
-                return 1; // don't destroy the model
+                return true; // don't destroy the model
             }
             switch (objToDestroy.item_id)
             {
@@ -378,7 +378,7 @@ namespace Underworld
                                                 RemoveFromWorld: true);
                                         }
                                         Debris = -1;
-                                        return 1;
+                                        return true;
                                     }
                                     else
                                     {
@@ -433,9 +433,9 @@ namespace Underworld
             }
             if (Debris >= -1)
             {
-                return 0;
+                return false;
             }
-            return 1;
+            return true;
         }
 
 
@@ -699,7 +699,7 @@ namespace Underworld
 
                 //apply damage
                 var result = DamageObject(objToDamage: obj, basedamage: damage, damagetype: damagetype, objList: playerdat.InventoryObjects, WorldObject: false, damagesource: 0);
-                if (result == 1)
+                if (result)
                 {//taken damage and can be destroyed
                     if (arg8 != 0)
                     {

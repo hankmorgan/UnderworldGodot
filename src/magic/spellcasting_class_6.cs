@@ -294,7 +294,7 @@ namespace Underworld
                                 bool returnValue;
                                 if (targetObject.npc_goal == 6)
                                 {//already fleeing
-                                    returnValue = damage.DamageObject(objToDamage: targetObject, basedamage: playerdat.Casting, damagetype: 3, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 1) != 0;
+                                    returnValue = damage.DamageObject(objToDamage: targetObject, basedamage: playerdat.Casting, damagetype: 3, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 1) != false;
                                 }
                                 else
                                 {
@@ -338,7 +338,7 @@ namespace Underworld
                         damagetype: 3,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true,                       
-                        damagesource: 1) != 0;
+                        damagesource: 1) != false;
                 }
             }
             return false;
@@ -376,7 +376,7 @@ namespace Underworld
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true,
                         damagesource: 1
-                        ) != 0;
+                        ) != false;
                 }
             }
 

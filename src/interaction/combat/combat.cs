@@ -641,7 +641,7 @@ namespace Underworld
                             }
                             else
                             {
-                                DamageObjectResult = 0;
+                                DamageObjectResult = false;
                             }
                         }
                         //seg024_24E9_CCD
