@@ -55,7 +55,7 @@ void fragment() {
 	vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xyz, world_camera));
-	
+	uint camera_layers = CAMERA_VISIBLE_LAYERS;
 
 	if (dist > cutoffdistance)
 	{		
@@ -63,63 +63,69 @@ void fragment() {
 	}
 	else
 	{
-		if ((CAMERA_VISIBLE_LAYERS & 8u) != 0u)
-		{
-			//object info layer. 
-			//contains tile information. (eg x,y and surface) or object index in the case of 3d models.
-			//Used for pixel perfect raycasts.
-			
-			vec4 simple = texture(simpleshade, vec2(dist/cutoffdistance, 0.0));
-			int shadelevel = ivec3(round(simple.rgb * 255.0)).r;
-			if (shadelevel >= 112 )
-			{
-				discard;
-			}
-			else
-			{
-				ALBEDO.r = float(tileflags)/255.0;// tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling. In game when this value >0 then I know I'm looking at this wall surface.
-				ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // this is either the objectindex bytes or tileX value. If tileflags is set it's tile, otherwise objectindex.
-				ALBEDO.b = float(objectindex_upperbytes)/255.0;   // this is either the objectindex bytes or tileY value. If tileflags is set it's tile, otherwise objectindex.
-			}
-		}
-		else
-		{
-			vec4 lowdetail = texture(texture_albedo, vec2(0.0, 0.0)); //get pixel at 0,0 which is the lowdetail colour to use
-			//Get the red channel original data.
-			vec4 rgba;// = texture(texture_albedo, UV);
 
-			//Check for low detail modes.
-			if ((!renderwalls) && (((tileflags >= 4) && (tileflags<=64)) || (tileflags == 0)))
-			{
-				rgba = lowdetail;
+		switch (camera_layers)
+		{
+			case 8u: //object info layer. 
+			{				
+				//contains tile information. (eg x,y and surface) or object index in the case of 3d models.
+				//Used for pixel perfect raycasts.
+				
+				vec4 simple = texture(simpleshade, vec2(dist/cutoffdistance, 0.0));
+				int shadelevel = ivec3(round(simple.rgb * 255.0)).r;
+				if (shadelevel >= 112 )
+				{
+					discard;
+				}
+				else
+				{
+					ALBEDO.r = float(tileflags)/255.0;// tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling. In game when this value >0 then I know I'm looking at this wall surface.
+					ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // this is either the objectindex bytes or tileX value. If tileflags is set it's tile, otherwise objectindex.
+					ALBEDO.b = float(objectindex_upperbytes)/255.0;   // this is either the objectindex bytes or tileY value. If tileflags is set it's tile, otherwise objectindex.
+				}
+				break;
 			}
-			else
+
+			case 2u: // Layer GEO
 			{
-				if ((!renderceilings) && (tileflags == 128))
+				vec4 lowdetail = texture(texture_albedo, vec2(0.0, 0.0)); //get pixel at 0,0 which is the lowdetail colour to use
+				//Get the red channel original data.
+				vec4 rgba;// = texture(texture_albedo, UV);
+
+				//Check for low detail modes.
+				if ((!renderwalls) && (((tileflags >= 4) && (tileflags<=64)) || (tileflags == 0)))
 				{
 					rgba = lowdetail;
 				}
 				else
 				{
-					if ((!renderfloors) && ((tileflags >= 1) && (tileflags<=2)))
+					if ((!renderceilings) && (tileflags == 128))
 					{
 						rgba = lowdetail;
 					}
-				else
+					else
 					{
-						rgba = texture(texture_albedo, UV);
+						if ((!renderfloors) && ((tileflags >= 1) && (tileflags<=2)))
+						{
+							rgba = lowdetail;
+						}
+					else
+						{
+							rgba = texture(texture_albedo, UV);
+						}
 					}
+					
 				}
 				
-			}
+				//Get the uv distance offset within the shades.dat image
+				float maptouse = dist/cutoffdistance;
+
+				rgba.g = maptouse; // green will indicate for the next shader what shading value in the lighting palettes to use for this pixel.
 			
-			//Get the uv distance offset within the shades.dat image
-			float maptouse = dist/cutoffdistance;
+				ALBEDO = rgba.rgb; // This shader output becomes an input into viewport_combination.gdshader
 
-			rgba.g = maptouse; // green will indicate for the next shader what shading value in the lighting palettes to use for this pixel.
-		
-			ALBEDO = rgba.rgb; // This shader output becomes an input into viewport_combination.gdshader
+				break;
+			}
 		}
-
 	}
 }
