@@ -1,8 +1,10 @@
+using SerdesNet;
+
 namespace Underworld
 {
     public class a_lock : objectInstance
     {
-        
+
         public static bool GetIsLocked(uwObject parentObject)
         {
             //if (isOpen) { return false; }
@@ -16,7 +18,7 @@ namespace Underworld
                 return (lockobj.flags & 0x01) == 1;
             }
         }
-            
+
         public static void SetIsLocked(uwObject parentObject, bool value, int character = 0)
         {
             var lockobj = LockObject(parentObject);
@@ -30,11 +32,11 @@ namespace Underworld
                 lockobj.flags &= 0xE;  //clear flag bit 0
                 //run unlock trap
                 trigger.TriggerObjectLink(
-                    character: character, 
-                    ObjectUsed: lockobj, 
-                    triggerType: (int)triggerObjectDat.UNLOCK_TRIGGER_TYPE, 
-                    triggerX: parentObject.tileX, 
-                    triggerY: parentObject.tileY, 
+                    character: character,
+                    ObjectUsed: lockobj,
+                    triggerType: (int)triggerObjectDat.UNLOCK_TRIGGER_TYPE,
+                    triggerX: parentObject.tileX,
+                    triggerY: parentObject.tileY,
                     objList: UWTileMap.current_tilemap.LevelObjects);
             }
         }
@@ -67,6 +69,51 @@ namespace Underworld
                 return -1;
             }
             return lockobj.link & 0x3F;
+        }
+
+
+        /// <summary>
+        /// Removes all locks from a container or door. Called when a door is broken open or when a locked container is spilled.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="RemoveAll"></param>
+        /// <returns></returns>
+        public static bool RemoveAllLocks(uwObject obj, bool RemoveAll)
+        {
+            bool HasRemoved = false;
+            if (obj.is_quant == 0)
+            {
+                if (obj.link != 0)
+                {
+                    while (true) //loop until all locks(when removeall==true) or until the first lock has been removed (when removeall = false), or until there are no locks
+                    {
+                        var lockObj = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: obj.index, 
+                            majorclass: 4, minorclass: 0, classindex: 0xF, 
+                            objList: UWTileMap.current_tilemap.LevelObjects);
+                        if (lockObj != null)
+                        {
+                            if (ObjectRemover_OLD.RemoveObjectFromLinkedList(listhead: obj.link, toRemove: lockObj.index, objlist: UWTileMap.current_tilemap.LevelObjects, OffsetToListHeadConnection: obj.PTR + 6))
+                            {
+                                ObjectFreeLists.ReleaseFreeObject(lockObj);
+                            }
+                            if (RemoveAll)
+                            {
+                                return HasRemoved; //this value will be false in this scenario.
+                            }
+                            else
+                            {
+                                HasRemoved = true;
+                            }
+                        }
+                        else
+                        {
+                            return HasRemoved;
+                        }
+                    }
+                }
+            }
+            return HasRemoved;
         }
 
     }//end class

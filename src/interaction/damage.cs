@@ -37,6 +37,7 @@ namespace Underworld
             {
                 Debug.Print($"Damage {objToDamage.a_name} by {basedamage} type {damagetype} source {damagesource}");
             }
+      
             if (objToDamage.majorclass == 1)
             {
                 return DamageNPC(
@@ -300,15 +301,11 @@ namespace Underworld
                 //doors
                 if (objToDestroy.classindex <= 7)
                 {
-                    a_lock.SetIsLocked(objToDestroy, false, 0);
+                    a_lock.SetIsLocked(parentObject: objToDestroy, value: false, character: 0);
                     door.OpenDoor(objToDestroy);
                     
                 }
-                else
-                {
-                    //TODO handle open doors getting destroyed.
-                    Debug.Print("Open door has been destroyed. This should unlink all lock objects linked to the door;");
-                }
+                a_lock.RemoveAllLocks(obj: objToDestroy, RemoveAll: true);
                 return true; // don't destroy the model
             }
             switch (objToDestroy.item_id)
