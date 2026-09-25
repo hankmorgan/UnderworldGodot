@@ -55,6 +55,8 @@ namespace Underworld
                 }
                 else
                 {
+                    //ovr113_746
+                    y++;
                     goto ovr113_747;
                 }
             }
