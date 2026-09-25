@@ -422,15 +422,13 @@ namespace Underworld
                                 case 3:
                                 case 4://save to chosen slot
                                     {
-                                        if (UWClass._RES != UWClass.GAME_UW1)
+                                        if (UWClass._RES == UWClass.GAME_UWDEMO)
                                         {
-                                            // UW2 save is unsupported pending an upstream UW2 lev.ark compressor.
-                                            // Writing uncompressed UW2 blocks would fail DOS load (>80 uncompressed
-                                            // blocks crash vanilla UW2.EXE). Until the compressor is ported, refuse.
-                                            //
-                                            // Refused before the prompt opens: asking for a name and then failing
-                                            // on purpose would be worse than failing straight away.
-                                            GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
+                                            // The demo keeps its level in LEVEL13 files rather than an
+                                            // archive, and the writers only know the two archive
+                                            // formats. It was refused before UW2 saving was enabled
+                                            // and still is. Refused before the prompt opens: asking
+                                            // for a name and then failing would be worse.
                                             listsaves();
                                             instance.scroll.Clear();
                                             AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_save_game_failed_)));

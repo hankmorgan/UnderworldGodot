@@ -9,12 +9,16 @@ namespace Underworld
     //   Bytes 4-5:              2 padding/unknown bytes (0x0000 in all observed files)
     //   Bytes 6 .. 6+(N*4)-1:  offsets[N]          (N × Int32 LE; 0 = block absent)
     //   Bytes 6+(N*4) ..
-    //          6+(N*8)-1:       compressionFlags[N] (N × Int32 LE; 0=none, 2=compressed)
+    //          6+(N*8)-1:       flags[N]            (N × Int32 LE, see below)
     //   Bytes 6+(N*8) ..
-    //          6+(N*12)-1:      dataLengths[N]      (N × Int32 LE; uncompressed length)
+    //          6+(N*12)-1:      dataLengths[N]      (N × Int32 LE; bytes on disk)
     //   Bytes 6+(N*12) ..
-    //          6+(N*16)-1:      reservedSpace[N]    (N × Int32 LE)
+    //          6+(N*16)-1:      availableSpace[N]   (N × Int32 LE)
     //   Then block data at each recorded offset.
+    //
+    // Flags: bit 0 asks DOS to compress the block when it next writes it, bit 1 says it
+    // is compressed now, bit 2 says availableSpace is larger than the data, left as slack
+    // for a block that may compress less well next time (uw-formats 9.1).
     //
     // UW1 LEV.ARK container header layout (default case in DataLoader.LoadUWBlock):
     //   Bytes 0-1:              NoOfBlocks (Int16 LE)
@@ -22,9 +26,23 @@ namespace Underworld
     //   Block data follows immediately after the offset table.
     //   No per-block metadata; targetDataLen is passed in by the caller.
     //
-    // For UW2 we always write uncompressed blocks (compressionFlag = 0) to avoid the
-    // incomplete RepackUW2 compressor.  The loader handles uncompressed blocks at
-    // DataLoader.cs:418-422.
+    // What DOS UW2 needs from a save, from UW2.EXE and from two DOS-written saves:
+    //
+    //   ReadArkFileBlock_ovr093_C33 reads an uncompressed block by copying dataLengths[i]
+    //   bytes straight to its destination. A level goes into a buffer of exactly 0x7E08
+    //   bytes (InitialiseEmptyTileMapData_ovr128_0), so a level block must not be longer.
+    //   DOS itself writes every level block uncompressed at 0x7E08 with flags 0.
+    //
+    //   WriteDataToARKFile_ovr093_779D_4B1 overwrites a block in place only when the new
+    //   data fits: within availableSpace when bit 2 is set, or exactly equal to it when
+    //   bit 2 is clear. Anything else makes it rebuild the archive. So availableSpace has
+    //   to describe the bytes actually reserved on disk, never more.
+    //
+    // The writer therefore copies every block it has not changed exactly as the source
+    // holds it: compressed bytes, flags, length, available space and any slack. Blocks it
+    // replaces from live state are written uncompressed with flags 0 and availableSpace
+    // equal to their length, which is what DOS does for level blocks. Compression is not
+    // needed for DOS to read a block, since the reader only tests bit 1.
 
     /// <summary>
     /// Rebuilds a LEV.ARK container from in-memory game state.
@@ -33,8 +51,12 @@ namespace Underworld
     /// </summary>
     public static class LevArkWriter
     {
-        // UW2 per-level block size (tilemap + animation overlay)
-        private const int UW2BlockSize = 0x8000;
+        // UW2 per-level block size: tilemap, objects and free lists to 0x7C08, then 64
+        // six-byte animation overlays to 0x7D88, then 64 timer words to 0x7E08. This is
+        // the size of DOS's tilemap buffer and what DOS writes for every level.
+        private const int UW2BlockSize = 0x7E08;
+        // UW2 automap block: one byte per tile of a 64 × 64 map.
+        private const int UW2AutomapBlockSize = 64 * 64;
         // UW1 per-level block size
         private const int UW1BlockSize = UWTileMap.TileMapDataSize; // 0x7C08
         // UW1 per-level animation-overlay block size. 64 slots × 6 bytes, matching
@@ -43,7 +65,7 @@ namespace Underworld
 
         /// <summary>
         /// Serialize one level block (UWBlock) to the raw bytes that should be
-        /// stored in the ARK container.  For UW2 the result is exactly 0x8000 bytes;
+        /// stored in the ARK container.  For UW2 the result is exactly 0x7E08 bytes;
         /// for UW1 it is TileMapDataSize bytes.
         /// </summary>
         public static byte[] SerializeLevelBlock(UWBlock block)
@@ -115,32 +137,47 @@ namespace Underworld
 
             int noOfBlocks = 320;
 
-            // ---- Step 1: gather each block's raw bytes -------------------------
-            byte[][] blockData = new byte[noOfBlocks][];
+            // ---- Step 1: blocks replaced from live state ------------------------
+            // null means "not replaced, copy the source block as it is". An empty array
+            // means "replaced by nothing", which the layout step writes as absent.
+            byte[][] replaced = new byte[noOfBlocks][];
 
-            for (int i = 0; i < noOfBlocks; i++)
-            {
-                UWBlock src = ExtractSourceBlock(i, targetLen: -1);
-                blockData[i] = src?.Data; // null means absent (address == 0)
-            }
-
-            // For visited levels, replace the tilemap block (index 0..79) with live data.
+            // Visited levels: the live tilemap block.
             if (UWTileMap.dungeons != null)
             {
-                for (int lvl = 0; lvl < UWTileMap.NO_OF_LEVELS; lvl++)
+                int levels = Math.Min(UWTileMap.NO_OF_LEVELS, UWTileMap.dungeons.Length);
+                for (int lvl = 0; lvl < levels; lvl++)
                 {
-                    if (UWTileMap.dungeons[lvl] != null)
+                    UWBlock live = UWTileMap.dungeons[lvl]?.lev_ark_block;
+                    if (live?.Data != null)
                     {
-                        UWBlock live = UWTileMap.dungeons[lvl].lev_ark_block;
-                        if (live?.Data != null)
-                        {
-                            blockData[lvl] = SerializeLevelBlock(live);
-                        }
+                        replaced[lvl] = SerializeLevelBlock(live);
                     }
                 }
             }
 
-            // Replace automap-note blocks (240..319) with the in-memory notes.
+            // Automaps for any level loaded this session. DOS writes one for every level
+            // the player has been on; without this a UW2 save kept whatever automap the
+            // source held and lost everything explored since. See issue #69.
+            if (automap.automaps != null)
+            {
+                int levels = Math.Min(80, automap.automaps.Length);
+                for (int lvl = 0; lvl < levels; lvl++)
+                {
+                    byte[] buffer = automap.automaps[lvl]?.buffer;
+                    if (buffer != null)
+                    {
+                        // The loader can hand back a few bytes past the 4096 the block
+                        // declares, because DataLoader.unpackUW2 finishes the control byte
+                        // it is on. Only the first 4096 are the map.
+                        byte[] block = new byte[UW2AutomapBlockSize];
+                        Buffer.BlockCopy(buffer, 0, block, 0, Math.Min(buffer.Length, UW2AutomapBlockSize));
+                        replaced[160 + lvl] = block;
+                    }
+                }
+            }
+
+            // Automap-note blocks (240..319) from the in-memory notes.
             // A level whose notes were all deleted serialises to an empty array, which the
             // layout step below turns into an absent block. Skipping the replacement instead
             // would write the source ARK's notes back out and they would reappear on reload.
@@ -148,11 +185,12 @@ namespace Underworld
             // constructor reads the source block, so an empty list means no notes.
             if (automapnote.automapsnotes != null)
             {
-                for (int lvl = 0; lvl < 80; lvl++)
+                int levels = Math.Min(80, automapnote.automapsnotes.Length);
+                for (int lvl = 0; lvl < levels; lvl++)
                 {
                     if (automapnote.automapsnotes[lvl] != null)
                     {
-                        blockData[240 + lvl] = automapnote.automapsnotes[lvl].Serialize();
+                        replaced[240 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }
                 }
             }
@@ -163,47 +201,72 @@ namespace Underworld
             int[] offsets = new int[noOfBlocks];
             int[] flags = new int[noOfBlocks];
             int[] lengths = new int[noOfBlocks];
-            int[] reserved = new int[noOfBlocks];
+            int[] available = new int[noOfBlocks];
+            byte[][] onDisk = new byte[noOfBlocks][];
 
-            // The source ARK's reservedSpace values — preserve them.
-            // (They are read from source block metadata at load time.)
             byte[] source = LevArkLoader.lev_ark_file_data;
-            for (int i = 0; i < noOfBlocks; i++)
-            {
-                // Read reservedSpace from source header if available.
-                int srcReserved = 0;
-                if (source != null && source.Length >= 6 + noOfBlocks * 16)
-                {
-                    int srcNoOfBlocks = (int)Loader.getAt(source, 0, 32);
-                    if (srcNoOfBlocks == noOfBlocks)
-                    {
-                        srcReserved = (int)Loader.getAt(source,
-                            6 + (i * 4) + (noOfBlocks * 12), 32);
-                    }
-                }
-                reserved[i] = srcReserved;
-            }
+            bool sourceUsable = source != null
+                && source.Length >= headerSize
+                && (int)Loader.getAt(source, 0, 32) == noOfBlocks;
 
-            // Assign offsets: layout all present blocks sequentially after header.
             int cursor = headerSize;
             for (int i = 0; i < noOfBlocks; i++)
             {
-                if (blockData[i] != null && blockData[i].Length > 0)
+                if (replaced[i] != null)
                 {
-                    offsets[i] = cursor;
-                    flags[i] = DataLoader.UW2_NOCOMPRESSION; // 0 — uncompressed
-                    lengths[i] = blockData[i].Length;
-                    cursor += blockData[i].Length;
+                    if (replaced[i].Length == 0) continue; // absent: offset, length, space all 0
+                    onDisk[i] = replaced[i];
+                    flags[i] = DataLoader.UW2_NOCOMPRESSION; // 0, as DOS writes level blocks
+                    lengths[i] = replaced[i].Length;
+                    available[i] = replaced[i].Length;
+                }
+                else if (sourceUsable)
+                {
+                    int srcOffset = (int)Loader.getAt(source, 6 + i * 4, 32);
+                    if (srcOffset == 0) continue; // absent in the source too
+                    int srcFlags = (int)Loader.getAt(source, 6 + noOfBlocks * 4 + i * 4, 32);
+                    int srcLength = (int)Loader.getAt(source, 6 + noOfBlocks * 8 + i * 4, 32);
+                    int srcAvailable = (int)Loader.getAt(source, 6 + noOfBlocks * 12 + i * 4, 32);
+
+                    // A block whose data runs past the end of the source cannot be copied
+                    // faithfully. Fail rather than pad it with zeros: the slot transaction
+                    // then leaves the previous save in place.
+                    if (srcOffset < 0 || srcLength < 0 || (long)srcOffset + srcLength > source.Length)
+                    {
+                        throw new InvalidDataException(
+                            $"LevArkWriter: source block {i} claims {srcLength} bytes at {srcOffset}, past the end of a {source.Length}-byte archive.");
+                    }
+
+                    // An uncompressed level block longer than DOS's 0x7E08 buffer is trimmed
+                    // to it. Earlier port builds wrote 0x8000, and DOS itself sometimes leaves
+                    // a few bytes of junk past 0x7E08; nothing past 0x7E08 is level data.
+                    if (i < 80 && (srcFlags & 2) == 0 && srcLength > UW2BlockSize)
+                    {
+                        srcLength = UW2BlockSize;
+                        srcFlags &= ~4;
+                    }
+
+                    // With bit 2 set, DOS may later write up to srcAvailable bytes here in
+                    // place, so the slack has to come with the block or that write would run
+                    // into whatever the layout puts next. Without it, the space is exactly
+                    // the data. Slack past the end of the file is zeros, as DOS pads it.
+                    bool hasSlack = (srcFlags & 4) != 0 && srcAvailable > srcLength;
+                    int reserve = hasSlack ? srcAvailable : srcLength;
+                    byte[] raw = new byte[reserve];
+                    int copyLen = Math.Min(reserve, source.Length - srcOffset);
+                    Buffer.BlockCopy(source, srcOffset, raw, 0, copyLen);
+
+                    onDisk[i] = raw;
+                    flags[i] = srcFlags;
+                    lengths[i] = srcLength;
+                    available[i] = reserve;
                 }
                 else
                 {
-                    // An absent block carries no allocation. Every absent block in the
-                    // shipped UW2 archive has offset, length and reserved all zero.
-                    offsets[i] = 0;
-                    flags[i] = 0;
-                    lengths[i] = 0;
-                    reserved[i] = 0;
+                    continue;
                 }
+                offsets[i] = cursor;
+                cursor += onDisk[i].Length;
             }
 
             // ---- Step 3: write output ------------------------------------------
@@ -214,22 +277,14 @@ namespace Underworld
             bw.Write((int)noOfBlocks);
             bw.Write((short)0); // 2 padding bytes
 
-            // Offsets table
             for (int i = 0; i < noOfBlocks; i++) bw.Write(offsets[i]);
-            // Compression flags table
             for (int i = 0; i < noOfBlocks; i++) bw.Write(flags[i]);
-            // Data lengths table
             for (int i = 0; i < noOfBlocks; i++) bw.Write(lengths[i]);
-            // Reserved space table
-            for (int i = 0; i < noOfBlocks; i++) bw.Write(reserved[i]);
+            for (int i = 0; i < noOfBlocks; i++) bw.Write(available[i]);
 
-            // Block data
             for (int i = 0; i < noOfBlocks; i++)
             {
-                if (blockData[i] != null && blockData[i].Length > 0)
-                {
-                    bw.Write(blockData[i]);
-                }
+                if (onDisk[i] != null) bw.Write(onDisk[i]);
             }
 
             return ms.ToArray();

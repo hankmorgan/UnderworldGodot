@@ -11,12 +11,18 @@ namespace Underworld
     /// See src/player/playerdatutil.cs for the inverse (load) routines; the
     /// EncryptDecryptUW1 and EncryptDecryptUW2 functions there are symmetric.
     ///
-    /// For UW1 we remap the inventory into DOS-canonical order before
+    /// Both games remap the inventory into DOS-canonical order before
     /// encrypting: top-level items (BP0..BP7 containers + equipped paperdoll
     /// items) form one unified next-chain starting at slot 1, with container
     /// contents chained internally via link/next. Paperdoll and BP pointers
     /// are rewritten to the new slot indices. Without this pass, DOS UW.EXE
     /// loads bag-only but truncates the chain before reaching equipped items.
+    ///
+    /// UW2 uses the same record layout at different offsets. Measured from two
+    /// DOS-written UW2 saves: the head is slot 1, every record is reached by a
+    /// depth-first walk of that chain in file order, and the word before the
+    /// player object holds the record count plus one (85 for 84 records, 70 for
+    /// 69), exactly as UW1 does at 0xD3.
     /// </summary>
     public static class PlayerDatWriter
     {
@@ -36,49 +42,46 @@ namespace Underworld
             0x10C,// LeftRing
         };
 
+        // UW2 paperdoll slot-pointer offsets, same order as UW1. See the accessors in
+        // src/player/playerdatinventory.cs, which read these for GAME_UW2.
+        private static readonly int[] Uw2PaperdollOffsets =
+        {
+            0x3A3, 0x3A5, 0x3A7, 0x3A9, 0x3AB, 0x3AD,
+            0x3AF, 0x3B1, 0x3B3, 0x3B5, 0x3B7,
+        };
+
         private const int Uw1BpOffsetBase = 0x10E;
-        private const int Uw1BpCount = 8;
+        private const int Uw2BpOffsetBase = 0x3B9;
+        private const int BpCount = 8;
 
         // DOS reads the number of inventory records from this 16-bit field, as
         // "records + 1". Every DOS-created UW1 save carries N+1 here; the port
         // wrote a constant 3, which is what made DOS walk a chain longer than it
-        // had read. See issue #44.
+        // had read. See issue #44. UW2 keeps the same field two bytes before its
+        // player object, at 0x37E.
         private const int Uw1InventoryCountOffset = 0xD3;
+        private const int Uw2InventoryCountOffset = 0x37E;
+
+        private static bool IsUw2 => Loader._RES == Loader.GAME_UW2;
+        private static int[] PaperdollOffsets => IsUw2 ? Uw2PaperdollOffsets : Uw1PaperdollOffsets;
+        private static int BpOffsetBase => IsUw2 ? Uw2BpOffsetBase : Uw1BpOffsetBase;
+        private static int InventoryCountOffset => IsUw2 ? Uw2InventoryCountOffset : Uw1InventoryCountOffset;
 
         public static byte[] Serialize()
         {
-            if (Loader._RES == Loader.GAME_UW2)
-            {
-                // UW2 save format not yet DOS-round-trip verified; keep legacy
-                // straight-copy path until UW2 reference data is captured.
-                return SerializeLegacy();
-            }
-
-            return SerializeUw1Canonical();
+            return SerializeCanonical();
         }
 
-        private static byte[] SerializeLegacy()
-        {
-            int lastSlot = LastPopulatedInventorySlot();
-            int fileLen = playerdat.InventoryPtr + lastSlot * 8;
-            byte[] plain = new byte[fileLen];
-            Array.Copy(playerdat.pdat, plain, fileLen);
-            byte seed = plain[0];
-            return Loader._RES == Loader.GAME_UW2
-                ? playerdat.EncryptDecryptUW2(plain, seed)
-                : playerdat.EncryptDecryptUW1(plain, seed);
-        }
-
-        private static byte[] SerializeUw1Canonical()
+        private static byte[] SerializeCanonical()
         {
             // 1. Gather top-level source slots: BP0..BP7 first, then paperdoll.
             var topLevel = new List<int>();
-            for (int bp = 0; bp < Uw1BpCount; bp++)
+            for (int bp = 0; bp < BpCount; bp++)
             {
-                int s = GetSlotPtr(playerdat.pdat, Uw1BpOffsetBase + bp * 2);
+                int s = GetSlotPtr(playerdat.pdat, BpOffsetBase + bp * 2);
                 if (s != 0) topLevel.Add(s);
             }
-            foreach (int off in Uw1PaperdollOffsets)
+            foreach (int off in PaperdollOffsets)
             {
                 int s = GetSlotPtr(playerdat.pdat, off);
                 if (s != 0) topLevel.Add(s);
@@ -193,14 +196,14 @@ namespace Underworld
             }
 
             // 5. Rewrite paperdoll + BP pointers to new slot indices.
-            for (int bp = 0; bp < Uw1BpCount; bp++)
+            for (int bp = 0; bp < BpCount; bp++)
             {
-                int off = Uw1BpOffsetBase + bp * 2;
+                int off = BpOffsetBase + bp * 2;
                 int oldSlot = GetSlotPtr(playerdat.pdat, off);
                 int newSlot = remap.TryGetValue(oldSlot, out var v) ? v : 0;
                 SetSlotPtr(plain, off, newSlot);
             }
-            foreach (int off in Uw1PaperdollOffsets)
+            foreach (int off in PaperdollOffsets)
             {
                 int oldSlot = GetSlotPtr(playerdat.pdat, off);
                 int newSlot = remap.TryGetValue(oldSlot, out var v) ? v : 0;
@@ -211,19 +214,23 @@ namespace Underworld
             SetInventoryCount(plain, newLast + 1);
 
             byte seed = plain[0];
-            return playerdat.EncryptDecryptUW1(plain, seed);
+            return IsUw2
+                ? playerdat.EncryptDecryptUW2(plain, seed)
+                : playerdat.EncryptDecryptUW1(plain, seed);
         }
 
         /// <summary>
         /// Writes DOS's inventory record count, which is the number of emitted
-        /// records plus one. Sixteen-bit little-endian at 0xD3, in the plaintext
-        /// region, so it is unaffected by the XOR pass over bytes 1..0xD2.
+        /// records plus one. Sixteen-bit little-endian at 0xD3 in UW1 and 0x37E in
+        /// UW2, in each case just past the encrypted region, so the cipher leaves it
+        /// alone.
         /// </summary>
         private static void SetInventoryCount(byte[] plain, int count)
         {
-            if (Uw1InventoryCountOffset + 1 >= plain.Length) return;
-            plain[Uw1InventoryCountOffset]     = (byte)(count & 0xFF);
-            plain[Uw1InventoryCountOffset + 1] = (byte)((count >> 8) & 0xFF);
+            int off = InventoryCountOffset;
+            if (off + 1 >= plain.Length) return;
+            plain[off]     = (byte)(count & 0xFF);
+            plain[off + 1] = (byte)((count >> 8) & 0xFF);
         }
 
         // Hard cap on emitted slots — defends against a pathological source
@@ -368,7 +375,7 @@ namespace Underworld
 
         /// <summary>
         /// Returns the highest index i where playerdat.InventoryObjects[i] refers
-        /// to an object with item_id != 0. Retained for legacy path / tests.
+        /// to an object with item_id != 0. Retained for tests.
         /// </summary>
         public static int LastPopulatedInventorySlot()
         {

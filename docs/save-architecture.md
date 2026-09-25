@@ -81,10 +81,7 @@ bytes past `InventoryPtr` — file length is `InventoryPtr + N*8`, not
 Size × Int16 Globals}` until EOF. No header, no footer, little-endian.
 (`uw-formats (Abysmal).txt` §7.2.)
 
-**`lev.ark` container (UW2).** Header is `[Int32 count][2 bytes padding]
-[offsets×N][compressionFlags×N][dataLengths×N][reservedSpace×N]` then block
-data at the recorded offsets. Loader reads the per-block compression flag
-and dispatches — flag `0 == UW2_NOCOMPRESSION` is valid.
+**`lev.ark` container (UW2).** Header is `[Int32 count][2 bytes padding][offsets×N][flags×N][dataLengths×N][availableSpace×N]` then block data at the recorded offsets. Flag bit 0 asks DOS to compress the block when it next writes it, bit 1 says it is compressed now, and bit 2 says the available space includes slack beyond the data (uw-formats 9.1). The loader tests bit 1 only, so flag `0 == UW2_NOCOMPRESSION` is valid, and DOS reads such blocks too. See "UW2 DOS round-trip" below for what the writer does with each block.
 
 **`lev.ark` container (UW1).** Simpler: `[Int16 count][offsets×N]` then block
 data. No per-block metadata; the caller supplies `targetDataLen`.
@@ -105,18 +102,7 @@ re-reads unmutated blocks from disk at save time.
 
 ## Known limitations
 
-**UW2 save is UI-gated pending validation.** The `SaveGame.Save`
-orchestrator and all UW2 writers are still present and tested - they
-produce files that round-trip through the port's own loader - but the
-Save button in the UW2 Options menu refuses to invoke them. Per
-@AlistairBrown (PR #33 review), DOS UW2 accepts uncompressed level
-blocks fine as long as the per-block compression flag is set
-correctly; an earlier theory that >80 uncompressed blocks crashed
-DOS UW2 was incorrect. Re-validating UW2 round-trip under the same
-matched-state byte-diff workflow used for UW1 (see "UW1 DOS round-trip"
-section below) is the right next step before un-gating the UI; the
-six byte-level adjustments needed for UW1 likely have UW2 analogues
-that haven't been pinned yet.
+**UW2 save is enabled and DOS-compatible.** The Options menu used to refuse UW2 saves, citing a theory that more than 80 uncompressed blocks crash DOS UW2. That theory was wrong: DOS loads a save with 114 uncompressed blocks, and its block reader never counts them. See "UW2 DOS round-trip" below for what was actually needed. The UW1 demo is still refused, because it keeps its level in `LEVEL13` files that no writer handles.
 
 **UW1 save is DOS-compatible in format.** UW1 `lev.ark` is uncompressed by
 spec, so the compression issue doesn't apply. DOS round-trip is verified
@@ -128,10 +114,7 @@ permission loss), `SAVE{n}/` is left in a partial state that the loader may
 crash on. Mitigation: write all files to `SAVE{n}.tmp/` then
 `Directory.Move` on success. Not implemented.
 
-**Automap visited-tile state passes through from source ARK.** Map notes
-ARE now persisted (see `LevArkWriter` automap-notes reconstruction), but
-visited-tile shading is not: requires serialising `automap.automaps[i]`
-back into ARK blocks `i+27` (UW1) or `i+160` (UW2). Noted as follow-up.
+**Automaps are written for every level loaded this session**, blocks `i+27` in UW1 and `i+160` in UW2 (issue #69 for UW2). A level never loaded keeps the automap its source archive held.
 
 **UI polish.** Description fallback is `"Save {slot}"`; no text-input prompt
 for custom descriptions. Existing slot DESC is reused on overwrite. Save-menu
@@ -392,6 +375,46 @@ routine for PLAYER.DAT comparison. Tools:
 - **Description text input.** UI still uses `"Save {slot}"` as
   the description. DESC writes only the first ASCII byte
   regardless, so this is cosmetic.
+
+## UW2 DOS round-trip
+
+Verified 2026-09-25 against real DOS UW2.EXE under dos-mcp, in both directions:
+
+- A DOS save loaded in the port and saved again loads in DOS with a pixel-identical first frame. DOS then saves it, and the inventory it writes is the same tree of 84 records as the original's.
+- A port save made after changing level loads in DOS on the new level at the same tile, and DOS saves it.
+- A new port game saved on level 1 loads in DOS, DOS saves it, and the port loads that save and saves it again.
+- A second DOS character, whose archive carries level blocks DOS itself wrote with odd lengths, loads in the port and saves again unchanged apart from live state.
+
+Each of the following was needed. Every one was found by comparing a port save with a DOS save, or by swapping one file or byte group at a time into a save DOS accepts.
+
+### 1. Level blocks are 0x7E08 bytes, not 0x8000
+
+`ReadArkFileBlock_ovr093_C33` reads an uncompressed block by copying its recorded length straight to the destination, and the level buffer is exactly 0x7E08 bytes (`InitialiseEmptyTileMapData_ovr128_0`). The port wrote 0x8000, 504 bytes past the end. 0x7E08 covers everything the port uses: tilemap and objects to 0x7C08, 64 overlays to 0x7D88, 64 timer words to 0x7E08. DOS writes every level block uncompressed at this size with flags 0.
+
+### 2. Blocks the port did not change are copied exactly
+
+The writer used to decompress every block it passed through and write it back uncompressed, while keeping the source's available space, which described the compressed size. `DataLoader.unpackUW2` also finishes the control byte it is on, so texture maps came out at up to 215 bytes instead of 134 and automaps at up to 4173 instead of 4096. Both were longer than the buffers DOS reads them into. Now an unchanged block keeps its compressed bytes, flags, length and available space, and any slack marked by bit 2 is reserved too. Two exceptions: an uncompressed level block longer than 0x7E08 is trimmed to it, since earlier port builds wrote 0x8000 and DOS sometimes leaves junk bytes past the end, and a block whose data runs past the end of the source file fails the save instead of being padded with zeros.
+
+### 3. Available space must describe the bytes on disk
+
+`WriteDataToARKFile_ovr093_779D_4B1` overwrites a block in place only when the new data fits: within the available space when bit 2 is set, or exactly equal to it when bit 2 is clear. Otherwise it rebuilds the archive. So every block the port writes itself is uncompressed with available space equal to its length, the way DOS writes level blocks. `SCD.ARK` follows the same rule.
+
+### 4. Automaps are written (issue #69)
+
+DOS writes one 4096-byte automap per visited level. The port wrote none for UW2, so exploration since the loaded save was lost.
+
+### 5. PLAYER.DAT inventory uses the same canonical layout as UW1
+
+UW2 used a straight copy of `pdat`. It now goes through the same remap as UW1, at UW2's offsets: paperdoll `0x3A3`, backpack `0x3B9`, record count plus one at `0x37E`, and the chain head in the player object's link at `0x386`. Two DOS UW2 saves measured the same shape as UW1: records in depth-first order along one chain from slot 1, the count word holding records plus one (85 for 84, 70 for 69), and head 1. DOS reads the port's order, which differs from its own, and writes the identical tree back.
+
+### 6. The player object's hit points equal current vitality
+
+A new port character went straight back to the DOS main menu on load. Swapping files one at a time showed `PLAYER.DAT` was the cause, and swapping byte groups from a DOS-made new character showed the byte was the player object's hit points, `0x380 + 8`, which was 0. DOS keeps it equal to current vitality in every DOS save checked, ten files across both games. The port mirrors vitality into the object only when `play_hp` is assigned and overwrites the object from `PLAYER.DAT` on load, so the two could drift. `StashLiveStateToPdat` now sets it.
+
+### Not tested
+
+- DOS changing level after loading a port save, which makes DOS write blocks into its working archive. The in-place write rule in section 3 is why this should work, but no run has walked DOS down a staircase.
+- Long play in the port. The runs above load, optionally teleport, and save.
 
 ## Files
 

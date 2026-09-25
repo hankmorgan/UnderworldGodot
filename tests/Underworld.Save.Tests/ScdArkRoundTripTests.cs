@@ -41,4 +41,36 @@ public class ScdArkRoundTripTests : IDisposable
 
         Assert.Equal(original, rewritten);
     }
+
+    [Fact]
+    public void Uw2Scd_ShrunkLiveBlock_AvailableSpaceMatchesItsLength()
+    {
+        // A live SCD block shrinks as its events are consumed. DOS overwrites a block that
+        // has no slack only when the new length equals the available space, so a stale
+        // larger figure from the source would describe space the file does not hold.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES     = Underworld.UWClass.GAME_UW2;
+
+        byte[] source = File.ReadAllBytes(TestData.Uw2Save0("SCD.ARK"));
+        const int n = 16;
+        int sourceLen0 = (int)Underworld.Loader.getAt(source, 6 + n * 8, 32);
+        Assert.True(sourceLen0 > 16, "block 0 is too short to shrink");
+
+        Underworld.scd.scd_data = new Underworld.UWBlock[n];
+        Underworld.scd.scd_data[0] = new Underworld.UWBlock
+        {
+            Data = new byte[sourceLen0 - 16],
+            DataLen = sourceLen0 - 16,
+        };
+
+        byte[] rewritten = ScdArkWriter.Serialize("SAVE0");
+
+        for (int i = 0; i < n; i++)
+        {
+            int len = (int)Underworld.Loader.getAt(rewritten, 6 + n * 8 + i * 4, 32);
+            int avail = (int)Underworld.Loader.getAt(rewritten, 6 + n * 12 + i * 4, 32);
+            Assert.Equal(len, avail);
+        }
+        Assert.Equal(sourceLen0 - 16, (int)Underworld.Loader.getAt(rewritten, 6 + n * 8, 32));
+    }
 }

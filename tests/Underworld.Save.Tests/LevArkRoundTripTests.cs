@@ -120,6 +120,205 @@ public class LevArkRoundTripTests : IDisposable
         Assert.Equal(modifiedByte, reloadedBlock0.Data[SafeOffset]);
     }
 
+    private static (int off, int flags, int len, int avail) Uw2Header(byte[] ark, int block)
+    {
+        int n = (int)Underworld.Loader.getAt(ark, 0, 32);
+        return ((int)Underworld.Loader.getAt(ark, 6 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 4 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 8 + block * 4, 32),
+                (int)Underworld.Loader.getAt(ark, 6 + n * 12 + block * 4, 32));
+    }
+
+    [Fact]
+    public void Uw2VisitedLevel_Serialize_WritesTheBlockTheWayDosDoes()
+    {
+        // DOS reads an uncompressed block by copying its recorded length into a tilemap
+        // buffer of 0x7E08 bytes (ReadArkFileBlock_ovr093_C33, InitialiseEmptyTileMapData_ovr128_0),
+        // and writes every level block itself as flags 0, length and space 0x7E08.
+        // The port used to write 0x8000, 504 bytes past the end of that buffer.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        LevArkLoader.LoadLevArkFileData(folder: "SAVE0");
+
+        UWTileMap.dungeons = new UWTileMap[UWTileMap.NO_OF_LEVELS];
+        UWTileMap.dungeons[0] = new UWTileMap(0);
+
+        byte[] rewritten = LevArkWriter.Serialize();
+
+        var (off, flags, len, avail) = Uw2Header(rewritten, 0);
+        Assert.NotEqual(0, off);
+        Assert.Equal(0, flags);
+        Assert.Equal(0x7E08, len);
+        Assert.Equal(0x7E08, avail);
+    }
+
+    [Fact]
+    public void Uw2UnchangedBlocks_Serialize_CopiedExactlyWithTheirSlack()
+    {
+        // A block the port did not change must reach the file as the source held it,
+        // compressed bytes, flags, length and available space alike. Decompressing it
+        // on the way through made texture maps and automaps longer than DOS's buffers
+        // and left the old compressed "available" figure describing the wrong bytes.
+        // Where bit 2 marks slack, the slack has to be reserved too, since DOS may later
+        // write that much in place.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        LevArkLoader.LoadLevArkFileData(folder: "SAVE0");
+        byte[] source = LevArkLoader.lev_ark_file_data;
+
+        UWTileMap.dungeons = new UWTileMap[UWTileMap.NO_OF_LEVELS];
+        UWTileMap.dungeons[0] = new UWTileMap(0); // one replaced block, so the layout moves
+
+        byte[] rewritten = LevArkWriter.Serialize();
+
+        int checkedBlocks = 0;
+        int withSlack = 0;
+        for (int i = 1; i < 320; i++)
+        {
+            var src = Uw2Header(source, i);
+            var dst = Uw2Header(rewritten, i);
+            if (src.off == 0)
+            {
+                Assert.Equal(0, dst.off);
+                continue;
+            }
+            Assert.Equal(src.flags, dst.flags);
+            Assert.Equal(src.len, dst.len);
+            Assert.Equal(src.avail, dst.avail);
+            for (int b = 0; b < src.len; b++)
+            {
+                Assert.True(source[src.off + b] == rewritten[dst.off + b],
+                    $"block {i} byte {b} differs");
+            }
+
+            // The next block must start after the reserved space, not just the data.
+            int reserved = ((src.flags & 4) != 0) ? Math.Max(src.avail, src.len) : src.len;
+            if (reserved > src.len) withSlack++;
+            for (int j = 0; j < 320; j++)
+            {
+                var other = Uw2Header(rewritten, j);
+                if (j == i || other.off == 0) continue;
+                Assert.False(other.off > dst.off && other.off < dst.off + reserved,
+                    $"block {j} starts inside block {i}'s reserved space");
+            }
+            checkedBlocks++;
+        }
+        Assert.True(checkedBlocks >= 80, $"only {checkedBlocks} blocks checked");
+        Assert.True(withSlack > 0, "no block in the fixture carries slack, so the reservation went untested");
+    }
+
+    /// <summary>Rewrites one UW2 header field in place.</summary>
+    private static void SetUw2Header(byte[] ark, int table, int block, int value)
+    {
+        int n = (int)Underworld.Loader.getAt(ark, 0, 32);
+        Underworld.Loader.setAt(ark, 6 + table * n * 4 + block * 4, 32, value);
+    }
+
+    [Fact]
+    public void Uw2OversizedUncompressedLevel_Serialize_TrimmedToDosBuffer()
+    {
+        // Earlier port builds wrote 0x8000-byte level blocks, and DOS sometimes leaves a
+        // few junk bytes past 0x7E08. Passed through untouched, either would overrun
+        // DOS's 0x7E08 level buffer, so the writer trims them.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        LevArkLoader.LoadLevArkFileData(folder: "SAVE0");
+
+        UWTileMap.dungeons = new UWTileMap[UWTileMap.NO_OF_LEVELS];
+        UWTileMap.dungeons[1] = new UWTileMap(1);
+        UWTileMap.dungeons[1].lev_ark_block.Data = (byte[])UWTileMap.dungeons[1].lev_ark_block.Data.Clone();
+        byte[] block1 = UWTileMap.dungeons[1].lev_ark_block.Data;
+
+        // Build a source whose level 1 is an uncompressed 0x8000 block, as old builds wrote.
+        byte[] padded = new byte[0x8000];
+        Buffer.BlockCopy(block1, 0, padded, 0, Math.Min(block1.Length, 0x7E08));
+        UWTileMap.dungeons[1].lev_ark_block.Data = padded;
+        byte[] withOldBlock = LevArkWriter.Serialize();
+        var off = Uw2Header(withOldBlock, 1).off;
+        SetUw2Header(withOldBlock, 2, 1, 0x8000);   // length
+        SetUw2Header(withOldBlock, 3, 1, 0x8000);   // available
+        // The block's bytes are 0x7E08 long in that file, so give it the 504 more it claims
+        // by appending them at the end and pointing the block there.
+        byte[] source = new byte[withOldBlock.Length + 0x8000];
+        Buffer.BlockCopy(withOldBlock, 0, source, 0, withOldBlock.Length);
+        Buffer.BlockCopy(padded, 0, source, withOldBlock.Length, 0x8000);
+        SetUw2Header(source, 0, 1, withOldBlock.Length);
+        Assert.NotEqual(0, off);
+
+        LevArkLoader.lev_ark_file_data = source;
+        UWTileMap.dungeons = null;              // level 1 untouched this session
+        byte[] rewritten = LevArkWriter.Serialize();
+
+        var h = Uw2Header(rewritten, 1);
+        Assert.Equal(0, h.flags);
+        Assert.Equal(0x7E08, h.len);
+        Assert.Equal(0x7E08, h.avail);
+        for (int b = 0; b < 0x7E08; b++)
+        {
+            Assert.True(padded[b] == rewritten[h.off + b], $"byte {b} differs");
+        }
+    }
+
+    [Fact]
+    public void Uw2TruncatedSourceBlock_Serialize_Throws()
+    {
+        // A block whose data runs past the end of the source must fail the save, which
+        // leaves the previous slot in place, rather than be padded with zeros.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        LevArkLoader.LoadLevArkFileData(folder: "SAVE0");
+        byte[] source = (byte[])LevArkLoader.lev_ark_file_data.Clone();
+
+        // Point the last-placed block's data past the end of the file.
+        int last = 0, lastOff = 0;
+        for (int i = 0; i < 320; i++)
+        {
+            int o = Uw2Header(source, i).off;
+            if (o > lastOff) { lastOff = o; last = i; }
+        }
+        SetUw2Header(source, 2, last, source.Length - lastOff + 1);
+        LevArkLoader.lev_ark_file_data = source;
+        UWTileMap.dungeons = null;
+
+        Assert.Throws<InvalidDataException>(() => LevArkWriter.Serialize());
+    }
+
+    [Fact]
+    public void Uw2LoadedLevel_Serialize_WritesTheLiveAutomap()
+    {
+        // Issue #69: the UW2 writer never wrote automaps, so everything explored since the
+        // source save was lost. DOS writes one 4096-byte automap per visited level.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        LevArkLoader.LoadLevArkFileData(folder: "SAVE0");
+
+        automap[] origAutomaps = automap.automaps;
+        try
+        {
+            automap.automaps = new automap[UWTileMap.NO_OF_LEVELS];
+            automap.automaps[3] = new automap(3);
+            automap.automaps[3].buffer[64 * 10 + 12] = 0x5A;
+
+            byte[] rewritten = LevArkWriter.Serialize();
+
+            var (off, flags, len, avail) = Uw2Header(rewritten, 160 + 3);
+            Assert.NotEqual(0, off);
+            Assert.Equal(0, flags);
+            Assert.Equal(4096, len);
+            Assert.Equal(4096, avail);
+            Assert.Equal(0x5A, rewritten[off + 64 * 10 + 12]);
+
+            // And the port reads it back.
+            LevArkLoader.lev_ark_file_data = rewritten;
+            var reloaded = new automap(3);
+            Assert.Equal(0x5A, reloaded.buffer[64 * 10 + 12]);
+        }
+        finally
+        {
+            automap.automaps = origAutomaps;
+        }
+    }
+
     [Fact]
     public void Uw1FullArk_Reassemble_Block0ReadBackIdentically()
     {
