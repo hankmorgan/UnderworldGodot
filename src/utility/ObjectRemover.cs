@@ -163,6 +163,10 @@ namespace Underworld
 
         static void RemoveTriggerChain(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toUnlink)
         {
+            // Decided before anything is released: releasing clears the item id.
+            bool isTimer = _RES == GAME_UW2
+                && triggerObjectDat.triggertype(toUnlink.item_id) == (int)triggerObjectDat.triggertypes.TIMER;
+            int triggerIndex = toUnlink.index;
             var linkedObject = GetLinkNextObject(objectlist, objectdata, toUnlink.PTR + 6);
             if (linkedObject != null)
             {
@@ -185,12 +189,10 @@ namespace Underworld
                         toUnlink: linkedObject);
                 }
 
-                if (_RES == GAME_UW2)
+                if (isTimer)
                 {
-                    if (triggerObjectDat.triggertype(toUnlink.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
-                    {
-                        Debug.Print("handle removal of timer trigger!");//the timer trigger has to be moved in the list of timers. Unknown when in game this would happen/?
-                    }
+                    // DOS takes a removed timer trigger out of the timer list here.
+                    timers.RemoveTimer(triggerIndex);
                 }
             }
         }
@@ -590,7 +592,9 @@ namespace Underworld
                         {
                             if (triggerObjectDat.triggertype(Obj.item_id) == 0xA)
                             {
-                                Debug.Print("TODO special handling for deleting timer triggers.");
+                                // A timer trigger: DOS takes it out of the timer list here, as in
+                                // RemoveTriggersPointingAtTrapToRemove_ovr166_1B84.
+                                timers.RemoveTimer(Obj.index);
                             }
                         }
                         //unlink object and replace with it's next
