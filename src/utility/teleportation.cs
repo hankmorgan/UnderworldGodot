@@ -172,7 +172,13 @@ namespace Underworld
 
             if (removefromtile)
             {
-                playerdat.PlacePlayerInTile(-1, -1, -1, -1);
+                // Take the player out of the tile they are leaving, as the level change
+                // path in HandleTeleportation does. Passing -1 for the previous tile removed
+                // nothing, so a teleport within a level left the player in the old tile's
+                // object chain as well as the new one. A save then carried the player in
+                // the old chain, and DOS UW2 refused to save that game again with
+                // "Cantcrunch badobjlist", because it counted the player twice.
+                playerdat.PlacePlayerInTile(-1, -1, playerdat.playerObject.tileX, playerdat.playerObject.tileY);
             }
 
             Loader.setAt(MotionHandler.PlayerMotionHandler.handlerdata, 0, 16, 0);//Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
