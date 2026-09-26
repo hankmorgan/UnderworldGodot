@@ -214,27 +214,25 @@ namespace Underworld
         /// PlayerObjectStoragePTR = 0xD5, so bytes 6-7 of the player obj
         /// copy live at file offsets 0xDB and 0xDC — both in the plaintext
         /// region. We can write to them directly without touching the seed.
+        /// UW2 is the same shape: the cipher stops at 0x37D and the player
+        /// object copy starts at 0x380, so its link is plain at 0x386.
         /// </summary>
         private static byte[] PatchPlayerLinkInSerialised(byte[] serialised)
         {
             int linkOff = playerdat.PlayerObjectStoragePTR + 6;
             if (linkOff + 1 >= serialised.Length) return serialised;
 
-            // UW1 only. The head must be 0 when no inventory records were emitted;
-            // writing 1 unconditionally told DOS to walk a chain into a file that ends
-            // at InventoryPtr, which hung it at "You reenter the Abyss...". DOS itself
+            // The head must be 0 when no inventory records were emitted; writing 1
+            // unconditionally told DOS to walk a chain into a file that ends at
+            // InventoryPtr, which hung it at "You reenter the Abyss...". DOS itself
             // writes 0 for an empty inventory. See issue #43.
             //
-            // UW2 keeps the previous unconditional 1. Its writer still takes the legacy
-            // straight-copy path, PlayerDatWriter.Serialize says so, and its DOS
-            // invariants are unverified, so deriving a head from a record count computed
-            // against a different InventoryPtr would change a format we cannot test.
-            int head = 1;
-            if (UWClass._RES != UWClass.GAME_UW2)
-            {
-                int records = (serialised.Length - playerdat.InventoryPtr) / 8;
-                head = records > 0 ? 1 : 0;
-            }
+            // UW2 takes the same rule now that its writer emits the same canonical
+            // chain. Both DOS-written UW2 saves we have carry head 1 with their
+            // records starting at slot 1, and the plaintext at the player object
+            // (0x380 + 6) sits past the cipher, as it does for UW1.
+            int records = (serialised.Length - playerdat.InventoryPtr) / 8;
+            int head = records > 0 ? 1 : 0;
 
             // link occupies bits 6-15 of the little-endian word; owner is bits 0-5.
             serialised[linkOff]     = (byte)((serialised[linkOff] & 0x3F) | ((head << 6) & 0xC0));
@@ -284,6 +282,16 @@ namespace Underworld
             if (UWTileMap.current_tilemap != null && UWTileMap.current_tilemap.LevelObjects[1] != null)
             {
                 var playerObj = UWTileMap.current_tilemap.LevelObjects[1];
+
+                // DOS keeps the player object's hit points equal to current vitality. That
+                // holds in every DOS-written save we have checked, ten files across both
+                // games, and DOS UW2 refuses a save where it does not: a new character whose
+                // object carried hit points 0 went back to the main menu on load, and
+                // changing only this byte made it load. The port mirrors vitality into the
+                // object only when play_hp is assigned, and loading a game copies the object
+                // over from PLAYER.DAT, so the two can drift apart. Set it here.
+                playerObj.npc_hp = (byte)playerdat.play_hp;
+
                 for (int i = 0; i <= 0x1A; i++)
                 {
                     playerdat.pdat[playerdat.PlayerObjectStoragePTR + i] = playerObj.DataBuffer[playerObj.PTR + i];
