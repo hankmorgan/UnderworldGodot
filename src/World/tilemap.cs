@@ -270,6 +270,16 @@ namespace Underworld
             lev_ark_block = LevArkLoader.LoadLevArkBlock(NewLevelNo);
             tex_ark_block = LevArkLoader.LoadTexArkBlock(NewLevelNo);
             ovl_ark_block = LevArkLoader.LoadOverlayBlock(NewLevelNo);
+
+            // Old records past the end of the overlay list are not live in DOS, so drop them.
+            if (_RES == GAME_UW2)
+            {
+                LevArkLoader.DiscardOverlaysPastEndOfList(lev_ark_block?.Data, LevArkLoader.UW2OverlayStart);
+            }
+            else if (_RES == GAME_UW1)
+            {
+                LevArkLoader.DiscardOverlaysPastEndOfList(ovl_ark_block?.Data, 0);
+            }
         }
 
         /// <summary>

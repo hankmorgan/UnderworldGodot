@@ -319,6 +319,86 @@ public class LevArkRoundTripTests : IDisposable
         }
     }
 
+    // ---- overlay lists: DOS ends the list at the first record with no link ------------
+
+    private static void SetOverlay(byte[] data, int start, int slot, int link, short duration, int x, int y)
+    {
+        int p = start + slot * 6;
+        int w = (link & 0x3FF) << 6;
+        data[p] = (byte)w; data[p + 1] = (byte)(w >> 8);
+        data[p + 2] = (byte)duration; data[p + 3] = (byte)(duration >> 8);
+        data[p + 4] = (byte)x; data[p + 5] = (byte)y;
+    }
+
+    private static int OverlayLink(byte[] data, int start, int slot) =>
+        ((data[start + slot * 6] | (data[start + slot * 6 + 1] << 8)) >> 6) & 0x3FF;
+
+    [Fact]
+    public void PackOverlays_ClosesGapsAndDropsFinishedRecords()
+    {
+        // DOS counts overlays up to the first record with no link, so a gap would hide
+        // everything after it. A record with duration 0 is free by the port's own test.
+        byte[] data = new byte[64 * 6];
+        SetOverlay(data, 0, 0, 508, -1, 32, 33);
+        SetOverlay(data, 0, 2, 774, 4, 36, 56);   // after a gap at slot 1
+        SetOverlay(data, 0, 3, 443, 0, 30, 61);   // finished
+        SetOverlay(data, 0, 5, 449, 2, 25, 48);
+
+        LevArkWriter.PackOverlays(data, 0);
+
+        Assert.Equal(508, OverlayLink(data, 0, 0));
+        Assert.Equal(774, OverlayLink(data, 0, 1));
+        Assert.Equal(449, OverlayLink(data, 0, 2));
+        for (int slot = 3; slot < 64; slot++)
+        {
+            Assert.Equal(0, OverlayLink(data, 0, slot));
+        }
+        Assert.Equal(56, data[1 * 6 + 5]);        // the whole record moved, not just the link
+    }
+
+    [Fact]
+    public void Uw1LevelLoad_DropsOverlayRecordsPastTheEndOfTheList()
+    {
+        // Seen in a real DOS save: slot 0 live, slot 1 empty, old records in slots 2 and up.
+        // DOS ignores those. Kept, they came back to life once the gap was filled, and DOS
+        // freed an object that had since been reused while it was still in a tile chain.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+        LevArkLoader.LoadLevArkFileData(folder: "DATA");
+        byte[] ark = (byte[])LevArkLoader.lev_ark_file_data.Clone();
+        int ovlOffset = (int)Underworld.Loader.getAt(ark, 2 + 9 * 4, 32);
+        Assert.NotEqual(0, ovlOffset);
+        SetOverlay(ark, ovlOffset, 0, 508, -1, 32, 33);
+        SetOverlay(ark, ovlOffset, 1, 0, 0, 0, 0);
+        SetOverlay(ark, ovlOffset, 2, 443, 0, 30, 61);
+        SetOverlay(ark, ovlOffset, 3, 449, 1, 25, 48);
+        LevArkLoader.lev_ark_file_data = ark;
+
+        var level = new UWTileMap(0);
+
+        byte[] ovl = level.ovl_ark_block.Data;
+        Assert.Equal(508, OverlayLink(ovl, 0, 0));
+        Assert.Equal(0, OverlayLink(ovl, 0, 2));
+        Assert.Equal(0, OverlayLink(ovl, 0, 3));
+        Assert.Equal(0, ovl[3 * 6 + 2]);          // duration cleared too
+    }
+
+    [Fact]
+    public void Uw1OverlayBlock_Serialize_WritesAPackedList()
+    {
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+        byte[] data = new byte[64 * 6];
+        SetOverlay(data, 0, 0, 508, -1, 32, 33);
+        SetOverlay(data, 0, 4, 774, 4, 36, 56);
+
+        byte[] written = LevArkWriter.SerializeOverlayBlock(new UWBlock { Data = data, DataLen = data.Length });
+
+        Assert.Equal(508, OverlayLink(written, 0, 0));
+        Assert.Equal(774, OverlayLink(written, 0, 1));
+        Assert.Equal(0, OverlayLink(written, 0, 4));
+        Assert.Equal(774, OverlayLink(data, 0, 4)); // the live block is not changed
+    }
+
     [Fact]
     public void Uw1FullArk_Reassemble_Block0ReadBackIdentically()
     {

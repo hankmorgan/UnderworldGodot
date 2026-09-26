@@ -77,6 +77,10 @@ namespace Underworld
                 int copyLen = Math.Min(block.Data.Length, targetSize);
                 Buffer.BlockCopy(block.Data, 0, result, 0, copyLen);
             }
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                PackOverlays(result, LevArkLoader.UW2OverlayStart);
+            }
             return result;
         }
 
@@ -109,7 +113,39 @@ namespace Underworld
                 int copyLen = Math.Min(block.Data.Length, UW1OverlayBlockSize);
                 Buffer.BlockCopy(block.Data, 0, result, 0, copyLen);
             }
+            PackOverlays(result, 0);
             return result;
+        }
+
+        /// <summary>
+        /// Rewrites an overlay list the way DOS keeps it: live records packed from slot 0
+        /// in their current order, and nothing after them.
+        ///
+        /// DOS counts overlays from slot 0 up to the first record with no object link and
+        /// ignores the rest (see LevArkLoader.DiscardOverlaysPastEndOfList). The port can
+        /// leave a gap mid-list, because its removal copies slot 63 rather than the last live
+        /// record over the one it removes, and a gap would hide every overlay after it from
+        /// DOS. A record is live when it links an object and its duration is not 0, which is
+        /// the port's own test for a free slot in GetFreeAnimoSlot.
+        /// </summary>
+        public static void PackOverlays(byte[] data, int start)
+        {
+            if (data == null || start + LevArkLoader.OverlayCount * LevArkLoader.OverlayRecordSize > data.Length) return;
+            int size = LevArkLoader.OverlayRecordSize;
+            byte[] packed = new byte[LevArkLoader.OverlayCount * size];
+            int n = 0;
+            for (int i = 0; i < LevArkLoader.OverlayCount; i++)
+            {
+                int p = start + i * size;
+                int link = ((data[p] | (data[p + 1] << 8)) >> 6) & 0x3FF;
+                int duration = (short)(data[p + 2] | (data[p + 3] << 8));
+                if (link != 0 && duration != 0)
+                {
+                    Buffer.BlockCopy(data, p, packed, n * size, size);
+                    n++;
+                }
+            }
+            Buffer.BlockCopy(packed, 0, data, start, packed.Length);
         }
 
         /// <summary>
