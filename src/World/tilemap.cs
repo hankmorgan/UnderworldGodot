@@ -952,6 +952,9 @@ namespace Underworld
                 }
             }
 
+            //Clear the steps between neighbouring slopes of the same type, as DOS does.
+            HideStepsBetweenMatchingSlopes();
+
             //Clear invisible faces on diagonals
             for (y = 1; y < TileMapSizeY; y++)
             {
@@ -1460,6 +1463,70 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Height of a tile's floor at one of its edges, in floor units. A slope rises one
+        /// unit towards the edge it is named for, so a north slope is one higher at its
+        /// north edge (y + 1) than at its south edge.
+        /// </summary>
+        static int EdgeHeight(TileInfo t, short edgeFace)
+        {
+            int h = t.floorHeight;
+            if ((t.tileType == TILE_SLOPE_N && edgeFace == vNORTH)
+                || (t.tileType == TILE_SLOPE_S && edgeFace == vSOUTH)
+                || (t.tileType == TILE_SLOPE_E && edgeFace == vEAST)
+                || (t.tileType == TILE_SLOPE_W && edgeFace == vWEST))
+            {
+                h++;
+            }
+            return h;
+        }
+
+        /// <summary>
+        /// Hides the face between two neighbouring slopes of the same type unless the step
+        /// between them is more than one floor unit.
+        ///
+        /// DOS decides whether to draw a wall on a tile face in seg032_2E9B (UW1 seg031, FM Towns
+        /// enc_n_chk_): it compares the heights of the two tiles at their shared edge, and when
+        /// both tiles are the same type, and not open floor, it adds one to this side before
+        /// comparing. So the one-unit step where one slope ends and an identical slope begins
+        /// is not drawn, and you see through it. That is the Escher staircase in Talorus, a
+        /// ring of slopes at the same floor height that DOS shows with see-through walls
+        /// (issue #180). A larger step is still drawn.
+        ///
+        /// Only slopes are handled. The same DOS rule covers two neighbouring diagonals of one
+        /// type, which is left alone here until a case needs it.
+        /// </summary>
+        void HideStepsBetweenMatchingSlopes()
+        {
+            for (int y = 0; y <= TileMapSizeY; y++)
+            {
+                for (int x = 0; x <= TileMapSizeX; x++)
+                {
+                    var t = Tiles[x, y];
+                    if (t.tileType < TILE_SLOPE_N || t.tileType > TILE_SLOPE_W || t.TerrainChange) continue;
+                    if (x < TileMapSizeX)
+                    {
+                        HideStepIfMatching(t, Tiles[x + 1, y], vEAST, vWEST);
+                    }
+                    if (y < TileMapSizeY)
+                    {
+                        HideStepIfMatching(t, Tiles[x, y + 1], vNORTH, vSOUTH);
+                    }
+                }
+            }
+        }
+
+        static void HideStepIfMatching(TileInfo a, TileInfo b, short faceOfA, short faceOfB)
+        {
+            if (b.tileType != a.tileType || b.TerrainChange) return;
+            int edgeA = EdgeHeight(a, faceOfA);
+            int edgeB = EdgeHeight(b, faceOfB);
+            // Each face is the wall seen from the other tile. DOS draws it only when this
+            // tile's edge is higher than the other's plus one.
+            if (edgeA <= edgeB + 1) a.VisibleFaces[faceOfA] = false;
+            if (edgeB <= edgeA + 1) b.VisibleFaces[faceOfB] = false;
+        }
 
         /// <summary>
         /// Finds a Tile by it's address PTR
