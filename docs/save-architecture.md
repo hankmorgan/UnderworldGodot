@@ -411,10 +411,27 @@ UW2 used a straight copy of `pdat`. It now goes through the same remap as UW1, a
 
 A new port character went straight back to the DOS main menu on load. Swapping files one at a time showed `PLAYER.DAT` was the cause, and swapping byte groups from a DOS-made new character showed the byte was the player object's hit points, `0x380 + 8`, which was 0. DOS keeps it equal to current vitality in every DOS save checked, ten files across both games. The port mirrors vitality into the object only when `play_hp` is assigned and overwrites the object from `PLAYER.DAT` on load, so the two could drift. `StashLiveStateToPdat` now sets it.
 
+### 7. A same-level teleport left the player in the old tile's chain
+
+`InitialisePlayerOnLevelOrPositionChange` passed -1 as the previous tile when asked to take the player out of its tile, which removes nothing. After a teleport within a level the player was in two tile chains. The save detaches the player only from its current tile, so the file carried it in the old chain, and DOS loaded it but refused to save again with "Cantcrunch badobjlist": `CheckCountOfAllObjects_seg029_2A8E_1053` found the player twice. It now passes the player's current tile, as the level-change path already did.
+
+### 8. Animation overlays are a list that ends at the first empty link
+
+DOS counts a level's overlays from slot 0 until the first record with no object link and ignores the rest (`seg044_EF3` in UW1, `LoadAnimationOverlays_ovr128_271` in UW2). DOS saves carry old records past that point. The port scanned all 64 slots and took the first with duration 0 as free, which on Hank's UW1 "exploring lvl 8" save was the gap ending the list. A door started in the port filled it, DOS then counted the old records as live, ended them, and freed an object still linked from its tile; the next static DOS allocated reused it and sat in two tile chains. The port now clears records past the end of the list when it loads a level, and packs live records from slot 0 when it saves, so a gap left by its removal, which copies slot 63 rather than the last live record, cannot hide overlays from DOS.
+
+### Verified in DOS, both games
+
+Scenarios driven through the port's own handlers in a test build, saved, loaded in DOS, advanced and saved again by DOS, then checked for object accounting and inventory:
+
+- UW2: pickup from the world, an item moved into a bag left open, a door saved mid-swing, an object thrown and saved in flight (DOS lands it where the port does), a same-level teleport, and DOS crossing to another level after loading a port save.
+- UW1: an item moved into a bag, a door mid-swing, and a ring thrown and saved in flight, on Hank's late-game DOS save.
+
+Saving while holding an item is not a case: DOS refuses the Options menu then ("You cannot select options partway through an action"), and so does the port.
+
 ### Not tested
 
-- DOS changing level after loading a port save, which makes DOS write blocks into its working archive. The in-place write rule in section 3 is why this should work, but no run has walked DOS down a staircase.
-- Long play in the port. The runs above load, optionally teleport, and save.
+- Long play in the port. The scenarios above are a handful of actions each.
+- Timer triggers in UW2. DOS counts them the same way as overlays, up to the first zero; the port has not been checked against that.
 
 ## Files
 
