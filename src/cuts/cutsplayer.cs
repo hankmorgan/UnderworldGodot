@@ -39,7 +39,6 @@ namespace Underworld
         // The composite is wider (horizontal) or taller (vertical) than 320x200.
         // See CutsceneBitmap_ovr108_33E0 (line 446657) for LBACK loading.
         static Godot.Image vpComposite;
-        static Godot.Image vpCompositeClean;  // pristine LBACK for per-frame reset
         static bool vpIsHorizontal;
         static System.Collections.Generic.List<(int pos, int extent, int fileIdx, byte[] rawPixels)> vpFileMappings = new();
 
@@ -48,67 +47,29 @@ namespace Underworld
         static CutsLoader vpSpriteLoader;
         static int vpSpriteFrame;
 
-        // === Panorama horizontal-scroll fixes ===
+        // === Animation during a panorama scroll ===
         //
-        // Original symptom: CS000's horizontal scroll (cart heading to bridge)
-        // showed two carts — one pre-rendered in LBACK000 and a second animating
-        // via N03. N03 is a cart-only sprite with no background-erase writes, so
-        // it couldn't paint over LBACK's cart.
+        // While a panorama scrolls, DOS does not keep the LPF frame in a buffer
+        // of its own. Each frame's delta is decoded straight onto the screen at
+        // the current view position (ovr108_24AB: record type 1 goes to
+        // DRAW_RELATED_ovr108_189F, which writes through the row table that
+        // seg003_0272_2A0D rebuilds at every pan step). Skipped pixels leave
+        // the scrolled picture alone, and written pixels become part of the
+        // picture and scroll with it from then on.
         //
-        // Secondary symptom: once (a) was fixed, the cart drifted left 1,2,3,4
-        // pixels every 4 frames before snapping back on the 5th frame.
+        // The sprite LPFs are authored for that. CS000.N06 (castle flags)
+        // redraws one of its two flags every 4th frame, alternating, with the
+        // 1 pixel per frame scroll already built in, and each delta repaints
+        // the background where that flag was drawn 8 frames (8 pixels) earlier.
+        // CS000.N03 (the cart) likewise paints the background over the cart
+        // that LBACK000 holds at rest. So we write each delta's pixels into
+        // vpComposite at the view position and crop, as DOS does.
         //
-        // Root causes:
-        //   (a) LBACK000.BYT contains the cart at rest. During scroll the DOS
-        //       engine substitutes a cart-less backdrop (CS000.N04's frame 0).
-        //       We couldn't locate the exact engine mechanism in the disassembly
-        //       — `Cutscene_23_Unk_ovr108_1393` (start-scroll) only stores scroll
-        //       state and doesn't touch the panorama buffer — but empirically
-        //       N04's frame 0 is what DOSBox ends up with as the scroll backdrop.
-        //       We reproduce this visually by swapping the LBACK000 region of
-        //       vpComposite with N04's frame 0 at the moment the sprite first
-        //       writes pixels (see vpPendingBackdropSwap).
-        //
-        //   (b) N03's LPF is delta-encoded: roughly every 5th frame carries a
-        //       real RLE payload (recordSize > 4), the intervening 4 frames are
-        //       empty deltas (recordSize ≤ 4) that keep the pixel buffer as-is.
-        //       The panorama, however, pans 1 pixel per display frame. Without
-        //       compensation, the sprite image stays pinned at the viewport
-        //       origin while the scene drifts under it, producing the 1,2,3,4
-        //       pixel drift. Between LPF keyframes we offset the sprite draw by
-        //       `vpSpriteStaleOffset` pixels in the pan direction; the offset
-        //       resets to 0 at each keyframe, at which point the new sprite
-        //       image's internal cart position is already authored to align
-        //       with the panned scene (see CutsLoader.IsKeyFrame).
-        //
-        // This only applies to horizontal scrolls (CS000 intro's cart, and
-        // CS002's later scroll). Vertical scenes (N05/N06/N07) have dense
-        // sprites with their own erase writes and align naturally.
-        //
-        // Verification:
-        //   - DOSBox per-capture-frame pixel diff from frame 1796 (scroll start)
-        //     through 2310 (fade): content changes every 5 capture frames at
-        //     70 fps = 14 fps effective render rate, matching N03's authored
-        //     fps header and our frameTime.
-        //   - Our dump frames 1-69 compared against DOSBox frames 1851+N*5
-        //     align with zero horizontal offset and <1% pixel diff (palette
-        //     conversion variance).
-
-        // Deferred backdrop swap: set true at start-scroll; swap triggers on the
-        // first sprite frame that has any RLE writes (non-empty mask). N03's
-        // first few frames are all-Skip so LBACK's cart remains visible during
-        // that grace window — a seamless hand-off between LBACK's cart and the
-        // sprite's cart.
-        static bool vpPendingBackdropSwap;
-        static bool vpBackdropSwapped;
-
-        // Sprite-stale offset: pixel offset applied to sprite draw position on
-        // null-delta LPF frames, to keep the sprite scene-aligned while the
-        // panorama pans underneath. See the block comment above for why.
-        // Resets to 0 on each LPF keyframe; increments by 1 on each null-delta
-        // frame. Offset direction = opposite of scroll direction (sprite slides
-        // in the same direction the scene is panning).
-        static int vpSpriteStaleOffset;
+        // Earlier versions reset the sprite to the backdrop on every keyframe,
+        // pasted it over each crop and nudged it between keyframes. That tore
+        // the castle flags, because whichever flag a keyframe did not redraw
+        // fell back to the one baked into LBACK002, and it needed a
+        // substitute backdrop (N04 frame 0) for the cart.
 
         // CutsceneNo accessible to ExecuteCommand for sprite path construction
         static int currentCutsceneNo;
@@ -342,131 +303,83 @@ namespace Underworld
             }
 
             vpComposite = img;
-            vpCompositeClean = (Godot.Image)img.Duplicate();
             Debug.Print($"  Composite: {compW}x{compH}, scroll={(vpIsHorizontal ? "horizontal" : "vertical")}");
         }
 
         /// <summary>
-        /// Extract the visible viewport region from the panorama composite at the
-        /// current scroll position. Implements the scroll formula from
+        /// Top-left of the view within the panorama composite at the given
+        /// frame. Implements the scroll formula from
         /// AnimateViewportScroll_ovr108_B8E (line 439098 in uw2_asm.asm):
         ///   pos = start + (frame+1) * delta * direction_table[index]
-        /// The (frame+1) comes from `inc ax` at line 439116 before the multiply.
+        /// The (frame+1) comes from `inc ax` at line 439116 before the multiply,
+        /// and applies to both axes.
         /// Direction tables at dseg_67d6+0x1068 (DX) and +0x1070 (DY) (line 358318).
         /// VGA hardware wraps the CRT start address; we use linear equivalents.
         /// </summary>
-        static Godot.Image GetScrollFrame(int totalFrame)
+        static Vector2I ScrollOrigin(int totalFrame)
         {
-            if (vpComposite == null) return null;
-
             int frameAdj = totalFrame + 1; // assembly uses frame+1 (ovr108_B9E, line 439116)
-            int displayH = SceneDisplayH;
-
-            Godot.Image region;
             if (vpIsHorizontal)
             {
                 int scrollX = vpStartX + vpScrollDX * frameAdj;
                 int maxScroll = vpComposite.GetWidth() - 320;
-                int scrollPos = System.Math.Clamp(scrollX, 0, maxScroll);
-                region = Godot.Image.Create(320, vpComposite.GetHeight(), false, vpComposite.GetFormat());
-                region.BlitRect(vpComposite,
-                    new Rect2I(scrollPos, 0, 320, vpComposite.GetHeight()),
-                    Vector2I.Zero);
+                return new Vector2I(System.Math.Clamp(scrollX, 0, maxScroll), 0);
             }
-            else
-            {
-                // Vertical scroll: convert VGA wrapping start position to composite Y.
-                // initial_y = (vp_start_y + 1) % canvas_h maps VGA start to composite.
-                // DY direction is inverted for composite: DY=-1 → pos increases,
-                // DY=+1 → pos decreases. This inversion occurs because VGA CRT start
-                // address increase pans content upward on screen.
-                // Examples from bytecode:
-                //   CS000: set-start [0,359], scroll Up (DY=-1): initial=0, increases 0→200
-                //   CS002: set-start [0,199], scroll Down (DY=+1): initial=200, decreases 200→0
-                int initialY = (vpStartY + 1) % vpComposite.GetHeight();
-                int scrollPos = initialY + (-vpScrollDY) * totalFrame;
-                int maxScroll = vpComposite.GetHeight() - displayH;
-                scrollPos = System.Math.Clamp(scrollPos, 0, maxScroll);
-                region = Godot.Image.Create(320, displayH, false, vpComposite.GetFormat());
-                region.BlitRect(vpComposite,
-                    new Rect2I(0, scrollPos, 320, displayH),
-                    Vector2I.Zero);
-            }
+            // Vertical scroll: convert VGA wrapping start position to composite Y.
+            // initial_y = (vp_start_y + 1) % canvas_h maps VGA start to composite.
+            // DY direction is inverted for composite: DY=-1 → pos increases,
+            // DY=+1 → pos decreases. This inversion occurs because VGA CRT start
+            // address increase pans content upward on screen.
+            // Examples from bytecode:
+            //   CS000: set-start [0,359], scroll Up (DY=-1): top row = frame+1
+            //   CS002: set-start [0,199], scroll Down (DY=+1): top row = 200-(frame+1)
+            int initialY = (vpStartY + 1) % vpComposite.GetHeight();
+            int scrollPos = initialY + (-vpScrollDY) * frameAdj;
+            int maxScrollY = vpComposite.GetHeight() - SceneDisplayH;
+            return new Vector2I(0, System.Math.Clamp(scrollPos, 0, maxScrollY));
+        }
 
+        /// <summary>
+        /// Extract the visible viewport region from the panorama composite at the
+        /// current scroll position.
+        /// </summary>
+        static Godot.Image GetScrollFrame(int totalFrame)
+        {
+            if (vpComposite == null) return null;
+            var origin = ScrollOrigin(totalFrame);
+            int w = 320;
+            int h = vpIsHorizontal ? vpComposite.GetHeight() : SceneDisplayH;
+            var region = Godot.Image.Create(w, h, false, vpComposite.GetFormat());
+            region.BlitRect(vpComposite, new Rect2I(origin.X, origin.Y, w, h), Vector2I.Zero);
             return region;
         }
 
         /// <summary>
-        /// Overlay animated sprite pixels (cart, flags) onto a scroll viewport
-        /// region. Uses the sprite LPF's per-frame RLE write mask so we only
-        /// paint pixels explicitly written by the sprite animation, preserving
-        /// the scrolling LBACK background under RLE Skip regions.
-        ///
-        /// (offX, offY) shift the sprite's draw position within the region. For
-        /// horizontal scroll this is the stale-offset compensation for null-delta
-        /// LPF frames (see the panorama-scroll block comment at the top of the
-        /// file). For the unshifted call path it defaults to (0, 0).
-        ///
-        /// `advance` controls whether vpSpriteFrame increments — retained for
-        /// the (currently unused) sub-tick path where multiple display frames
-        /// render the same sprite frame during a finer pan interpolation.
-        ///
-        /// Also hosts the one-shot deferred-backdrop swap: on the first sprite
-        /// frame whose RLE actually writes pixels we replace the LBACK000 half
-        /// of the panorama with the next LPF's frame 0 (e.g. CS000.N04 for the
-        /// cart scroll), removing the at-rest cart that was baked into LBACK.
+        /// Write the current sprite frame's delta into the panorama composite at
+        /// the view position, as DOS decodes it onto the scrolled screen (see the
+        /// block comment at the top of the file). Only keyframes carry pixels;
+        /// the sprite LPF's per-frame RLE write mask says which pixels the delta
+        /// wrote. Advances vpSpriteFrame.
         /// </summary>
-        static void ApplySpriteOverlay(Godot.Image region, bool advance = true)
-        {
-            ApplySpriteOverlay(region, 0, 0, advance);
-        }
-
-        static void ApplySpriteOverlay(Godot.Image region, int offX, int offY, bool advance)
+        static void WriteSpriteDelta(int totalFrame)
         {
             if (vpSpriteLoader == null || vpSpriteLoader.WriteMasks == null) return;
-            if (vpSpriteFrame >= vpSpriteLoader.ImageCache.Length) return;
-
-            var spriteTex = vpSpriteLoader.ImageCache[vpSpriteFrame];
-            var mask = vpSpriteLoader.WriteMasks[vpSpriteFrame];
-            if (spriteTex == null || mask == null) { if (advance) vpSpriteFrame++; return; }
-
-            // Trigger deferred backdrop swap on first non-empty sprite frame.
-            if (vpPendingBackdropSwap && !vpBackdropSwapped)
-            {
-                bool hasWrites = false;
-                for (int i = 0; i < mask.Length; i++) { if (mask[i] != 0) { hasWrites = true; break; } }
-                if (hasWrites)
-                {
-                    SwapBackdropToNextFile();
-                    vpBackdropSwapped = true;
-                    // Rebuild this frame's region from the swapped composite.
-                    var rebuilt = GetScrollFrame(vpFrameOffset + vpSpriteFrame);
-                    if (rebuilt != null)
-                        region.BlitRect(rebuilt,
-                            new Rect2I(0, 0, rebuilt.GetWidth(), rebuilt.GetHeight()),
-                            Vector2I.Zero);
-                }
-            }
+            int f = vpSpriteFrame++;
+            if (f >= vpSpriteLoader.ImageCache.Length || !vpSpriteLoader.IsKeyFrame[f]) return;
+            var mask = vpSpriteLoader.WriteMasks[f];
+            var spriteTex = vpSpriteLoader.ImageCache[f];
+            if (spriteTex == null || mask == null) return;
 
             var spriteImg = spriteTex.GetImage();
-            int rw = region.GetWidth();
-            int rh = region.GetHeight();
+            var origin = ScrollOrigin(totalFrame);
             int sw = spriteImg.GetWidth();
-            int sh = spriteImg.GetHeight();
-            int h = System.Math.Min(sh, rh);
-            int w = System.Math.Min(sw, rw);
-
+            int viewH = vpIsHorizontal ? vpComposite.GetHeight() : SceneDisplayH;
+            int h = System.Math.Min(spriteImg.GetHeight(), viewH);
+            int w = System.Math.Min(sw, 320);
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
-                {
-                    int rx = x + offX;
-                    int ry = y + offY;
-                    if (rx < 0 || rx >= rw || ry < 0 || ry >= rh) continue;
                     if (mask[y * sw + x] != 0)
-                        region.SetPixel(rx, ry, spriteImg.GetPixel(x, y));
-                }
-
-            if (advance) vpSpriteFrame++;
+                        vpComposite.SetPixel(origin.X + x, origin.Y + y, spriteImg.GetPixel(x, y));
         }
 
         // --- Debug: dump composited scroll frames for pixel-perfect comparison
@@ -483,32 +396,6 @@ namespace Underworld
             string dirAbs = Godot.ProjectSettings.GlobalizePath($"user://cuts_dump/{subdir}");
             Godot.DirAccess.MakeDirRecursiveAbsolute(dirAbs);
             img.SavePng($"{dirAbs}/frame_{totalFrame:D3}.png");
-        }
-
-        /// <summary>
-        /// Replace the LBACK000 region of the panorama composite with the next
-        /// LPF file's frame 0 content. Called on the first sprite frame that
-        /// actually writes pixels, to remove the at-rest cart baked into
-        /// LBACK000 so the animated sprite cart is the only cart visible.
-        /// Horizontal scroll only; see the block comment at the top of the file.
-        /// </summary>
-        static void SwapBackdropToNextFile()
-        {
-            if (vpComposite == null) return;
-            int nextExt = currentFileExt + 1;
-            var backdropPath = System.IO.Path.Combine(
-                BasePath, "CUTS", GetsCutsceneFileName(currentCutsceneNo, nextExt));
-            if (!System.IO.File.Exists(backdropPath)) return;
-            var backdrop = new CutsLoader(GetsCutsceneFileName(currentCutsceneNo, nextExt));
-            var tex = backdrop.LoadImageAt(0);
-            if (tex == null) return;
-            var img = tex.GetImage();
-            int blitH = System.Math.Min(img.GetHeight(), vpComposite.GetHeight());
-            int blitW = System.Math.Min(320, vpComposite.GetWidth());
-            vpComposite.BlitRect(img, new Rect2I(0, 0, blitW, blitH), Vector2I.Zero);
-            if (vpCompositeClean != null)
-                vpCompositeClean.BlitRect(img, new Rect2I(0, 0, blitW, blitH), Vector2I.Zero);
-            Debug.Print($"  Backdrop swap: N{nextExt:D2} frame 0 -> composite[0:{blitW}]");
         }
 
         /// <summary>
@@ -797,7 +684,6 @@ namespace Underworld
                         vpFrameOffset = 0;
                         vpFileMappings.Clear();
                         vpComposite = null;
-                        vpCompositeClean = null;
                         vpSpriteLoader = null;
                         vpSpriteFrame = 0;
                         Debug.Print($"  Viewport: {vpCanvasWidth}x{vpCanvasHeight} offsetY={vpOffsetY}");
@@ -866,17 +752,6 @@ namespace Underworld
                             }
                         }
 
-                        // Backdrop swap (horizontal only): LBACK000 has the cart at its
-                        // rest position; the next LPF (N04) is a cart-less variant and
-                        // N03 is the cart-only sprite overlay. N03's first 3 frames are
-                        // all-Skip (no writes) so LBACK shows through unchanged — cart
-                        // stays visible. When the sprite starts writing (frame 3+), the
-                        // backdrop flips to N04 and the sprite picks up the cart from
-                        // ~the same rest position, giving a seamless hand-off.
-                        // Vertical scenes (N06) include erase writes so no swap needed.
-                        vpPendingBackdropSwap = vpIsHorizontal;
-                        vpBackdropSwapped = false;
-                        vpSpriteStaleOffset = 0;
                         break;
                     }
 
@@ -1192,40 +1067,18 @@ namespace Underworld
                         // when canvas != 320x200), the normal DrawBitMap call is SKIPPED
                         // (ovr108_24AB, line 443935). Instead:
                         // 1. AnimateViewportScroll shifts the VGA CRT start address
-                        // 2. LPF frame decoded into persistent buffer (delta chaining)
-                        // 3. DrawArtToScreen draws at fixed screen position
-                        // We simulate this by cropping the LBACK composite and
-                        // overlaying sprite pixels via the LPF's RLE write mask.
-                        // See the panorama-scroll block comment at the top of the
-                        // file for the horizontal-scroll fixes layered on top.
+                        // 2. A delta record (type 1) is decoded straight onto the
+                        //    screen at the view position by DRAW_RELATED_ovr108_189F
+                        // We simulate this by writing the frame's delta into the
+                        // LBACK composite at the view position and cropping it.
+                        // See the panorama block comment at the top of the file.
                         if (vpScrollActive && vpComposite != null)
                         {
                             int totalFrame = vpFrameOffset + frame;
+                            WriteSpriteDelta(totalFrame);
                             var scrollRegion = GetScrollFrame(totalFrame);
                             if (scrollRegion != null)
                             {
-                                // Null-delta stale-offset: keep the sprite
-                                // scene-aligned while the panorama pans between
-                                // LPF keyframes. Resets on each LPF keyframe;
-                                // increments on each null-delta frame. Offset
-                                // direction is opposite the scroll delta so the
-                                // sprite slides in the same direction the scene
-                                // is moving.
-                                int offX = 0, offY = 0;
-                                if (vpSpriteLoader != null
-                                    && vpSpriteLoader.IsKeyFrame != null
-                                    && vpSpriteFrame < vpSpriteLoader.IsKeyFrame.Length)
-                                {
-                                    if (vpSpriteLoader.IsKeyFrame[vpSpriteFrame])
-                                        vpSpriteStaleOffset = 0;
-                                    else
-                                        vpSpriteStaleOffset++;
-                                    if (vpIsHorizontal)
-                                        offX = -vpSpriteStaleOffset * vpScrollDX;
-                                    else
-                                        offY = vpSpriteStaleOffset * vpScrollDY;
-                                }
-                                ApplySpriteOverlay(scrollRegion, offX, offY, advance: true);
                                 uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
                                 DumpFrame(scrollRegion, CutsceneNo, currentFileExt, totalFrame);
                             }
