@@ -228,6 +228,18 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// DOS refreshes the music on every cutscene frame (ovr108_162B calls
+        /// ovr108_13D6, which calls RefreshMusic_seg016_1E73_2BB2). That is what
+        /// repeats the intro theme (0x18) when it finishes, since the XMI has no
+        /// loop of its own. UW2 only: UW1's cutscene loop has not been checked.
+        /// </summary>
+        static void RefreshCutsceneMusic()
+        {
+            if (_RES == GAME_UW2 && MusicStreamPlayer.Instance != null)
+                XMIMusic.RefreshMusic();
+        }
+
         public static void StopCutscene()
         {
             cancelRequested = true;
@@ -1171,6 +1183,7 @@ namespace Underworld
                         {
                             goto cleanup;
                         }
+                        RefreshCutsceneMusic();
 
                         // Fire commands scheduled for this frame
                         foreach (var cmd in scheduledCmds)
@@ -1360,6 +1373,7 @@ namespace Underworld
 
                         for (int frame = 0; frame <= maxFrame; frame++)
                         {
+                            RefreshCutsceneMusic();
                             foreach (var cmd in scheduledCmds)
                             {
                                 if (cmd.frame == frame)
