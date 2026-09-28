@@ -663,8 +663,15 @@ namespace Underworld
                         //   bottom margin = 2px (inc dx; inc dx at ovr108_15CE, lines 441401-441403)
                         //   word wrap at 320px, no inter-character spacing
                         // NOTE: game uses underscore-as-dot convention: "_." should render as " ."
+                        // A speech argument of 998 marks a line that continues the speech
+                        // already playing: DOS starts no clip for it
+                        // (CutsceneTextAndSound_ovr108_FDA; FM Towns cutsop_say_ checks
+                        // 0x3E6). Only the UW2 dreams use it, where one clip speaks
+                        // several lines, so show those lines on their frame rather than
+                        // after the whole clip has finished.
+                        bool continuesSpeech = cmd.functionParams[2] == 998;
                         var audioPlayer = main.instance?.DigitalAudioPlayer;
-                        while (audioPlayer != null && audioPlayer.Playing)
+                        while (!continuesSpeech && audioPlayer != null && audioPlayer.Playing)
                         {
                             if (cancelRequested)
                             {
@@ -698,7 +705,7 @@ namespace Underworld
                                     BasePath, "SOUND",
                                     $"{cmd.functionParams[2]:0#}.VOC");
                             }
-                            var sound = vocLoader.Load(vocfile);
+                            var sound = continuesSpeech ? null : vocLoader.Load(vocfile);
                             if (sound != null)
                             {
                                 main.instance.DigitalAudioPlayer.Stream = sound.toWav();
