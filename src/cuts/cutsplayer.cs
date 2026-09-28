@@ -146,7 +146,9 @@ namespace Underworld
         // which calls RotatePaletteEntry_seg023_9 (line 98009).
         static Palette crngPalette;  // working copy of palette for cycling
         static CutsLoader.CrngEntry[] crngRanges;
-        static int[] crngCounters;   // per-range accumulator (mirrors disasm pad field)
+        static long[] crngLastRotation; // per range, when it last rotated (DOS keeps this in the pad field)
+        static readonly System.Diagnostics.Stopwatch crngClock = System.Diagnostics.Stopwatch.StartNew();
+        static long CrngTicks => crngClock.ElapsedTicks * 256 / System.Diagnostics.Stopwatch.Frequency; // DOS 256 Hz clock
 
         static int StringBlock;
         static bool cancelRequested;
@@ -163,7 +165,9 @@ namespace Underworld
         static void InitCrngCycling(CutsLoader loader)
         {
             crngRanges = loader?.CrngRanges;
-            crngCounters = crngRanges != null ? new int[crngRanges.Length] : null;
+            crngLastRotation = crngRanges != null ? new long[crngRanges.Length] : null;
+            if (crngLastRotation != null)
+                System.Array.Fill(crngLastRotation, CrngTicks);
             if (loader?.EmbeddedPalette != null)
             {
                 // Take a working copy of the palette for cycling
@@ -194,15 +198,17 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Apply one tick of CRNG colour cycling to the working palette.
-        /// Mirrors UpdatePaletteFadeTimers_ovr108_934 (line 438583):
-        /// for each range with rate > 0, accumulate the counter and rotate
-        /// when it overflows. RotatePaletteEntry_seg023_9 (line 98009)
-        /// rotates forward: save first, shift entries down, wrap to end.
+        /// Rotate every colour-cycling range that is due, as DOS does in
+        /// UpdatePaletteFadeTimers_ovr108_934: a range with a non-zero rate
+        /// rotates once 0x38E / rate ticks of the 256 Hz clock have passed since
+        /// it last rotated (integer division). The flags are not checked.
+        /// RotatePaletteEntry_seg023_9 rotates forward: save first, shift
+        /// entries down, wrap to end.
         /// </summary>
         static void ApplyCrngCycling()
         {
-            if (crngRanges == null || crngPalette == null || crngCounters == null) return;
+            if (crngRanges == null || crngPalette == null || crngLastRotation == null) return;
+            long now = CrngTicks;
             for (int i = 0; i < crngRanges.Length; i++)
             {
                 if (crngRanges[i].Rate <= 0) continue;
@@ -210,20 +216,16 @@ namespace Underworld
                 int high = crngRanges[i].High;
                 if (low < 0 || high < 0 || high >= 256 || low >= high) continue;
 
-                crngCounters[i] += crngRanges[i].Rate;
-                // The disasm accumulates rate per tick; rotate when counter >= threshold.
-                // From DOSBox frame capture analysis (frames 425-750):
-                //   CRNG 0 (rate 18): 1 step every 14 DOSBox frames at ~70fps = 5.0 steps/sec
-                //   CRNG 3 (rate 14): 1 step every 17 DOSBox frames at ~70fps = 4.1 steps/sec
-                // At PIT timer rate 18.2 Hz, threshold = 65 gives:
-                //   rate 18: 18/65 * 18.2 = 5.04/sec ✓
-                //   rate 14: 14/65 * 18.2 = 3.92/sec ✓
-                while (crngCounters[i] >= 65)
+                // DOS polls this continuously; we are called about 18 times a
+                // second, so step the schedule by whole periods to keep DOS's
+                // average rate, without a burst after a long pause.
+                long period = 0x38E / crngRanges[i].Rate;
+                if (now - crngLastRotation[i] > 4 * period)
+                    crngLastRotation[i] = now - period;
+                while (now - crngLastRotation[i] >= period)
                 {
-                    crngCounters[i] -= 65;
-                    // Forward rotation: save first, shift down, wrap to end
-                    // Matches RotatePaletteEntry_seg023_9 (line 98009)
                     Palette.cyclePalette(crngPalette, low, high - low + 1);
+                    crngLastRotation[i] += period;
                 }
             }
         }
@@ -244,7 +246,7 @@ namespace Underworld
         {
             cancelRequested = false;
             crngRanges = null;
-            crngCounters = null;
+            crngLastRotation = null;
             crngPalette = null;
             if (CutsceneNo >= 256)
             {
