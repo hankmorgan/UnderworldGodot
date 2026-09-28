@@ -580,8 +580,10 @@ namespace Underworld
                     break;
 
                 case 6: // end-cutsc
-                    uimanager.EnableDisable(cutscontrol, false);
-                    uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
+                    // Only ends the cutscene after this segment: DOS clears the loop
+                    // flags and nothing else (FM Towns cutsop_end_). The picture and
+                    // subtitle stay up for the closing commands, such as the dreams'
+                    // audio-wait and fade-out, and are put away in cleanup.
                     break;
 
                 case 8: // open-file
@@ -1566,8 +1568,17 @@ namespace Underworld
         cleanup:
             IsPlaying = false;
             uimanager.CurrentGameMode = OrigGameMode;//restore gamemode before any new cutscenes start.
-            uimanager.EnableDisable(cutscontrol, false);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
+            if (CutsceneNo < 0x100 && FullScreen && uimanager.InGame && callBackMethod == null && !cancelRequested)
+            {
+                // Back in the game after a full screen cutscene, DOS goes through the
+                // main screen setup (PlayCutscene_ovr108_2DC5 ->
+                // ShowMapAndOtherFullScreenUIs_ovr112_31A), which ends by fading
+                // palette 0 in from black with an argument of 2 (ovr112_434), half
+                // a second. Reveal the game from under a black cutscene screen.
+                yield return FadeBackToGame(cutscontrol, 2);
+            }
+            uimanager.EnableDisable(cutscontrol, false);
 
             if ((cancelRequested) && (_RES == GAME_UW2) && (CutsceneNo == 0))
             {
@@ -1586,6 +1597,25 @@ namespace Underworld
             }
 
             yield return new WaitOneFrame();
+        }
+
+        /// <summary>
+        /// Uncover the game by fading a black cutscene screen out, the same curve
+        /// as DOS fading the palette in: arg * 8 linear steps, 8 ticks of the
+        /// 256 Hz clock apart.
+        /// </summary>
+        static IEnumerator FadeBackToGame(TextureRect cutscontrol, int arg)
+        {
+            var black = Image.CreateEmpty(2, 2, false, Image.Format.Rgb8);
+            cutscontrol.Texture = ImageTexture.CreateFromImage(black);
+            cutscontrol.Material = null;
+            int steps = arg * 8;
+            for (int i = 0; i <= steps; i++)
+            {
+                cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f - (float)i / steps);
+                yield return new WaitForSeconds(8 / 256f);
+            }
+            cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
         }
 
         /// <summary>
