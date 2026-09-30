@@ -649,7 +649,7 @@ namespace Underworld
             critter.npc_attitude = 2;
             critter.npc_goal = 8;
             playerdat.FreezeTimeEnchantment = false;//?
-            talk.Talk(ObjectUsed: critter, WorldObject: true, dyingNPC: true);
+            talk.Talk(ConversationNPC: critter, WorldObject: true, dyingNPC: true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
         }
 

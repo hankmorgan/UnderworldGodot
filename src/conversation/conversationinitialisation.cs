@@ -39,12 +39,14 @@ namespace Underworld
                 }
                 //Check if npc can be talked to
                 if ((conversations[conversationNo].CodeSize == 0) || (talker.npc_whoami == 255))
-                {//006~007~001~You get no response.
+                {
+                    //006~007~001~You get no response.
                     uimanager.AddToMessageScroll(GameStrings.GetString(7, 1));
                     return;
                 }
                 else
-                { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
+                { 
+                    //a conversation can be had
                     currentConversation = conversations[conversationNo];
                     uimanager.CurrentGameMode = uimanager.GameModes.CONVERSATION;
                     DoTeleport = false;
@@ -179,7 +181,7 @@ namespace Underworld
             int conversationNo;
             if (talker.npc_whoami == 0)
             {
-                conversationNo = 256 + (talker.item_id - 64);
+                conversationNo = 256 + talker.classindex;
             }
             else
             {

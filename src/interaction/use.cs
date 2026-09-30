@@ -53,7 +53,7 @@ namespace Underworld
                             {
                                 if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
                                 {
-                                    talk.Talk(ObjectUsed: ObjectUsed, WorldObject: WorldObject);
+                                    talk.Talk(ConversationNPC: ObjectUsed, WorldObject: WorldObject);
                                     return true;
                                 }
                             }

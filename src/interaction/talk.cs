@@ -5,39 +5,125 @@ namespace Underworld
     /// </summary>
     public class talk : UWClass
     {
-        public static bool Talk(uwObject ObjectUsed, bool WorldObject = true, bool dyingNPC = false)
+        public static void Talk(uwObject ConversationNPC, bool WorldObject = true, bool dyingNPC = false)
         {
-            if (ObjectUsed != null)
+            if (ConversationNPC != null)
             {
-                //var obj = objList[index];
-                switch (ObjectUsed.majorclass)
+                if (_RES == GAME_UW2)
                 {
-                    case 1: //NPCs
-                        {
-                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on                                    
-                            ConversationVM.StartConversation(ObjectUsed);
-                            break;
-                        }
-                    default:
-                        {
-                            if (_RES == GAME_UW2)
-                            {
-                                if (ObjectUsed.item_id == 461)
-                                {//a wisp, which is a static object in UW2
-
-                                    var wisp = SpawnTemporaryTalker(whoami: 48, tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY);
-                                    uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on        
-                                    ConversationVM.StartConversation(wisp);
-                                    return false;
-                                }
-                            }
-                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_talk_to_that_));
-                            break;
-                        }
+                    TalkUW2(ConversationNPC);
+                }
+                else
+                {
+                    //uw1 logic.
                 }
             }
-            return false;
         }
+
+        private static void TalkUW2(uwObject ConversationNPC)
+        {
+            if (ConversationNPC.item_id == 0x1CD)
+            {
+                //a wisp, which is a static object in UW2
+                var wisp = SpawnTemporaryTalker(whoami: 48, tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY);
+                ConversationVM.StartConversation(wisp);
+            }
+
+            else
+            {
+                if (ConversationNPC.majorclass == 1)
+                {
+                    if (ConversationNPC.npc_goal != 0xF)
+                    {
+                        if (playerdat.FreezeTimeEnchantment)
+                        {
+                            //world is subject to freeze time.
+                            uimanager.AddToMessageScroll(GameStrings.GetString(7, 1)); // you get no response.
+                        }
+                        else
+                        {
+                            switch (ConversationNPC.npc_whoami)
+                            {
+                                case 0x8C: //patterson is the only npc that will talk in combat
+                                    ConversationVM.StartConversation(ConversationNPC);
+                                    break;
+                                default:
+                                    {
+                                        if ((ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_5) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_fear_6) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_9))
+                                        {
+                                            goto ovr103_EA;
+                                        }
+                                        else
+                                        {
+                                            goto ovr103_FD;
+                                        }
+
+                                    ovr103_EA:
+                                        if (ConversationNPC.npc_gtarg == 1)
+                                        {
+                                            goto ovr103_10F;
+                                        }
+                                        else
+                                        {
+                                            goto ovr103_FD;
+                                        }
+
+                                    ovr103_FD:
+                                        if (ConversationNPC.npc_attitude != 0)
+                                        {
+                                            goto ovr103_123;
+                                        }
+
+                                    ovr103_10F:
+                                        if (ConversationNPC.IsAlly == 0)
+                                        {
+                                            goto ovr103_129;
+                                        }
+
+                                    ovr103_123:
+                                        //talk to npc. Further logic like generic npc and empty size code blocks is handled in the next function.
+                                        if (ConversationNPC.npc_whoami != 0xFF)
+                                        {
+                                            goto ovr103_152;
+                                        }
+                                        else
+                                        {
+                                            goto ovr103_129;
+                                        }
+
+                                    ovr103_129:
+                                        if (ConversationNPC.npc_goal != (byte)npc.npc_goals.npc_goal_want_to_talk)
+                                        {
+                                            uimanager.AddToMessageScroll(GameStrings.GetString(7, 1)); // you get no response.
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            goto ovr103_152;
+                                        }
+
+                                    ovr103_152:
+                                        //further logic like generic conversations  (whoami==0) is handled in the next function.
+                                        ConversationVM.StartConversation(ConversationNPC);
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //goal is 0xF (petrified/stonestrike)
+                        uimanager.AddToMessageScroll(GameStrings.GetString(7, 1)); // you get no response.
+                    }
+                }
+                else
+                {
+                    //not an npc
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_talk_to_that_));
+                }
+            }
+        }
+
 
 
         /// <summary>
@@ -58,7 +144,6 @@ namespace Underworld
             ConversationVM.TemporaryTalker = true;
             return temporaryTalker;
         }
-
 
     } //end class
 } //end namespace

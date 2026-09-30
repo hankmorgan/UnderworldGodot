@@ -127,7 +127,7 @@ namespace Underworld
             {
                 case InteractionModes.ModeTalk:
                     talk.Talk(
-                        ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
+                        ConversationNPC: UWTileMap.current_tilemap.LevelObjects[index],
                         WorldObject: true);
                     break;
                 case InteractionModes.ModeLook:
