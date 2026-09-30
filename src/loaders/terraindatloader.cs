@@ -101,6 +101,7 @@ namespace Underworld
             }
         }
 
+        //what a useless function..
         public static TerrainTypes getTerrain(int terrainNo)
         {
             /*
@@ -111,7 +112,7 @@ namespace Underworld
             Pipe=5,
             Grating=6,
             Drain=7,
-            ChainedPrincess,
+            ChainedPrincess=8,
             Window=9,
             Tapestry=0xa,
             Textured_door= 0xb,

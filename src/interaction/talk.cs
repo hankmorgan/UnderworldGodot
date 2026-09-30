@@ -1,3 +1,4 @@
+
 namespace Underworld
 {
     /// <summary>
@@ -15,9 +16,55 @@ namespace Underworld
                 }
                 else
                 {
-                    //uw1 logic.
+                    TalkUW1(ConversationNPC);
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Logic for initiating conversations in UW1. 
+        /// Handles Golem, Tybal and Rodrick who can be spoken to during conversations.
+        /// Special cases for the Shrine and the Chained Up Princess.
+        /// </summary>
+        /// <param name="ConversationNPC"></param>
+        private static void TalkUW1(uwObject ConversationNPC)
+        {
+            switch(ConversationNPC.item_id)
+            {
+                case 0x157://shrine
+                    shrine.Use(ConversationNPC);
+                    break;
+                case 0x16E://tmap. probably Ariel
+                    var walltexture = UWTileMap.current_tilemap.texture_map[ConversationNPC.owner];
+                    if(TerrainDatLoader.Terrain[walltexture] == 8)
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x110)); // There is no reaction from the princess.
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(7, 0)); // you can't talk to that
+                    }
+                    break;
+                default:
+                    {
+                        switch (ConversationNPC.npc_whoami)
+                        {
+                            case 0x16://GOLEM
+                            case 0x8E: //RODRICK
+                            case 0xE7: //TYBAL
+                                ConversationVM.StartConversation(ConversationNPC);
+                                break;
+                            default:
+                                {
+                                    DefaultTalkLogic(ConversationNPC);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
+
         }
 
         private static void TalkUW2(uwObject ConversationNPC)
@@ -42,72 +89,7 @@ namespace Underworld
                         }
                         else
                         {
-                            switch (ConversationNPC.npc_whoami)
-                            {
-                                case 0x8C: //patterson is the only npc that will talk in combat
-                                    ConversationVM.StartConversation(ConversationNPC);
-                                    break;
-                                default:
-                                    {
-                                        if ((ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_5) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_fear_6) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_9))
-                                        {
-                                            goto ovr103_EA;
-                                        }
-                                        else
-                                        {
-                                            goto ovr103_FD;
-                                        }
-
-                                    ovr103_EA:
-                                        if (ConversationNPC.npc_gtarg == 1)
-                                        {
-                                            goto ovr103_10F;
-                                        }
-                                        else
-                                        {
-                                            goto ovr103_FD;
-                                        }
-
-                                    ovr103_FD:
-                                        if (ConversationNPC.npc_attitude != 0)
-                                        {
-                                            goto ovr103_123;
-                                        }
-
-                                    ovr103_10F:
-                                        if (ConversationNPC.IsAlly == 0)
-                                        {
-                                            goto ovr103_129;
-                                        }
-
-                                    ovr103_123:
-                                        //talk to npc. Further logic like generic npc and empty size code blocks is handled in the next function.
-                                        if (ConversationNPC.npc_whoami != 0xFF)
-                                        {
-                                            goto ovr103_152;
-                                        }
-                                        else
-                                        {
-                                            goto ovr103_129;
-                                        }
-
-                                    ovr103_129:
-                                        if (ConversationNPC.npc_goal != (byte)npc.npc_goals.npc_goal_want_to_talk)
-                                        {
-                                            uimanager.AddToMessageScroll(GameStrings.GetString(7, 1)); // you get no response.
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            goto ovr103_152;
-                                        }
-
-                                    ovr103_152:
-                                        //further logic like generic conversations  (whoami==0) is handled in the next function.
-                                        ConversationVM.StartConversation(ConversationNPC);
-                                        break;
-                                    }
-                            }
+                            DefaultTalkLogic(ConversationNPC);
                         }
                     }
                     else
@@ -123,6 +105,82 @@ namespace Underworld
                 }
             }
         }
+
+        /// <summary>
+        /// Determines if a npc can be talked to based on AI state, Attitude and goals
+        /// </summary>
+        /// <param name="ConversationNPC"></param>
+        private static void DefaultTalkLogic(uwObject ConversationNPC)
+        {
+            switch (ConversationNPC.npc_whoami)
+            {
+                case 0x8C: //patterson is the only npc that will talk in combat
+                    ConversationVM.StartConversation(ConversationNPC);
+                    break;
+                default:
+                    {
+                        if ((ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_5) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_fear_6) || (ConversationNPC.npc_goal == (byte)npc.npc_goals.npc_goal_attack_9))
+                        {
+                            goto ovr103_EA;
+                        }
+                        else
+                        {
+                            goto ovr103_FD;
+                        }
+
+                    ovr103_EA:
+                        if (ConversationNPC.npc_gtarg == 1)
+                        {
+                            goto ovr103_10F;
+                        }
+                        else
+                        {
+                            goto ovr103_FD;
+                        }
+
+                    ovr103_FD:
+                        if (ConversationNPC.npc_attitude != 0)
+                        {
+                            goto ovr103_123;
+                        }
+
+                    ovr103_10F:
+                        if (ConversationNPC.IsAlly == 0)
+                        {
+                            goto ovr103_129_checkiftalkgoal;
+                        }
+
+                    ovr103_123:                        
+                        if (ConversationNPC.npc_whoami != 0xFF)
+                        {
+                            goto ovr103_152_startconversation;
+                        }
+                        else
+                        {
+                            goto ovr103_129_checkiftalkgoal;
+                        }
+
+                    ovr103_129_checkiftalkgoal:
+                        if (ConversationNPC.npc_goal != (byte)npc.npc_goals.npc_goal_want_to_talk)
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(7, 1)); // you get no response.
+                            return;
+                        }
+                        else
+                        {
+                            goto ovr103_152_startconversation;
+                        }
+
+                    ovr103_152_startconversation:
+                        //further logic like generic conversations  (whoami==0) is handled in the next function.
+                        ConversationVM.StartConversation(ConversationNPC);
+                        break;
+                    }
+            }
+
+            return;
+        }
+
 
 
 
