@@ -169,7 +169,7 @@ namespace Underworld
 
         public static int MaxAnimFrame;
         public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF, likely flags the npc has collided during motion.
-        
+
         //Used by collision handlers. unknown impact, 
         public static bool dseg_2682;
         public static bool dseg_2684;
@@ -524,7 +524,7 @@ namespace Underworld
                             {
                                 if (critter.AnimationFrame == 1)
                                 {
-                                    if (_RES==GAME_UW2)
+                                    if (_RES == GAME_UW2)
                                     {
                                         soundeffect = 0x5A;//uw2 value?
                                     }
@@ -535,14 +535,14 @@ namespace Underworld
                                 }
                                 else if (critter.AnimationFrame == 3)
                                 {
-                                    if (_RES==GAME_UW2)
+                                    if (_RES == GAME_UW2)
                                     {
                                         soundeffect = 0x5B;//uw2 value?    
                                     }
                                     else
                                     {
                                         soundeffect = 2;
-                                    }                                    
+                                    }
                                 }
                                 break;
                             }
@@ -553,14 +553,14 @@ namespace Underworld
                             }
                         case 3://swimmers
                             {
-                                if (_RES==GAME_UW2)
+                                if (_RES == GAME_UW2)
                                 {
                                     soundeffect = 0x27;//uw2 value?    
                                 }
                                 else
                                 {
                                     soundeffect = 5;
-                                }                                
+                                }
                                 break;
                             }
                         case 4://creepycrawlies
@@ -1572,37 +1572,43 @@ namespace Underworld
                                 //seg006_1413_3209
                                 if (RelatedToColliding_dseg_67d6_226F == false)
                                 {
-                                    //seg006_1413_324E:                                    
-                                    if
-                                     (!(
-                                        (collisionObject.majorclass == 1)
-                                        &&
-                                        (collisionObject.item_id == 0x7F)
-                                        &&
-                                        (critter.npc_goal == 5)
-                                        )
-                                     )
+                                    //seg006_1413_324E:         
+                                    if (collisionObject != null)
                                     {
-                                        //seg006_1413_3290:
-                                        //when not colliding with the avatar with a goal of 5.
-                                        if (
-                                            (collisionObject.item_id >> 4 == 0x14)
-                                            && (collisionObject.classindex >= 8)
-                                            && critterObjectDat.isFlier(critter.item_id)
+                                        //check for null object. This can happen rarely in UW1
+                                        if
+                                            (!(
+                                            (collisionObject.majorclass == 1)
+                                            &&
+                                            (collisionObject.item_id == 0x7F)
+                                            &&
+                                            (critter.npc_goal == 5)
+                                            )
                                             )
                                         {
-                                            //when a flier collides with an open door.
-                                            //seg006_1413:32B5
-                                            critter.Projectile_Pitch = 14;
-                                            RelatedToMotionCollision_dseg_67d6_224E = false;
-                                            FlyingPitchingRelated_dseg_67d6_2246 = true;
+                                            //seg006_1413_3290:
+                                            //when not colliding with the avatar with a goal of 5.
+                                            if (
+                                                (collisionObject.item_id >> 4 == 0x14)
+                                                && (collisionObject.classindex >= 8)
+                                                && critterObjectDat.isFlier(critter.item_id)
+                                                )
+                                            {
+                                                //when a flier collides with an open door.
+                                                //seg006_1413:32B5
+                                                critter.Projectile_Pitch = 14;
+                                                RelatedToMotionCollision_dseg_67d6_224E = false;
+                                                FlyingPitchingRelated_dseg_67d6_2246 = true;
+                                            }
+                                            else
+                                            {
+                                                //seg006_1413_32D5
+                                                critter.UnkBit_0x18_6 = 1;
+                                            }
                                         }
-                                        else
-                                        {
-                                            //seg006_1413_32D5
-                                            critter.UnkBit_0x18_6 = 1;
-                                        }
+
                                     }
+
                                 }
                                 else
                                 {
@@ -2441,8 +2447,8 @@ namespace Underworld
             {
                 var RangeAttackStarted = false;
                 var var4_dist = 4;
-                        
-                if(_RES != GAME_UW2)
+
+                if (_RES != GAME_UW2)
                 {
                     if (playerdat.dungeon_level == 7) //tybals lair
                     {
@@ -2778,8 +2784,8 @@ namespace Underworld
             short CalcedFacing = CalculateFacingAngleToNPC(critter);
             string animname = CritterArt.GetAnimName(critter.npc_animation, CalcedFacing);
             var crit = CritterArt.GetCritter(
-                critter.item_id & 0x3F, 
-                GetStoneArt: (_RES == GAME_UW2) && (critter.npc_goal== (byte)npc.npc_goals.npc_goal_petrified));
+                critter.item_id & 0x3F,
+                GetStoneArt: (_RES == GAME_UW2) && (critter.npc_goal == (byte)npc.npc_goals.npc_goal_petrified));
             if (crit.Animations.ContainsKey(animname))
             {
                 var anim = crit.Animations[animname];
