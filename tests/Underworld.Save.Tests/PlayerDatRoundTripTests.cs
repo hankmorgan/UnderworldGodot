@@ -72,15 +72,72 @@ public class PlayerDatRoundTripTests : IDisposable
 
         // File length mirrors the load loop in playerdatutil.cs:Load: slot i lives at
         // PTR = InventoryPtr + (i-1)*8, so N populated slots occupy N*8 bytes past InventoryPtr.
-        int expectedLen = Underworld.playerdat.InventoryPtr
-            + Underworld.PlayerDatWriter.LastPopulatedInventorySlot() * 8;
+        int slotsExpected = Underworld.PlayerDatWriter.LastPopulatedInventorySlot();
+        int expectedLen = Underworld.playerdat.InventoryPtr + slotsExpected * 8;
         Assert.Equal(expectedLen, decrypted.Length);
+
+        // As for UW1, everything is copied except the derived record count, which UW2
+        // keeps at 0x37E. Both DOS-written UW2 saves we have store records + 1 there.
+        const int countOffset = 0x37E;
         for (int i = 0; i < expectedLen; i++)
         {
+            if (i == countOffset || i == countOffset + 1) continue;
             Assert.True(originalPdat[i] == decrypted[i],
                 $"Byte mismatch at 0x{i:X4}: expected 0x{originalPdat[i]:X2}, got 0x{decrypted[i]:X2}");
         }
+        Assert.Equal(slotsExpected + 1, decrypted[countOffset] | (decrypted[countOffset + 1] << 8));
     }
+
+    [Fact]
+    public void Uw2Serialize_BackpackAndPaperdoll_FormOneChainFromSlotOne()
+    {
+        // The UW2 layout DOS writes, measured from two DOS saves: records in depth-first
+        // order along one top-level chain that starts at slot 1, container contents
+        // reached through link, and the backpack and paperdoll pointers naming slots in
+        // that file. Build an inventory that is none of those things in memory (a hole,
+        // stale next pointers, items out of order) and check the writer produces it.
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW2");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW2;
+        Underworld.playerdat.InitEmptyPlayer("TestGronk");
+
+        WriteSlot(slot: 2, item_id: 0x80, is_quant: false, link: 5, next: 7); // bag, stale next
+        WriteSlot(slot: 5, item_id: 0x10, is_quant: false, link: 0, next: 0); // inside the bag
+        WriteSlot(slot: 7, item_id: 0x20, is_quant: false, link: 0, next: 2); // helm, stale next
+        SetSlotPointer(0x3B9, 2); // BP0
+        SetSlotPointer(0x3A3, 7); // helm
+
+        byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
+        byte[] plain = Underworld.playerdat.EncryptDecryptUW2(encrypted, encrypted[0]);
+
+        int records = (plain.Length - Underworld.playerdat.InventoryPtr) / 8;
+        Assert.Equal(3, records);
+        Assert.Equal(records + 1, plain[0x37E] | (plain[0x37F] << 8));
+
+        // Top-level chain from slot 1: the bag then the helm, and nothing after.
+        var bag = ReadSlotFromDecrypted(plain, 1);
+        Assert.Equal(0x80, bag.itemId);
+        Assert.Equal(2, bag.link);           // its content follows it
+        Assert.Equal(3, bag.next);           // then the helm
+        var content = ReadSlotFromDecrypted(plain, 2);
+        Assert.Equal(0x10, content.itemId);
+        Assert.Equal(0, content.next);
+        var helm = ReadSlotFromDecrypted(plain, 3);
+        Assert.Equal(0x20, helm.itemId);
+        Assert.Equal(0, helm.next);
+
+        Assert.Equal(1, GetSlotPointer(plain, 0x3B9));
+        Assert.Equal(3, GetSlotPointer(plain, 0x3A3));
+    }
+
+    private static void SetSlotPointer(int offset, int slot)
+    {
+        int w = (slot & 0x3FF) << 6;
+        Underworld.playerdat.pdat[offset] = (byte)(w & 0xFF);
+        Underworld.playerdat.pdat[offset + 1] = (byte)((w >> 8) & 0xFF);
+    }
+
+    private static int GetSlotPointer(byte[] buf, int offset) =>
+        ((buf[offset] | (buf[offset + 1] << 8)) >> 6) & 0x3FF;
 
     // -------------------------------------------------------------------------
     // DOS round-trip marker guards

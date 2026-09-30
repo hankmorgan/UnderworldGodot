@@ -27,7 +27,7 @@ namespace Underworld
     // Writer strategy: read the source SCD.ARK bytes from disk (BasePath + folder + "/SCD.ARK"),
     // then for each block overlay any live scd_data[i] entry that is non-null (those are the
     // blocks the game has mutated during the session). Reassemble the UW2 ARK container
-    // uncompressed, preserving reservedSpace from the source header.
+    // uncompressed, with each block's available space equal to its length.
     //
     // UW1 has no SCD.ARK — Serialize() returns an empty array for UW1.
 
@@ -80,21 +80,17 @@ namespace Underworld
                 }
             }
 
-            // Preserve reservedSpace from the source header.
-            int[] reserved = new int[noOfBlocks];
-            if (source.Length >= 6 + noOfBlocks * 16)
-            {
-                for (int i = 0; i < noOfBlocks; i++)
-                {
-                    reserved[i] = (int)Loader.getAt(source, 6 + (i * 4) + (noOfBlocks * 12), 32);
-                }
-            }
-
             // Compute layout: header = 6 + noOfBlocks*16 bytes.
             int headerSize = 6 + noOfBlocks * 16;
             int[] offsets = new int[noOfBlocks];
             int[] flags   = new int[noOfBlocks]; // all 0 = uncompressed
             int[] lengths = new int[noOfBlocks];
+            // Available space equals the length, as in DATA/SCD.ARK and in both DOS-written
+            // saves we have. A live block shrinks as its events are consumed, and carrying
+            // the source's larger figure forward would describe space that is not there.
+            // DOS's ARK writer overwrites a block without slack in place only when the new
+            // length equals this value; see the note at the top of LevArkWriter.
+            int[] reserved = new int[noOfBlocks];
 
             int cursor = headerSize;
             for (int i = 0; i < noOfBlocks; i++)
@@ -104,6 +100,7 @@ namespace Underworld
                     offsets[i] = cursor;
                     flags[i]   = DataLoader.UW2_NOCOMPRESSION; // 0
                     lengths[i] = blockData[i].Length;
+                    reserved[i] = blockData[i].Length;
                     cursor += blockData[i].Length;
                 }
                 // else: offsets[i] = 0, flags[i] = 0, lengths[i] = 0 (absent block)

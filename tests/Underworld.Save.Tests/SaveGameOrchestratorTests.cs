@@ -260,29 +260,68 @@ public class SaveGameOrchestratorTests : IDisposable
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// UW2 must keep the head it had before the UW1 inventory fix. Its writer still
-    /// uses the legacy straight-copy path and its DOS invariants are unverified, so the
-    /// records-derived rule is deliberately UW1-only. Without this, the UW1 fix silently
-    /// rewrote UW2's avatar link, because InventoryPtr differs between the formats
-    /// (0x3E3 versus 0x138) and the derived record count would be computed against the
-    /// wrong base.
+    /// The UW1 rule for the two derived inventory fields, now applied to UW2, checked on
+    /// the file the orchestrator writes because the head is patched after Serialize.
+    /// Both DOS-written UW2 saves we have store the record count plus one at 0x37E and
+    /// head 1 at the player object's link, 0x380 + 6, with records starting at slot 1.
     /// </summary>
     [Fact]
-    public void Save_Uw2_PlayerObjectLinkUnchangedByUw1InventoryRule()
+    public void Save_Uw2_EmptyInventory_WritesCountOneAndHeadZero()
     {
         SetupUw2State();
         UWClass.BasePath = _tempRoot;
 
-        SaveGame.Save(1, "uw2 head");
+        SaveGame.Save(1, "uw2 inventory fields");
 
         byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", "PLAYER.DAT"));
-        int linkOff = playerdat.PlayerObjectStoragePTR + 6;
-        Assert.True(linkOff + 1 < raw.Length, "UW2 PLAYER.DAT too short to hold the link");
+        byte[] plain = playerdat.EncryptDecryptUW2(raw, raw[0]);
 
-        // UW2 pdat is encrypted differently, so read the raw bytes: the rule under test
-        // writes them directly either way.
-        int head = (raw[linkOff] | (raw[linkOff + 1] << 8)) >> 6;
-        Assert.Equal(1, head);
+        Assert.Equal(playerdat.InventoryPtr, raw.Length);
+        Assert.Equal(1, plain[0x37E] | (plain[0x37F] << 8));
+
+        int linkOff = playerdat.PlayerObjectStoragePTR + 6;
+        int head = (plain[linkOff] | (plain[linkOff + 1] << 8)) >> 6;
+        Assert.Equal(0, head);
+    }
+
+    /// <summary>
+    /// DOS keeps the player object's hit points equal to current vitality, in every
+    /// DOS-written save checked across both games, and DOS UW2 sent a new character
+    /// whose object carried 0 straight back to the main menu. The port's object can
+    /// drift from play_hp, so the save sets it. Checked in both stores that carry the
+    /// object: PLAYER.DAT at 0x380 + 8 and slot 1 of the level block.
+    /// </summary>
+    [Fact]
+    public void Save_Uw2_PlayerObjectHitPointsFollowVitality()
+    {
+        SetupUw2State();
+        UWTileMap origCurrent = UWTileMap.current_tilemap;
+        try
+        {
+            UWTileMap.dungeons = new UWTileMap[UWTileMap.NO_OF_LEVELS];
+            var tm = new UWTileMap(0);
+            UWTileMap.dungeons[0] = tm;
+            UWTileMap.current_tilemap = tm;
+            tm.BuildTileMapUW(levelNo: 0, tex_ark: tm.tex_ark_block, ovl_ark: tm.ovl_ark_block);
+
+            playerdat.pdat[0x36] = 40;                 // current vitality
+            tm.LevelObjects[1].npc_hp = 0;             // the drift DOS refuses
+
+            UWClass.BasePath = _tempRoot;
+            SaveGame.Save(1, "uw2 hit points");
+
+            byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", "PLAYER.DAT"));
+            byte[] plain = playerdat.EncryptDecryptUW2(raw, raw[0]);
+            Assert.Equal(40, plain[playerdat.PlayerObjectStoragePTR + 8]);
+
+            LevArkLoader.lev_ark_file_data = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", "LEV.ARK"));
+            UWBlock level0 = LevArkLoader.LoadLevArkBlock(0);
+            Assert.Equal(40, level0.Data[0x4000 + 1 * 27 + 8]);
+        }
+        finally
+        {
+            UWTileMap.current_tilemap = origCurrent;
+        }
     }
 
     [Fact]
