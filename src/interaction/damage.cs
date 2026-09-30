@@ -88,12 +88,15 @@ namespace Underworld
             critter.ProjectileSourceID = (short)damagesource;
             if (damagesource == 1)
             {//player applied damage
-                playerdat.LastDamagedNPCIndex = critter.index;
-                playerdat.LastDamagedNPCType = critterObjectDat.generaltype(critter.item_id);
-                playerdat.LastDamagedNPCTime = playerdat.ClockValue;
-                playerdat.LastDamagedNPCTileX = critter.tileX;
-                playerdat.LastDamagedNPCTileY = critter.tileY;
-                playerdat.LastDamagedNPCZpos = critter.zpos;
+                if (critter.UnkBit_0XA_Bit7 == 0)
+                {
+                    playerdat.LastDamagedNPCIndex = critter.index;
+                    playerdat.LastDamagedNPCType = critterObjectDat.generaltype(critter.item_id);
+                    playerdat.LastDamagedNPCTime = playerdat.ClockValue;
+                    playerdat.LastDamagedNPCTileX = critter.tileX;
+                    playerdat.LastDamagedNPCTileY = critter.tileY;
+                    playerdat.LastDamagedNPCZpos = critter.zpos;   
+                }
             }
 
 
