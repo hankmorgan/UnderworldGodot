@@ -236,6 +236,50 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Fade the picture, and the subtitle drawn over it, in or out as DOS
+        /// does. DOS fades the palette linearly in arg * 8 steps and waits 8
+        /// ticks of its 256 Hz clock between steps (fade-in ovr118_330, both
+        /// via FadeInRelated_ovr108_B1A; FM Towns fadein_ and fadeout_), so a
+        /// fade lasts arg / 4 seconds and the cutscene waits for it. An
+        /// argument of 0 sets the end state at once.
+        /// </summary>
+        static IEnumerator DosFade(TextureRect cutscontrol, int arg, bool fadeIn)
+        {
+            if (fadeIn)
+            {
+                // A subtitle given on this frame or the one before is not drawn
+                // yet, so DOS shows it once the fade is over; an older one is
+                // erased by the fade-in.
+                if (subtitleStoredAt >= commandFrames - 1)
+                    subtitleHiddenDuringFade = true;
+                else
+                    uimanager.instance.CutsSubtitle.Text = "";
+            }
+            if (arg > 0)
+            {
+                int steps = arg * 8;
+                for (int i = 1; i <= steps && !cancelRequested; i++)
+                {
+                    yield return new WaitForSeconds(8 / 256f);
+                    float level = (float)i / steps;
+                    SetFadeLevel(cutscontrol, fadeIn ? level : 1f - level);
+                }
+            }
+            subtitleHiddenDuringFade = false;
+            SetFadeLevel(cutscontrol, fadeIn ? 1f : 0f);
+        }
+
+        static bool subtitleHiddenDuringFade;
+
+        // DOS fades the whole palette, so the subtitle text dims with the picture.
+        static void SetFadeLevel(TextureRect cutscontrol, float level)
+        {
+            var colour = new Color(level, level, level, 1f);
+            cutscontrol.Modulate = colour;
+            uimanager.instance.CutsSubtitle.Modulate = subtitleHiddenDuringFade ? Colors.Transparent : colour;
+        }
+
+        /// <summary>
         /// Loads and begins a cutscene
         /// </summary>
         /// <param name="CutsceneNo">The index number of the cutscene to play</param>
@@ -274,6 +318,59 @@ namespace Underworld
             _ = Coroutine.Run(
                 RunCutscene(CutsceneNo: CutsceneNo, callBackMethod: callBackMethod, useSingleRedChannel: useSingleRedChannel),
                 main.instance);
+        }
+
+        // FONTBIG.SYS cell height, which DOS uses as the subtitle line spacing.
+        const int SubtitleLineHeight = 15;
+
+        // DOS draws subtitles through the VGA row table, and the two routines
+        // that build it map the subtitle bar one row apart. A viewport-setup
+        // with a bar (func 20 -> seg003_0272_2977) maps bottom-up row y to
+        // screen row 198 - y. Set-start (func 21 -> seg003_0272_4A7F ->
+        // seg003_0272_2A0D, also run by every pan step) maps it to 199 - y, as
+        // does a viewport-setup without a bar. True while the last build was
+        // the first kind.
+        static bool subtitleRowsFromViewportSetup;
+
+        // DOS only stores a subtitle when its command runs. The frame loop
+        // draws it later, after the next frame's commands and the frame wait
+        // (ovr108_27BD), so a fade-in on that next frame, which starts by
+        // filling the subtitle bar with pen 0x1B (FadeInRelated_ovr108_B1A,
+        // ovr108_A55), erases older text but not the new line. Counts frames
+        // whose commands have run; subtitleStoredAt is the count when the
+        // current subtitle was given.
+        static int commandFrames;
+        static int subtitleStoredAt = int.MinValue;
+
+        /// <summary>
+        /// Show a subtitle laid out as DOS draws it (ProbablyCutsSubtitle_ovr108_157B).
+        /// FONTBIG at one source pixel per screen pixel, in the palette colour
+        /// given as the command's first argument (stored at ovr108_C6D). Lines
+        /// wrap at 320 pixels and are drawn bottom-up one font height apart from
+        /// a fixed base (the +2 at ovr108_15CE), so the block always ends on the
+        /// same row: 197, or 198 depending on how the row table was last built
+        /// (see subtitleRowsFromViewportSetup). So a one-line subtitle sits
+        /// where the second line of a two-line one would.
+        /// </summary>
+        static void ShowSubtitle(TextureRect cutscontrol, int colourIndex, string text)
+        {
+            subtitleStoredAt = commandFrames;
+            var label = uimanager.instance.CutsSubtitle;
+            float scale = cutscontrol.Size.Y / 200f;
+            label.AddThemeFontSizeOverride("normal_font_size", Mathf.RoundToInt(16 * scale));
+            var pal = cuts?.EmbeddedPalette;
+            if (pal != null && colourIndex >= 0 && colourIndex < 256)
+            {
+                label.AddThemeColorOverride("default_color",
+                    Color.Color8(pal.red[colourIndex], pal.green[colourIndex], pal.blue[colourIndex]));
+            }
+            label.Size = new Vector2(320 * scale, 200 * scale);
+            label.Text = $"[center]{text}[/center]";
+            int lines = System.Math.Max(1, label.GetLineCount());
+            int blockEnd = subtitleRowsFromViewportSetup ? 197 : 198;
+            float top = (blockEnd - SubtitleLineHeight * lines) * scale;
+            label.Position = new Vector2(label.Position.X, top);
+            label.Size = new Vector2(320 * scale, 200 * scale - top);
         }
 
         /// <summary>
@@ -573,7 +670,8 @@ namespace Underworld
             switch (cmd.functionNo)
             {
                 case 0: // show-text with colour (palette index)
-                    uimanager.instance.CutsSubtitle.Text = $"[center]{GameStrings.GetString(StringBlock, cmd.functionParams[1])}[/center]";
+                    if ((short)cmd.functionParams[1] >= 0) // -1 erases nothing, as for text-play
+                        ShowSubtitle(cutscontrol, cmd.functionParams[0], GameStrings.GetString(StringBlock, cmd.functionParams[1]));
                     break;
 
                 case 1: // set-flag — clears internal animation flag
@@ -620,24 +718,13 @@ namespace Underworld
 
                 case 9: // fade-out
                     {
-                        var rate = cmd.functionParams[0];
-                        if (rate > 0)
-                        {
-                            float duration = 2.0f / rate;
-                            // Modulate to black
-                            cutscontrol.Modulate = new Color(0f, 0f, 0f, 1f);
-                        }
-                        else
-                        {
-                            cutscontrol.Modulate = new Color(0f, 0f, 0f, 1f);
-                        }
+                        yield return DosFade(cutscontrol, cmd.functionParams[0], fadeIn: false);
                         break;
                     }
 
                 case 10: // fade-in
                     {
-                        var rate = cmd.functionParams[0];
-                        cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
+                        yield return DosFade(cutscontrol, cmd.functionParams[0], fadeIn: true);
                         break;
                     }
 
@@ -676,12 +763,11 @@ namespace Underworld
 
                         if ((short)cmd.functionParams[1] >= 0)
                         {
-                            uimanager.instance.CutsSubtitle.Text = $"[center]{GameStrings.GetString(StringBlock, cmd.functionParams[1])}[/center]";
+                            ShowSubtitle(cutscontrol, cmd.functionParams[0], GameStrings.GetString(StringBlock, cmd.functionParams[1]));
                         }
-                        else
-                        {
-                            uimanager.instance.CutsSubtitle.Text = ""; // clear subtitle (0xFFFF = -1)
-                        }
+                        // -1 (0xFFFF) draws nothing more but does not erase what is
+                        // on screen: cutsop_say_ -> cutsop_txt_ only zeroes the line
+                        // count, so the line stays until the next subtitle replaces it.
                         if (cmd.functionParams[2] != 999)
                         {
                             string vocfile;
@@ -777,22 +863,8 @@ namespace Underworld
                         vpCanvasWidth = cmd.functionParams[0];
                         vpCanvasHeight = cmd.functionParams[1];
                         vpOffsetY = cmd.NoOfParams > 2 ? cmd.functionParams[2] : 0;
+                        subtitleRowsFromViewportSetup = cmd.NoOfParams > 2 && cmd.functionParams[2] != 999;
 
-                        // Position subtitle label in the black bar area.
-                        // From RenderCutsceneText_ovr108_157B (line 441321):
-                        //   text is bottom-aligned with 2px margin (ovr108_15CE lines 441401-441403)
-                        //   scene height = 200 - vpOffsetY
-                        // The fullscreen cutscene renders at 4x scale (1280x800 for 320x200).
-                        if (PanoramaActive && vpOffsetY > 0)
-                        {
-                            float scale = cutscontrol.Size.Y / 200f;
-                            float subtitleTop = (200 - vpOffsetY) * scale;
-                            float subtitleBottom = cutscontrol.Size.Y;
-                            uimanager.instance.CutsSubtitle.Position = new Vector2(
-                                uimanager.instance.CutsSubtitle.Position.X, subtitleTop);
-                            uimanager.instance.CutsSubtitle.Size = new Vector2(
-                                uimanager.instance.CutsSubtitle.Size.X, subtitleBottom - subtitleTop);
-                        }
                         vpScrollActive = false;
                         vpFrameOffset = 0;
                         vpFileMappings.Clear();
@@ -806,6 +878,7 @@ namespace Underworld
 
                 case 21: // set-start
                     {
+                        subtitleRowsFromViewportSetup = false;
                         vpStartX = cmd.functionParams[0];
                         vpStartY = cmd.NoOfParams > 1 ? cmd.functionParams[1] : 0;
                         Debug.Print($"  Start: x={vpStartX} y={vpStartY}");
@@ -834,6 +907,7 @@ namespace Underworld
 
                 case 23: // start-scroll — direction table lookup
                     {
+                        subtitleRowsFromViewportSetup = false;
                         // Scroll direction from table (disassembly dseg_67d6+0x1068/0x1070)
                         // Index 0=Down, 1=Right, 2=Up, 3=Left
                         var tableIdx = cmd.functionParams[0];
@@ -971,6 +1045,9 @@ namespace Underworld
             uimanager.EnableDisable(cutscontrol, true);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, true);
             uimanager.instance.CutsSubtitle.Text = "";
+            subtitleRowsFromViewportSetup = false; // no bar set up yet in this cutscene
+            subtitleStoredAt = int.MinValue;
+            subtitleHiddenDuringFade = false;
 
             FrameNo = 0;
             currentFileExt = 1;
@@ -1057,8 +1134,8 @@ namespace Underworld
             }
             InitCrngCycling(cuts);
 
-            // Set initial frame to black
-            cutscontrol.Modulate = new Color(0f, 0f, 0f, 1f);
+            // Set initial frame, and any subtitle, to black
+            SetFadeLevel(cutscontrol, 0f);
             uimanager.FlashColour(
                 colour: 0, targetControl: cutscontrol, duration: 1, IgnoreDelay: true);
 
@@ -1186,6 +1263,7 @@ namespace Underworld
                                     fileChanged = true;
                             }
                         }
+                        commandFrames++;
 
                         // Display animation frame.
                         // When panorama mode is active ([si+4Fh]!=0, set by func 20
@@ -1365,6 +1443,7 @@ namespace Underworld
                                 if (cmd.frame == frame)
                                     yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                             }
+                            commandFrames++;
 
                             // Display frame
                             if (cuts != null)
@@ -1424,46 +1503,6 @@ namespace Underworld
                                     goto cleanup;
                                 }
                             }
-                            else if (cmd.functionNo == 9 && cmd.functionParams[0] > 0) // blocking fade-out
-                            {
-                                float duration = 2.0f / cmd.functionParams[0];
-                                int steps = 10;
-                                float stepTime = duration / steps;
-                                for (int i = 1; i <= steps; i++)
-                                {
-                                    float t = (float)i / steps;
-                                    cutscontrol.Modulate = new Color(1f - t, 1f - t, 1f - t, 1f);
-                                    if (cancelRequested)
-                                    {
-                                        goto cleanup;
-                                    }
-                                    yield return new WaitForSeconds(stepTime);
-                                    if (cancelRequested)
-                                    {
-                                        goto cleanup;
-                                    }
-                                }
-                            }
-                            else if (cmd.functionNo == 10 && cmd.functionParams[0] > 0) // blocking fade-in
-                            {
-                                float duration = 2.0f / cmd.functionParams[0];
-                                int steps = 10;
-                                float stepTime = duration / steps;
-                                for (int i = 1; i <= steps; i++)
-                                {
-                                    float t = (float)i / steps;
-                                    cutscontrol.Modulate = new Color(t, t, t, 1f);
-                                    if (cancelRequested)
-                                    {
-                                        goto cleanup;
-                                    }
-                                    yield return new WaitForSeconds(stepTime);
-                                    if (cancelRequested)
-                                    {
-                                        goto cleanup;
-                                    }
-                                }
-                            }
                             else if (cmd.functionNo == 4) // to-frame (inline)
                             {
                                 for (int i = 0; i < cmd.functionParams[0]; i++)
@@ -1508,50 +1547,6 @@ namespace Underworld
                     if (cancelRequested)
                     {
                         goto cleanup;
-                    }
-                    if (cmd.functionNo == 9 && cmd.functionParams[0] > 0) // fade-out
-                    {
-                        float duration = 2.0f / cmd.functionParams[0];
-                        int steps = 10;
-                        float stepTime = duration / steps;
-                        for (int i = 1; i <= steps; i++)
-                        {
-                            float t = (float)i / steps;
-                            cutscontrol.Modulate = new Color(1f - t, 1f - t, 1f - t, 1f);
-                            if (cancelRequested)
-                            {
-                                goto cleanup;
-                            }
-                            yield return new WaitForSeconds(stepTime);
-                            if (cancelRequested)
-                            {
-                                goto cleanup;
-                            }
-                        }
-                    }
-                    else if (cmd.functionNo == 10 && cmd.functionParams[0] > 0) // fade-in
-                    {
-                        if (cancelRequested)
-                        {
-                            goto cleanup;
-                        }
-                        float duration = 2.0f / cmd.functionParams[0];
-                        int steps = 10;
-                        float stepTime = duration / steps;
-                        for (int i = 1; i <= steps; i++)
-                        {
-                            float t = (float)i / steps;
-                            cutscontrol.Modulate = new Color(t, t, t, 1f);
-                            if (cancelRequested)
-                            {
-                                goto cleanup;
-                            }
-                            yield return new WaitForSeconds(stepTime);
-                            if (cancelRequested)
-                            {
-                                goto cleanup;
-                            }
-                        }
                     }
                 }
 
