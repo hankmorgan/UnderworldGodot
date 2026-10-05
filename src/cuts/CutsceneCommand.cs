@@ -42,7 +42,7 @@ namespace Underworld
             "set-start",        // 21: set scroll start position
             "map-file",         // 22: load LBACK*.BYT background bitmap for panorama
             "start-scroll",     // 23: begin scrolling (direction table lookup, not raw speed)
-            "audio-setup",      // 24: set audio file index (999=none, else decrement)
+            "splity",           // 24: height of the subtitle bar (999=none)
             "music",            // 25: play XMI music theme
             "no-op3",           // 26: no operation
             "audio-wait"        // 27: wait for audio playback completion or timeout
@@ -75,7 +75,7 @@ namespace Underworld
             "sets scroll start position: arg[0]=X, arg[1]=Y",
             "loads LBACK background bitmap: arg[0]=position, arg[1]=extent, arg[2]=LBACK file index",
             "begins scrolling: arg[0]=direction table index (0=Down,1=Right,2=Up,3=Left), arg[1]=delta multiplier",
-            "sets audio file index: 999->none, otherwise decrements by 1",
+            "sets the subtitle bar height in rows (999=none); DOS stores arg-1 at CutsRelated_dseg_67d6_107C",
             "plays XMI music theme arg[0]",
             "does nothing (no-op)",
             "waits for audio playback completion or timeout arg[0]"
@@ -138,7 +138,7 @@ namespace Underworld
                 case 21: return 2;//unknown
                 case 22: return 3;//unknown
                 case 23: return 3;//unknown
-                case 24: return 1;//unknown, usually at the start of cutscene
+                case 24: return 1;//splity: height of the subtitle bar, usually at the start of cutscene
                 case 25: return 1;//music
                 case 26: return 1;//does nothing, not used in uw2
                 case 27: return 1;//unknown

@@ -120,15 +120,18 @@ namespace Underworld
             vpCanvasWidth != 0 && vpCanvasHeight != 0 &&
             (vpCanvasWidth != 320 || vpCanvasHeight != 200);
 
+        // Rows at the bottom of the screen kept for subtitles, which DOS
+        // keeps in CutsRelated_dseg_67d6_107C (FM Towns _splity). Set by splity
+        // (func 24, Cutscene_24_Unk_ovr108_BF1) and by viewport-setup
+        // (func 20, via ovr108_33A8); 999 means no bar. 0 until either runs.
+        static int subtitleBarRows;
+
         /// <summary>
-        /// Height of the scene area on the 320x200 display.
-        /// When a panorama viewport is active and vpOffsetY is set, the scene
-        /// occupies 200 - vpOffsetY pixels, with the remainder reserved for
-        /// subtitles. Otherwise the full 200 pixels are used.
-        /// Derived from viewport-setup (func 20) bytecode parameters.
+        /// Height of the scene area on the 320x200 display. DOS draws every
+        /// frame, full or delta, only above the subtitle bar (the clip height
+        /// passed at ovr108_24AB), whether or not a panorama is active.
         /// </summary>
-        static int SceneDisplayH =>
-            PanoramaActive && vpOffsetY > 0 ? 200 - vpOffsetY : 200;
+        static int SceneDisplayH => 200 - System.Math.Clamp(subtitleBarRows, 0, 200);
 
         // Palette interpolation state (func 19).
         // Linear interpolation matching InterpolatePaletteRange_ovr108_32CC (line 446461):
@@ -176,6 +179,23 @@ namespace Underworld
             {
                 crngPalette = null;
             }
+        }
+
+        /// <summary>
+        /// Blank everything below the scene, as DisplayCutsImage does, for the
+        /// paths that build a full 320x200 frame themselves (palette
+        /// interpolation and colour cycling). Otherwise the picture shows
+        /// through the subtitle bar, eg CS000.N05, whose colour cycling sends
+        /// every frame down this path.
+        /// </summary>
+        static ImageTexture CropToScene(ImageTexture frame)
+        {
+            int sceneH = SceneDisplayH;
+            if (frame == null || sceneH >= 200) return frame;
+            var img = frame.GetImage();
+            var cropped = Image.Create(img.GetWidth(), 200, false, img.GetFormat());
+            cropped.BlitRect(img, new Rect2I(0, 0, img.GetWidth(), sceneH), Vector2I.Zero);
+            return ImageTexture.CreateFromImage(cropped);
         }
 
         /// <summary>
@@ -800,6 +820,7 @@ namespace Underworld
                         vpCompositeClean = null;
                         vpSpriteLoader = null;
                         vpSpriteFrame = 0;
+                        subtitleBarRows = vpOffsetY == 999 ? 0 : vpOffsetY;
                         Debug.Print($"  Viewport: {vpCanvasWidth}x{vpCanvasHeight} offsetY={vpOffsetY}");
                         break;
                     }
@@ -880,10 +901,10 @@ namespace Underworld
                         break;
                     }
 
-                case 24: // audio-setup
+                case 24: // splity: height of the subtitle bar (FM Towns cutsop_splity_)
                     {
-                        var fileNo = cmd.functionParams[0];
-                        Debug.Print($"  Audio setup: {(fileNo == 999 ? "none" : $"file {fileNo - 1}")}");
+                        subtitleBarRows = cmd.functionParams[0] == 999 ? 0 : cmd.functionParams[0];
+                        Debug.Print($"  Splity: {subtitleBarRows} rows");
                         break;
                     }
 
@@ -962,6 +983,7 @@ namespace Underworld
             MessageDisplay.WaitingForMore = false;
             Debug.Print($"Running cutscene {CutsceneNo}");
             IsPlaying = true;
+            subtitleBarRows = 0;
             TextureRect cutscontrol;
             if (FullScreen)
                 cutscontrol = uimanager.CutsFullscreen;
@@ -1269,7 +1291,7 @@ namespace Underworld
                                     useAlphaChannel: false,
                                     useSingleRedChannel: false,
                                     crop: false);
-                                cutscontrol.Texture = rerendered;
+                                cutscontrol.Texture = CropToScene(rerendered);
                                 FrameNo++;
                             }
                             else if (HasActiveCrng()
@@ -1300,7 +1322,7 @@ namespace Underworld
                                         useAlphaChannel: false,
                                         useSingleRedChannel: false,
                                         crop: false);
-                                    cutscontrol.Texture = rerendered;
+                                    cutscontrol.Texture = CropToScene(rerendered);
                                     if (tick < cycleTicksPerFrame - 1)
                                         yield return new WaitForSeconds(tickTime);
                                 }
@@ -1473,7 +1495,8 @@ namespace Underworld
                                         if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                             FrameNo = 0;
                                         uimanager.DisplayCutsImage(
-                                            cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol, useSingleRedChannel: useSingleRedChannel);
+                                            cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
+                                            cropHeight: SceneDisplayH, useSingleRedChannel: useSingleRedChannel);
                                     }
                                     if (cancelRequested)
                                     {
