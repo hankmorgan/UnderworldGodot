@@ -952,6 +952,39 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Seconds per LPF frame as DOS paces it. After each frame the engine
+        /// waits until its 256 Hz clock (IncrementPITTimer_seg016_1E73_12C5,
+        /// registered at 100h Hz in seg016_1E73_12FB) has advanced by
+        /// 256 / fps ticks, integer division (ovr108_277E, UW1 ovr105_E55).
+        /// </summary>
+        static float DosFrameTime(CutsLoader lpf)
+        {
+            if (lpf == null || lpf.FramesPerSecond <= 0)
+                return 0.1f; // default 10fps fallback
+            return (256 / lpf.FramesPerSecond) / 256f;
+        }
+
+        // When the last frame wait ended (DOS keeps this in seg049_3EE2_2C).
+        static readonly System.Diagnostics.Stopwatch frameClock = System.Diagnostics.Stopwatch.StartNew();
+        static double lastFrameWaitEnd;
+
+        /// <summary>
+        /// Wait until frameTime has passed since the previous frame wait ended,
+        /// as DOS does, rather than for frameTime after this frame's work. A
+        /// frame that is already late does not wait, and later frames do not
+        /// try to catch up. Keeping the schedule also averages out Godot's
+        /// per-frame rounding of short waits.
+        /// </summary>
+        static WaitForSeconds WaitForNextFrame(float frameTime)
+        {
+            double now = frameClock.Elapsed.TotalSeconds;
+            double due = System.Math.Max(lastFrameWaitEnd + frameTime, now);
+            lastFrameWaitEnd = due;
+            // Always yield so the frame gets displayed, even when already late.
+            return new WaitForSeconds((float)System.Math.Max(due - now, 0.001));
+        }
+
+        /// <summary>
         /// Main cutscene playback coroutine. Processes commands in segments.
         /// Each segment ends at a frame-set (func 5) or end-cutsc (func 6).
         /// </summary>
@@ -1159,11 +1192,7 @@ namespace Underworld
                 {
                     // Frame timing from LPF file header fps field (offset 0x44).
                     // Each LPF specifies its own playback rate (e.g. N03: 14fps, N06: 40fps).
-                    float frameTime = 0.1f; // default 10fps fallback
-                    if (cuts != null && cuts.FramesPerSecond > 0)
-                    {
-                        frameTime = 1.0f / cuts.FramesPerSecond;
-                    }
+                    float frameTime = DosFrameTime(cuts);
 
                     for (int frame = 0; frame < segmentFrameCount; frame++)
                     {
@@ -1317,7 +1346,7 @@ namespace Underworld
                         {
                             goto cleanup;
                         }
-                        yield return new WaitForSeconds(frameTime);
+                        yield return WaitForNextFrame(frameTime);
                         if (cancelRequested)
                         {
                             goto cleanup;
@@ -1354,9 +1383,7 @@ namespace Underworld
                     if (maxFrame > 0)
                     {
                         // Frame timing from LPF fps
-                        float frameTime = 0.1f;
-                        if (cuts != null && cuts.FramesPerSecond > 0)
-                            frameTime = 1.0f / cuts.FramesPerSecond;
+                        float frameTime = DosFrameTime(cuts);
 
                         for (int frame = 0; frame <= maxFrame; frame++)
                         {
@@ -1378,7 +1405,7 @@ namespace Underworld
                                         cropHeight: SceneDisplayH, useSingleRedChannel: useSingleRedChannel);
                                 }
                             }
-                            yield return new WaitForSeconds(frameTime);
+                            yield return WaitForNextFrame(frameTime);
                             if (cancelRequested)
                             {
                                 goto cleanup;
