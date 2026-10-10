@@ -40,6 +40,34 @@ namespace Underworld
                 return counter;
             }
         }
+        /// <summary>
+        /// Takes a timer trigger out of the level's timer list when the trigger is removed.
+        ///
+        /// DOS does this whenever it removes a trigger chain (RemoveTriggerChain_ovr166_253F and
+        /// RemoveTriggersPointingAtTrapToRemove_ovr166_1B84 both call
+        /// MoveObjectIndexInArrayToNewPositionTimerRelated_seg044_1094): it finds the entry,
+        /// lowers the count and moves the last entry into its place, so the list stays packed.
+        /// The port has no separate count and ends the list at the first zero, as DOS does
+        /// when it loads a level, so the last entry is zeroed instead. Left in place, the
+        /// entry would keep running a trigger that no longer exists, and a save would give
+        /// DOS a timer pointing at whatever object later reused the slot.
+        /// </summary>
+        /// <returns>Whether the object was in the list.</returns>
+        public static bool RemoveTimer(int objectIndex)
+        {
+            int count = NoOfTimerTriggers;
+            for (int t = 0; t < count; t++)
+            {
+                if (GetTimer(t) == objectIndex)
+                {
+                    SetTimer(t, GetTimer(count - 1));
+                    SetTimer(count - 1, 0);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static void RunTimerTriggers(int delta = 1)
         {
             if (_RES != GAME_UW2) 
