@@ -60,7 +60,7 @@ namespace Underworld
         public struct CrngEntry
         {
             public int Pad;    // bytes 0-1: counter/accumulator
-            public int Rate;   // bytes 2-3: cycling speed
+            public int Rate;   // byte 3 & 0x3F: cycling speed, as DOS reads it
             public int Flags;  // bytes 4-5: flags (bit 0 = active in standard IFF)
             public int Low;    // byte 6: low palette index
             public int High;   // byte 7: high palette index
@@ -207,7 +207,10 @@ namespace Underworld
             for (int i = 0; i < 16; i++)
             {
                 CrngRanges[i].Pad = ((int)getAt(cutsFile, addptr, 8) << 8) | (int)getAt(cutsFile, addptr + 1, 8);
-                CrngRanges[i].Rate = ((int)getAt(cutsFile, addptr + 2, 8) << 8) | (int)getAt(cutsFile, addptr + 3, 8);
+                // DOS keeps only the low 6 bits of the big-endian rate: straight after
+                // reading the header, ReadCutsN0XData_ovr108_751 (ovr108_780) rewrites
+                // the little-endian word at +2 as (word >> 8) & 0x3F.
+                CrngRanges[i].Rate = (int)getAt(cutsFile, addptr + 3, 8) & 0x3F;
                 CrngRanges[i].Flags = ((int)getAt(cutsFile, addptr + 4, 8) << 8) | (int)getAt(cutsFile, addptr + 5, 8);
                 CrngRanges[i].Low = (int)getAt(cutsFile, addptr + 6, 8);
                 CrngRanges[i].High = (int)getAt(cutsFile, addptr + 7, 8);
