@@ -14,6 +14,45 @@ namespace Underworld
         public static byte[] lev_ark_file_data;
 
         /// <summary>
+        /// Where a level's animation overlays start: UW1 keeps them in their own block,
+        /// UW2 inside the level block after the tilemap and objects. 64 records of 6 bytes.
+        /// </summary>
+        public const int UW2OverlayStart = 0x7C08;
+        public const int OverlayCount = 64;
+        public const int OverlayRecordSize = 6;
+
+        /// <summary>
+        /// Clears every overlay record from the first one with no object link onwards.
+        ///
+        /// DOS treats the overlays as a list that ends at the first record whose link is 0:
+        /// on loading a level it counts records from slot 0 until it meets one, and ignores
+        /// the rest (seg044_EF3 in UW1, LoadAnimationOverlays_ovr128_271 in UW2). DOS saves
+        /// can carry old records past that point, and the port, which scans all 64 slots,
+        /// would otherwise treat them as live. Worse, filling the gap that ends the list
+        /// made DOS count them again when it next loaded the save, end them, and free
+        /// objects that had since been reused, which left a freed object still linked
+        /// from its tile.
+        /// </summary>
+        public static void DiscardOverlaysPastEndOfList(byte[] data, int start)
+        {
+            if (data == null) return;
+            bool ended = false;
+            for (int i = 0; i < OverlayCount; i++)
+            {
+                int p = start + i * OverlayRecordSize;
+                if (p + OverlayRecordSize > data.Length) return;
+                if (!ended && (((data[p] | (data[p + 1] << 8)) >> 6) & 0x3FF) == 0)
+                {
+                    ended = true;
+                }
+                if (ended)
+                {
+                    for (int b = 0; b < OverlayRecordSize; b++) data[p + b] = 0;
+                }
+            }
+        }
+
+        /// <summary>
         /// How many bytes block <paramref name="blockNo"/> occupies in a UW1 LEV.ARK. Returns 0
         /// for a block the table records as absent, and for anything it cannot measure.
         ///
