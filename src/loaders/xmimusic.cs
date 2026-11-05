@@ -130,7 +130,7 @@ namespace Underworld
                         }
 
                         //seg_2D7B:
-                        LoadXMI(NewThemeToPlay);
+                        LoadXMI(NewThemeToPlay, restartIfSame: true);
                         if ((NewThemeToPlay >= 2) && (NewThemeToPlay <= 4))
                         {
                             LastCombatMusicThemeChange = main.GlobalPITTimer;
@@ -311,10 +311,13 @@ namespace Underworld
             }
         }
 
-        public static void LoadXMI(byte themeNo, bool Loop = false)
+        /// <param name="restartIfSame">Restart the theme if it is already the current one.
+        /// DOS LoadXMIFile_seg016_1E73_174B does this when its second argument is set, which
+        /// RefreshMusic passes when it repeats a theme that has finished (seg016_1E73_1859).</param>
+        public static void LoadXMI(byte themeNo, bool Loop = false, bool restartIfSame = false)
         {
             Loop = false;//temporary force looping off in all cases.
-            if (CurrentlyPlayingThemeNo != themeNo)
+            if (CurrentlyPlayingThemeNo != themeNo || restartIfSame)
             {
                 // Theme numbers are octal-encoded: upper 5 bits = first digit, lower 3 bits = second digit.
                 // Matches original engine behaviour (see commit 9beb7e6 upstream).

@@ -13,6 +13,10 @@ namespace Underworld
         {
             get
             {
+                if (pdat == null)
+                {
+                    return 0; //game has not loaded yet, eg a cutscene played from the main menu
+                }
                 if (_RES==GAME_UW2)
                     {
                         return GetAt(0x61) & 0x1;
