@@ -69,13 +69,10 @@ namespace Underworld
             var MainPos = eventMousePosition; //eventMouseButton.Position;
             //var mousepos = instance.uwsubviewport.GetMousePosition();
             var mousepos = instance.uwviewport.GetLocalMousePosition();
-
-            // var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
-            // if (mouselook)
-            // {//get centred mouse cursor positions when in mouselook mode to account for off-centre vanilla ui
-            //     MainPos = mouseCursor.CursorPosition;
-            //     mousepos = mouseCursor.CursorPositionSub;
-            // }
+            if (main.MouseLookActive)
+            {//free-look aims from the centre marker, not the captured pointer
+                mousepos = (Vector2)instance.uwviewport.Size * 0.5f;
+            }
 
             var from = main.cameraPitchGimbal_world.ProjectRayOrigin(MainPos);
             RayOrigin = from;
