@@ -19,6 +19,35 @@ public partial class main : Node3D
 
 	public static main instance;
 
+	public static bool mouseMoveButtonHeld = false;
+	public const float MouseDeadZone = 0.10f;
+	public const float MouseTurnRadius = 0.55f;
+	public const short MouseSlowSpeed = 0x20;
+	public const short MouseRunSpeed = 0x70;
+	public const short MouseTurnHeading = 90;
+
+	//Middle mouse jump. Right click is the vanilla use/activate action, so jump
+	//lives on the middle button, which is unused in both control modes.
+	static bool mouseJumpRequested = false;
+	static bool mouseLongJumpRequested = false;
+
+	const int CursorDefault = 0;
+	const int CursorForward = 1;
+	const int CursorBack = 2;
+	const int CursorStrafeLeft = 3;
+	const int CursorStrafeRight = 4;
+	const int CursorTurnLeft = 5;
+	const int CursorTurnRight = 6;
+	const int CursorForwardLeft = 7;
+	const int CursorForwardRight = 8;
+	const int CursorCentre = 10;
+
+	public static bool mouseLookEnabled = false;
+	static bool mouseLookSuspendedByObject = false;
+	public const float MouseLookYawSensitivity = 64f;
+	public const float MouseLookPitchSensitivity = 32f;
+	const int MouseLookPitchLimit = 4096;
+
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam_world;
 	[Export] public Node3D GimbalYaw_world;
@@ -97,6 +126,154 @@ public partial class main : Node3D
 
 		//_ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
 
+	}
+
+	/// <summary>
+	/// True when the optional free-look mode is active. Vanilla cursor movement
+	/// is the default; this only takes over while the toggle is on and no menu,
+	/// conversation, cutscene or text input is blocking play.
+	/// </summary>
+	public static bool MouseLookActive
+	{
+		get
+		{
+			return mouseLookEnabled
+				&& !mouseLookSuspendedByObject
+				&& uimanager.instance != null
+				&& uimanager.InGame
+				&& !uimanager.blockinput
+				&& !cutsplayer.IsPlaying
+				&& !MessageDisplay.WaitingForTypedInput;
+		}
+	}
+
+	/// <summary>
+	/// Captures the pointer for free-look, or hides the OS pointer and leaves the
+	/// game's own cursor free for the vanilla control scheme.
+	/// </summary>
+	static void UpdateMouseInputState()
+	{
+		if (uimanager.instance == null) { return; }
+		if (uimanager.InGame)
+		{
+			var carryingObject = playerdat.ObjectInHand != -1;
+			if (carryingObject && mouseLookEnabled && !mouseLookSuspendedByObject)
+			{
+				mouseLookSuspendedByObject = true;
+				uimanager.AddToMessageScroll("Mouse look paused while carrying an object.");
+			}
+			else if (!carryingObject && mouseLookSuspendedByObject)
+			{
+				mouseLookSuspendedByObject = false;
+			}
+		}
+		if (MouseLookActive)
+		{
+			mouseMoveButtonHeld = false;
+			if (Input.MouseMode != Input.MouseModeEnum.Captured)
+			{
+				Input.MouseMode = Input.MouseModeEnum.Captured;
+			}
+			return;
+		}
+		if (!uimanager.InGame || uimanager.blockinput || cutsplayer.IsPlaying)
+		{
+			mouseMoveButtonHeld = false;
+		}
+		if (Input.MouseMode != Input.MouseModeEnum.Hidden)
+		{
+			Input.MouseMode = Input.MouseModeEnum.Hidden;
+		}
+	}
+
+	/// <summary>
+	/// Position of the mouse inside the 3D view, normalised so that the centre
+	/// is (0,0), +X is right and +Y is down. Returns false when outside the view.
+	/// </summary>
+	static bool GetMouseViewPosition(out Vector2 normalised, out float radius, out float angleDegrees)
+	{
+		normalised = Vector2.Zero;
+		radius = 0f;
+		angleDegrees = 0f;
+		if (uimanager.instance == null) { return false; }
+		if (!uimanager.IsMouseInViewPort()) { return false; }
+		var vp = uimanager.instance.uwsubviewport;
+		var size = vp.Size;
+		if (size.X <= 0 || size.Y <= 0) { return false; }
+		var pos = vp.GetMousePosition();
+		normalised = new Vector2(
+			(pos.X - (size.X * 0.5f)) / (size.X * 0.5f),
+			(pos.Y - (size.Y * 0.5f)) / (size.Y * 0.5f));
+		radius = Mathf.Sqrt((normalised.X * normalised.X) + (normalised.Y * normalised.Y));
+		angleDegrees = Mathf.RadToDeg(Mathf.Atan2(normalised.X, -normalised.Y));
+		return true;
+	}
+
+	/// <summary>
+	/// Cursor shown in the view window. The arrow shape is the movement direction;
+	/// the centre is a crosshair, the sides become the in-place turn arrows.
+	/// </summary>
+	public static int GetMouseCursorIndex()
+	{
+		if (!uimanager.InGame || uimanager.blockinput || cutsplayer.IsPlaying) { return CursorDefault; }
+		if (MouseLookActive) { return CursorCentre; }
+		if (!GetMouseViewPosition(out _, out var radius, out var angleDegrees)) { return CursorDefault; }
+		if (radius < MouseDeadZone) { return CursorCentre; }
+		var a = Mathf.Abs(angleDegrees);
+		var right = angleDegrees >= 0f;
+		if (a <= 22.5f) { return CursorForward; }
+		if (a <= 67.5f)
+		{
+			if (radius > MouseTurnRadius) { return right ? CursorTurnRight : CursorTurnLeft; }
+			return right ? CursorForwardRight : CursorForwardLeft;
+		}
+		if (a <= 112.5f) { return right ? CursorStrafeRight : CursorStrafeLeft; }
+		if (a <= 157.5f) { return right ? CursorTurnRight : CursorTurnLeft; }
+		return CursorBack;
+	}
+
+	/// <summary>
+	/// Vanilla UW mouse movement: the cursor position selects the direction and
+	/// speed, but the player only moves while the left button is held down.
+	/// </summary>
+	static void ApplyMouseMovement()
+	{
+		if (cutsplayer.IsPlaying) { return; }
+		if (!GetMouseViewPosition(out _, out var radius, out var angleDegrees)) { return; }
+		if (radius < MouseDeadZone) { return; }
+		var a = Mathf.Abs(angleDegrees);
+		var right = angleDegrees >= 0f;
+		var speed = (short)Mathf.Clamp(
+			(int)(MouseSlowSpeed + ((MouseRunSpeed - MouseSlowSpeed) *
+				((radius - MouseDeadZone) / (1f - MouseDeadZone)))),
+			(int)MouseSlowSpeed, (int)MouseRunSpeed);
+		var turn = (short)(right ? MouseTurnHeading : -MouseTurnHeading);
+
+		if (a <= 22.5f)
+		{
+			motion.PlayerMotionWalk_77C = speed;
+			motion.MotionInputPressed = 1;
+		}
+		else if (a <= 67.5f)
+		{
+			motion.PlayerMotionHeading_77E = turn;
+			motion.PlayerMotionWalk_77C = (radius > MouseTurnRadius) ? (short)0 : speed;
+			motion.MotionInputPressed = 1;
+		}
+		else if (a <= 112.5f)
+		{
+			motion.MotionInputPressed = (short)(right ? 0xA : 9);
+		}
+		else if (a <= 157.5f)
+		{
+			motion.PlayerMotionHeading_77E = turn;
+			motion.PlayerMotionWalk_77C = 0;
+			motion.MotionInputPressed = 1;
+		}
+		else
+		{
+			motion.MotionInputPressed = 8;
+		}
 	}
 
 	/// <summary>
@@ -269,6 +446,7 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
+		UpdateMouseInputState();
 		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
 			PitTimer += delta;
@@ -496,6 +674,11 @@ public partial class main : Node3D
 			motion.MotionInputPressed = 0xA;
 		}
 
+		if (mouseMoveButtonHeld)
+		{
+			ApplyMouseMovement();
+		}
+
 		//Addition. put roaming sight input here and override other inputs.
 		if (playerdat.RoamingSightEnchantment)
 		{
@@ -588,6 +771,16 @@ public partial class main : Node3D
 				}
 			}
 
+		}
+		if (mouseJumpRequested)//middle mouse jump
+		{
+			mouseJumpRequested = false;
+			var longJump = mouseLongJumpRequested;
+			mouseLongJumpRequested = false;
+			if (playerdat.TileState != 1)//ensure we are not swimming
+			{
+				motion.MotionInputPressed = longJump ? (short)6 : (short)7;
+			}
 		}
 		if (Input.IsKeyPressed(Key.R))//fly up
 		{
@@ -753,26 +946,115 @@ public partial class main : Node3D
 			return;
 		}
 
-		if ((@event is InputEventMouseButton eventMouseButton)
-			&&
-			((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)		{
+			if (uimanager.InGame && !uimanager.blockinput
+				&& !cutsplayer.IsPlaying && !MessageDisplay.WaitingForTypedInput)
+			{
+				if (keyEvent.Keycode == Key.Quoteleft || keyEvent.Keycode == Key.Asciitilde)
+				{
+					mouseLookEnabled = !mouseLookEnabled;
+					UpdateMouseInputState();
+					uimanager.AddToMessageScroll(mouseLookEnabled
+						? "Mouse look enabled. Tab cycles action modes."
+						: "Mouse look disabled.");
+					GetViewport().SetInputAsHandled();
+					return;
+				}
+				if (keyEvent.Keycode == Key.Tab)
+				{
+					var next = (int)uimanager.InteractionMode + 1;
+					if (next > (int)uimanager.InteractionModes.ModeUse)
+					{
+						next = (int)uimanager.InteractionModes.ModeTalk;
+					}
+					uimanager.InteractionModeToggle((uimanager.InteractionModes)next);
+					uimanager.AddToMessageScroll($"Action mode: {uimanager.InteractionMode.ToString().Replace("Mode", "")}");
+					GetViewport().SetInputAsHandled();
+					return;
+				}
+			}
+		}
+
+		if (@event is InputEventMouseMotion mouseMotion && MouseLookActive)
 		{
-			if (eventMouseButton.Pressed)
+			var yawDelta = (int)(mouseMotion.Relative.X * MouseLookYawSensitivity);
+			yawDelta = Math.Clamp(yawDelta, -32768, 32767);
+			playerdat.PlayerCameraYaw_dseg_8294 += (short)yawDelta;
+
+			var pitch = playerdat.PlayerCameraPitch_dseg_67d6_33D6
+				- (int)(mouseMotion.Relative.Y * MouseLookPitchSensitivity);
+			playerdat.PlayerCameraPitch_dseg_67d6_33D6 =
+				(short)Math.Clamp(pitch, -MouseLookPitchLimit, MouseLookPitchLimit);
+
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
+		if (@event is InputEventMouseButton leftButton
+			&& (leftButton.ButtonIndex == MouseButton.Left))
+		{
+			if (leftButton.Pressed)
 			{
 				if (MessageDisplay.WaitingForMore)
 				{
-					//Debug.Print("End wait due to click");
 					MessageDisplay.WaitingForMore = false;
-					return; //don't process any more clicks here.
+					return;
 				}
-				if (!uimanager.blockinput)
+				if (uimanager.InGame && !uimanager.blockinput && uimanager.IsMouseInViewPort())
 				{
-					if (uimanager.IsMouseInViewPort())
+					if (MouseLookActive)
 					{
-						uimanager.ClickOnViewPort(eventMouseButton);
+						uimanager.ClickOnViewPort(leftButton);
 					}
-
+					else
+					{
+						mouseMoveButtonHeld = true;
+					}
+					GetViewport().SetInputAsHandled();
+					return;
 				}
+			}
+			else
+			{
+				mouseMoveButtonHeld = false;
+			}
+		}
+
+		if (@event is InputEventMouseButton rightButton
+			&& (rightButton.ButtonIndex == MouseButton.Right)
+			&& rightButton.Pressed)
+		{
+			if (MessageDisplay.WaitingForMore)
+			{
+				MessageDisplay.WaitingForMore = false;
+				return;
+			}
+			if (uimanager.InGame && !uimanager.blockinput && uimanager.IsMouseInViewPort())
+			{
+				uimanager.ClickOnViewPort(rightButton);
+				GetViewport().SetInputAsHandled();
+				return;
+			}
+		}
+
+		if (@event is InputEventMouseButton middleButton
+			&& (middleButton.ButtonIndex == MouseButton.Middle)
+			&& middleButton.Pressed)
+		{
+			if (MessageDisplay.WaitingForMore)
+			{
+				MessageDisplay.WaitingForMore = false;
+				return;
+			}
+			if (uimanager.InGame && !uimanager.blockinput
+				&& (MouseLookActive || uimanager.IsMouseInViewPort()))
+			{
+				//Queued so the physics tick applies it after mouse/WASD movement,
+				//the same way the J key jump is applied.
+				mouseJumpRequested = true;
+				mouseLongJumpRequested = Input.IsKeyPressed(Key.Shift);
+				GetViewport().SetInputAsHandled();
+				return;
 			}
 		}
 
