@@ -16,23 +16,7 @@ namespace Underworld
             {
                 b.modelNode = b.Generate3DModel(parent, name);
                 SetModelRotation(parent, b);
-                //DisplayModelPoints(b, modelNode);
-                if (obj.xpos == 0)
-                {
-                    parent.Position += new Vector3(+0.05f, 0f, 0f);
-                }
-                if (obj.ypos == 0)
-                {
-                    parent.Position += new Vector3(0f, 0f, -0.05f);
-                }
-                if (obj.xpos == 7)
-                {
-                    parent.Position += new Vector3(-0.05f, 0f, 0f);
-                }
-                if (obj.ypos == 7)
-                {
-                    parent.Position += new Vector3(0f, 0f, +0.05f);
-                }
+                SnapToWall(parent, obj, 0.0625f);
             }
             else
             {

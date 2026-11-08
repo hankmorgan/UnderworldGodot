@@ -20,6 +20,7 @@ namespace Underworld
             {
                 b.modelNode =  b.Generate3DModel(parent, name);
                 SetModelRotation(parent, b);
+                SnapToWall(parent, obj, 0.0625f);
             }
             else
             {

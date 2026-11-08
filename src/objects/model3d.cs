@@ -345,6 +345,70 @@ namespace Underworld
 
 
         //Center the model in the tile it is in along it's heading
+        /// <summary>
+        /// The direction from a wall into the room for a model heading.
+        /// World +X is west and world +Z is north in this port.
+        /// </summary>
+        public static Vector3 WallRoomDirection(int heading)
+        {
+            const float d = 0.70710678f;
+            switch (heading)
+            {
+                case 0: return new Vector3(0f, 0f, -1f); //south
+                case 1: return new Vector3(d, 0f, -d);  //south-west
+                case 2: return new Vector3(1f, 0f, 0f);  //west
+                case 3: return new Vector3(d, 0f, d);   //north-west
+                case 4: return new Vector3(0f, 0f, 1f);  //north
+                case 5: return new Vector3(-d, 0f, d);  //north-east
+                case 6: return new Vector3(-1f, 0f, 0f); //east
+                default: return new Vector3(-d, 0f, -d); //south-east
+            }
+        }
+
+        /// <summary>
+        /// Snaps a wall mounted model (switch, lever, chain, sign) to the wall
+        /// face while keeping its position along the wall. protrusion is the
+        /// model-local +Z distance of the face that should sit in front of the
+        /// wall. Used instead of the old per-axis +/-0.05 guesses, which left
+        /// north/east models about 0.2 out from the wall.
+        /// </summary>
+        public static void SnapToWall(Node3D parent, uwObject obj, float protrusion, float clearance = 0.01f)
+        {
+            float roomFactor = clearance - protrusion;
+            var room = WallRoomDirection(obj.heading);
+            float x = parent.Position.X;
+            float y = parent.Position.Y;
+            float z = parent.Position.Z;
+
+            switch (obj.heading)
+            {
+                case 0: //north wall
+                    z = ((obj.tileY + 1) * 1.2f) + (roomFactor * room.Z);
+                    break;
+                case 4: //south wall
+                    z = (obj.tileY * 1.2f) + (roomFactor * room.Z);
+                    break;
+                case 2: //east wall
+                    x = (-(obj.tileX + 1) * 1.2f) + (roomFactor * room.X);
+                    break;
+                case 6: //west wall
+                    x = (-obj.tileX * 1.2f) + (roomFactor * room.X);
+                    break;
+                default:
+                    {
+                        //Diagonal wall: keep the along-wall position, correct only depth.
+                        float cx = -((obj.tileX * 1.2f) + 0.6f);
+                        float cz = (obj.tileY * 1.2f) + 0.6f;
+                        float distanceIntoRoom = ((x - cx) * room.X) + ((z - cz) * room.Z);
+                        float t = roomFactor - distanceIntoRoom;
+                        x += t * room.X;
+                        z += t * room.Z;
+                        break;
+                    }
+            }
+            parent.Position = new Vector3(x, y, z);
+        }
+
         public static void centreAlongAxis(Node3D ModelParentNode, model3D modelObj)
         {
             int x = modelObj.uwobject.tileX;
