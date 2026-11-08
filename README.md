@@ -31,7 +31,7 @@
 ## Overview
 An engine recreation of Ultima Underworld and Ultima Underworld 2 in the Godot Engine.
 
-This project supercedes the Unity-based project and reboots the code base to act more like the Underworld games originally worked.
+This project supersedes the Unity-based project and reboots the code base to act more like the Underworld games originally worked.
 
 ![Screenshot1](resources/screenshots/screenshotuw1.jpg)
 ![Screenshot2](resources/screenshots/screenshotuw2.jpg)
@@ -70,10 +70,10 @@ Requires game files for either UW1 or UW2. See [settings.json](#settingsjson) fo
 * Usable wands, scrolls and potions.
 * Small window cutscenes (partial)
 * Game variables and quest variables (partial support, not all scenarios may work)
-* Level transitions and persistance.
+* Level transitions and persistence.
 * Options menu incl sound, music and low quality detail levels (try it out if you still use a 486!)
 * Many Object interactions
-* Combat attack charge buildup and combat accuracy calcuations for player
+* Combat attack charge buildup and combat accuracy calculations for player
 * Missile combat
 * In game advancement and player status changes over time (hunger, fatigue, mana regeneration)
 * Skillpoints and character advancement logic
@@ -96,7 +96,7 @@ Requires game files for either UW1 or UW2. See [settings.json](#settingsjson) fo
 * Loading (full support)
 * Endgame screens
 * Animated Dragon UI Elements
-* Partial Weight and encumberance mechanics
+* Partial Weight and encumbrance mechanics
 * Splash screens and game credits
 * Adding and deleting automap notes
 * Stealth mechanics
@@ -128,7 +128,7 @@ See [https://godotengine.org/](https://godotengine.org/) for engine runtime down
     > Make sure you run BUILD on the project before continuing.
 7. Run. It might work
 
-This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can alos just be compiled and ran from there.
+This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can also just be compiled and ran from there.
 
 #### macOS notes
 
@@ -289,11 +289,11 @@ https://godotengine.org/asset-library/asset/2144
 
 ## AI Policy
 
-This project is an (ocassionally) fun hobby for me and is focused on the creation of a vanilla/vanilla plus implementation of Underworld that is closely tied to the original look and feel of the games. It is not planned to support use of AI upscaled assets or other AI generated artifacts within this project.
+This project is an (occasionally) fun hobby for me and is focused on the creation of a vanilla/vanilla plus implementation of Underworld that is closely tied to the original look and feel of the games. It is not planned to support use of AI upscaled assets or other AI generated artifacts within this project.
 
 # Appendix
 ## Guide to the Underworld and Reverse Engineering
-See  [https://github.com/hankmorgan/UWReverseEngineering] for my dissassemblies and notes on UW1/UW2
+See  [https://github.com/hankmorgan/UWReverseEngineering] for my disassemblies and notes on UW1/UW2
 
 ## Sources/Previous Projects
 
@@ -306,7 +306,7 @@ Unfortunately some information sources have been lost to me over time. If I have
 
 Unknown authors [Internal Formats on the Ultima Codex](https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats) 
 
-Mitch Aigner FAQs for [UW1](https://gamefaqs.gamespot.com/pc/562665-ultima-underworld-the-stygian-abyss/faqs/1811) abd [UW2](https://gamefaqs.gamespot.com/pc/564592-ultima-underworld-ii-labyrinth-of-worlds/faqs/1813)
+Mitch Aigner FAQs for [UW1](https://gamefaqs.gamespot.com/pc/562665-ultima-underworld-the-stygian-abyss/faqs/1811) and [UW2](https://gamefaqs.gamespot.com/pc/564592-ultima-underworld-ii-labyrinth-of-worlds/faqs/1813)
 
 #### Credits
 The following credits are taken verbatim from the files shared by named projects.
