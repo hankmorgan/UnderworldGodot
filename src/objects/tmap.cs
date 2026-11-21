@@ -7,8 +7,8 @@ namespace Underworld
     {
         Node3D tmapnode;
 
-        const float TmapDepth = 0.075f;
-        float wallClearance = 0.01f;
+        float tmapDepth = 0.075f;
+        bool sharesDoorPosition;
 
         public tmap(uwObject _uwobject)
         {
@@ -32,7 +32,8 @@ namespace Underworld
                     if ((door.xpos == obj.xpos) && (door.ypos == obj.ypos))
                     {
                         Debug.Print($"Tmap {obj.index} shares space with door {door.index}");
-                        t.wallClearance = 0.035f;
+                        t.sharesDoorPosition = true;
+                        t.tmapDepth = 0.1f;
                     }
                 }
             }
@@ -43,7 +44,14 @@ namespace Underworld
 
             var tileType = UWTileMap.ValidTile(obj.tileX, obj.tileY)
                 ? a_tilemap.Tiles[obj.tileX, obj.tileY].tileType : (short)-1;
-            if (IsDiagonalTile(tileType))
+            if (t.sharesDoorPosition && !IsDiagonalTile(tileType))
+            {
+                // A door is inside the tile rather than on its outer wall.
+                // Keep the flat on the door plane, offset toward the viewer.
+                parent.Position = obj.GetCoordinate();
+                centreAlongAxis(parent, t);
+            }
+            else if (IsDiagonalTile(tileType))
                 PlaceOnDiagonalWall(parent, t, tileX, tileY, tileType);
             else
                 PlaceOnWall(parent, t, tileX, tileY);
@@ -85,10 +93,10 @@ namespace Underworld
         {
             float tx = tileX * 1.2f;
             float ty = tileY * 1.2f;
-            //The drawn face is TmapDepth along the node's local +Z, and local
+            //The drawn face is tmapDepth along the node's local +Z, and local
             //+Z points into the room. Offset the node back by that amount so the
             //face lands on the wall plane.
-            float roomFactor = t.wallClearance - TmapDepth;
+            float roomFactor = 0.01f - t.tmapDepth;
             float y = parent.Position.Y;
             var room = RoomDirection(t.uwobject.heading);
 
@@ -136,7 +144,7 @@ namespace Underworld
             {
                 minDepth = Mathf.Min(minDepth, (parent.GlobalTransform * local - tileCenter).Dot(inward));
             }
-            parent.Position += inward * Mathf.Clamp(t.wallClearance - minDepth, -0.12f, 0.12f);
+            parent.Position += inward * Mathf.Clamp(0.01f - minDepth, -0.12f, 0.12f);
         }
 
         public static bool LookAt(uwObject obj)
@@ -158,10 +166,10 @@ namespace Underworld
             const float halfWidth = 0.6f;
             const float height = 1.2f;
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-halfWidth, 0f, TmapDepth);
-            v[1] = new Vector3(halfWidth, 0f, TmapDepth);
-            v[2] = new Vector3(halfWidth, height, TmapDepth);
-            v[3] = new Vector3(-halfWidth, height, TmapDepth);
+            v[0] = new Vector3(-halfWidth, 0f, tmapDepth);
+            v[1] = new Vector3(halfWidth, 0f, tmapDepth);
+            v[2] = new Vector3(halfWidth, height, tmapDepth);
+            v[3] = new Vector3(-halfWidth, height, tmapDepth);
             return v;
         }
 
