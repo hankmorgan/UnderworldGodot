@@ -197,10 +197,13 @@ public partial class main : Node3D
 		angleDegrees = 0f;
 		if (uimanager.instance == null) { return false; }
 		if (!uimanager.IsMouseInViewPort()) { return false; }
-		var vp = uimanager.instance.uwsubviewport;
-		var size = vp.Size;
+		// The rendered view is displayed in a UI control. Read its local mouse
+		// position, as the viewport hit test does; the render SubViewport may not
+		// receive mouse events and can report a stale (0, 0).
+		var view = uimanager.instance.uwviewport;
+		var size = view.Size;
 		if (size.X <= 0 || size.Y <= 0) { return false; }
-		var pos = vp.GetMousePosition();
+		var pos = view.GetLocalMousePosition();
 		normalised = new Vector2(
 			(pos.X - (size.X * 0.5f)) / (size.X * 0.5f),
 			(pos.Y - (size.Y * 0.5f)) / (size.Y * 0.5f));
