@@ -8,6 +8,8 @@ namespace Underworld
 	public partial class mouseCursor : TextureRect
 	{
 		[Export] public TextureRect cross;
+		int directionalCursorIndex = -1;
+		bool directionalOwnsCursor = false;
 		// private static Vector2 UW1CursorPosition = new Vector2(552, 296);
 		// private static Vector2 UW2CursorPosition = new Vector2(474, 314);
 		// private static Vector2 UW1SubCursorPosition = new Vector2(366, 238);
@@ -55,14 +57,6 @@ namespace Underworld
 		{
 			if (main.cameraPitchGimbal_world != null)
 			{
-				// var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
-
-				// if (mouselook)
-				// {
-				// 	this.Position = CursorPosition;
-				// }
-				// else
-				// {//follow the mouse
 				if (Texture != null)
 				{
 					if (uimanager.CurrentGameMode == uimanager.GameModes.AUTOMAP)
@@ -72,13 +66,59 @@ namespace Underworld
 							return; //don't move mouse while writing.
 						}
 					}
-					cross.Position = GetViewport().GetMousePosition() ;
-					var offset = new Vector2(-Texture.GetWidth() , -Texture.GetHeight() );
-					var pos = GetViewport().GetMousePosition() + offset;
-					this.Position = pos;
+					UpdateDirectionalCursor();
+					var offset = new Vector2(-Texture.GetWidth(), -Texture.GetHeight());
+					if (main.MouseLookActive && uimanager.instance != null)
+					{
+						var viewCentre = uimanager.instance.uwviewport.GetGlobalRect().GetCenter();
+						cross.Position = viewCentre - (cross.Texture.GetSize() * 0.5f);
+						cross.Visible = true;
+						Visible = false;
+					}
+					else
+					{
+						cross.Visible = false;
+						Visible = true;
+						var target = GetViewport().GetMousePosition();
+						cross.Position = target;
+						this.Position = target + offset;
+					}
 				}
 			}
-			//}
+		}
+
+		/// <summary>
+		/// Shows the vanilla UW directional arrow / crosshair for the current
+		/// position in the 3D view. Special cursors (spells, held objects) win.
+		/// </summary>
+		void UpdateDirectionalCursor()
+		{
+			if (!uimanager.InGame || uimanager.blockinput
+				|| SpellCasting.currentSpell != null
+				|| playerdat.ObjectInHand != -1)
+			{
+				ReleaseDirectionalCursor();
+				return;
+			}
+			var desired = main.GetMouseCursorIndex();
+			if (desired != directionalCursorIndex || !directionalOwnsCursor)
+			{
+				SetCursorToCursor(desired);
+				directionalCursorIndex = desired;
+				directionalOwnsCursor = true;
+			}
+		}
+
+		/// <summary>
+		/// Restores the default cursor when the 3D view no longer owns it, so a
+		/// directional arrow never survives into menus, options or conversations.
+		/// </summary>
+		void ReleaseDirectionalCursor()
+		{
+			if (!directionalOwnsCursor) { return; }
+			directionalOwnsCursor = false;
+			directionalCursorIndex = -1;
+			SetCursorToCursor(0);
 		}
 
 		public void InitCursor()
@@ -93,6 +133,8 @@ namespace Underworld
 			Texture = uimanager.grObjects.LoadImageAt(index);
 			Material = uimanager.grObjects.GetMaterial(index);
 			this.Size = Texture.GetSize() * 4;
+			directionalOwnsCursor = false;
+			directionalCursorIndex = -1;
 		}
 
 		public void SetCursorToCursor(int index = 0)
@@ -110,6 +152,8 @@ namespace Underworld
 			//Material= uimanager.grCursors.GetMaterial(index);//no shader is applied here
 			Material = null;
 			this.Size = Texture.GetSize() * 4;
+			directionalOwnsCursor = false;
+			directionalCursorIndex = -1;
 		}
 	}
 

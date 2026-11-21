@@ -187,8 +187,13 @@ namespace Underworld
         {
             if (!InGame) { return; }
             //store these values for use in throw and spell casting events
-            ViewPortMouseXPos = eventMouseButton.Position.X;
-            ViewPortMouseYPos = eventMouseButton.Position.Y;
+            var clickPosition = eventMouseButton.Position;
+            if (main.MouseLookActive && instance != null)
+            {
+                clickPosition = instance.uwviewport.GetGlobalRect().GetCenter();
+            }
+            ViewPortMouseXPos = clickPosition.X;
+            ViewPortMouseYPos = clickPosition.Y;
             if (uimanager.InteractionMode == InteractionModes.ModeAttack)
             {
                 return;//no more needs to be done.
@@ -201,6 +206,10 @@ namespace Underworld
             //text.GetImage().SavePng("c:\\temp\\testobjectinfo.png");
             //var vi = new Vector2I((int)(ViewPortMouseXPos / text.GetWidth()), (int)(ViewPortMouseYPos / text.GetHeight()));
             var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
+            if (main.MouseLookActive)
+            {//free-look clicks come from the centre marker, not the captured pointer
+                mouse = (Vector2)uimanager.instance.uwviewport.Size * 0.5f;
+            }
             var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//
 
 
