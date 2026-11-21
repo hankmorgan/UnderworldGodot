@@ -7,15 +7,8 @@ namespace Underworld
     {
         Node3D tmapnode;
 
-        //Depth of the flat's drawn face. Builtin models 20 and 22 both sit
-        //16 model units (0.0625 tile = 0.075 world units) proud of their
-        //origin plane. The door case needs a little more so it does not
-        //fight the door texture.
-        float tmapDepth = 0.075f;
-
-        //Item 0x016E is the small texture map (builtin model 20); 0x016F is
-        //the full tile one (model 22).
-        bool smallTmap = false;
+        const float TmapDepth = 0.075f;
+        float wallClearance = 0.01f;
 
         public tmap(uwObject _uwobject)
         {
@@ -27,7 +20,6 @@ namespace Underworld
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var t = new tmap(obj);
-            t.smallTmap = (obj.item_id == 0x016E);
 
             //A tmap sharing a tile with a door (UW1 level 4) must sit slightly
             //further out so it does not z-fight the door.
@@ -40,7 +32,7 @@ namespace Underworld
                     if ((door.xpos == obj.xpos) && (door.ypos == obj.ypos))
                     {
                         Debug.Print($"Tmap {obj.index} shares space with door {door.index}");
-                        t.tmapDepth = 0.1f;
+                        t.wallClearance = 0.035f;
                     }
                 }
             }
@@ -91,13 +83,12 @@ namespace Underworld
         /// </summary>
         static void PlaceOnWall(Node3D parent, tmap t, int tileX, int tileY)
         {
-            const float clearance = 0.01f; //sit just in front of the wall to avoid z-fighting
             float tx = tileX * 1.2f;
             float ty = tileY * 1.2f;
-            //The drawn face is t.tmapDepth along the node's local +Z, and local
+            //The drawn face is TmapDepth along the node's local +Z, and local
             //+Z points into the room. Offset the node back by that amount so the
             //face lands on the wall plane.
-            float roomFactor = clearance - t.tmapDepth;
+            float roomFactor = t.wallClearance - TmapDepth;
             float y = parent.Position.Y;
             var room = RoomDirection(t.uwobject.heading);
 
@@ -145,7 +136,7 @@ namespace Underworld
             {
                 minDepth = Mathf.Min(minDepth, (parent.GlobalTransform * local - tileCenter).Dot(inward));
             }
-            parent.Position += inward * Mathf.Clamp(0.01f - minDepth, -0.12f, 0.12f);
+            parent.Position += inward * Mathf.Clamp(t.wallClearance - minDepth, -0.12f, 0.12f);
         }
 
         public static bool LookAt(uwObject obj)
@@ -162,17 +153,15 @@ namespace Underworld
 
         public override Vector3[] ModelVertices()
         {
-            //Model 20 (0x016E) spans 0.25 of a tile (0.3 world units), model 22
-            //(0x016F) spans a full tile (1.2). Both quads sit 0.0625 tile proud
-            //of the origin and are not centred on it, so the node is centred on
-            //the visible quad here rather than on the model origin.
-            float halfWidth = smallTmap ? 0.15f : 0.6f;
-            float height = smallTmap ? 0.3f : 1.2f;
+            //Keep the established full-tile size for both texture map items.
+            //The mapping from item IDs to built-in model sizes is not established.
+            const float halfWidth = 0.6f;
+            const float height = 1.2f;
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-halfWidth, 0f, tmapDepth);
-            v[1] = new Vector3(halfWidth, 0f, tmapDepth);
-            v[2] = new Vector3(halfWidth, height, tmapDepth);
-            v[3] = new Vector3(-halfWidth, height, tmapDepth);
+            v[0] = new Vector3(-halfWidth, 0f, TmapDepth);
+            v[1] = new Vector3(halfWidth, 0f, TmapDepth);
+            v[2] = new Vector3(halfWidth, height, TmapDepth);
+            v[3] = new Vector3(-halfWidth, height, TmapDepth);
             return v;
         }
 
