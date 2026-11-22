@@ -378,6 +378,13 @@ public partial class main : Node3D
 			RefreshWorldState();//handles teleports, tile redraws	
 		}
 
+		if (!cutsplayer.IsPlaying &&
+			(uimanager.AtMainMenu || uimanager.InConversation || uimanager.InAutomap || uimanager.CurrentGameMode == uimanager.GameModes.OPTIONS))
+		{
+			//screens that wait for input keep their music going, as the original's do
+			XMIMusic.LoopMusicMaybe();
+		}
+
 		//Other updates
 		if (uimanager.InGame)
 		{
