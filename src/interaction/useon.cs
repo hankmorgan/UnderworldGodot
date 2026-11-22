@@ -94,6 +94,18 @@ namespace Underworld
         {
             switch (objInHand.minorclass)
             {
+                case 0:
+                    {
+                        if (_RES != GAME_UW2)
+                        {
+                            switch (objInHand.classindex)
+                            {
+                                case >= 2 and <= 6://skulls and bones
+                                    return UseBonesOn(objInHand, targetObject);
+                            }
+                        }
+                        break;
+                    }
                 case 1:
                     {//some misc items                    
                         switch (objInHand.classindex)
@@ -197,6 +209,63 @@ namespace Underworld
                     }
             }
             return false;
+        }
+
+        /// <summary>
+        /// UW1 bones used on something. Garamon's bones on his grave bury him. (UseBonesOn, uw1 USEITEMS.C:416-454)
+        /// </summary>
+        public static bool UseBonesOn(uwObject bones, uwObject targetObject)
+        {
+            bool used = false;
+            if (targetObject.item_id == 0x165)//gravestone
+            {
+                if (bones.owner == 0x3E)
+                {
+                    if ((targetObject.is_quant == 1) && ((targetObject.link & 0x200) != 0) && ((targetObject.link & 0x1FF) == 0x21))
+                    {
+                        playerdat.CanTalismansBeDestroyed = true;
+                        playerdat.IsGaramonBuried = true;
+                        targetObject.link = 0x222;
+                        //Garamon talks
+                        var garamon = talk.SpawnTemporaryTalker(
+                            whoami: 0x1B, itemid: 0x7E,
+                            tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY,
+                            attitude: 3, goal: 7);
+                        talk.Talk(garamon, true);
+                        //set off the trigger at tile (0x36, 0x34)
+                        var tile = UWTileMap.current_tilemap.Tiles[0x36, 0x34];
+                        if (tile.indexObjectList != 0)
+                        {
+                            trigger.RunTrigger(
+                                character: 1,
+                                ObjectUsed: null,
+                                TriggerObject: UWTileMap.current_tilemap.LevelObjects[tile.indexObjectList],
+                                triggerType: (int)triggerObjectDat.triggertypes.MOVE,
+                                objList: UWTileMap.current_tilemap.LevelObjects);
+                        }
+                        used = true;
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x103));
+                        return true;
+                    }
+                }
+                else
+                {
+                    used = true;
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x86));
+                }
+            }
+            if (!used)
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x84));
+            }
+            else
+            {
+                ObjectCreator.Consume(bones, true);
+            }
+            return true;
         }
 
     } //end class

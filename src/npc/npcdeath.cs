@@ -76,9 +76,7 @@ namespace Underworld
                     {
                         if (mode == 1)
                         {
-                            var tmp = playerdat.GetQuest(37);
-                            tmp &= 0xFB;
-                            playerdat.SetQuest(37, tmp);//can talismans be thrown == false
+                            playerdat.CanTalismansBeDestroyed = false;//talisman_ok (uw1 WORLDEV.C:558)
                         }
                         return true;
                     }
