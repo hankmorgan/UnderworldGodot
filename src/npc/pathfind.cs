@@ -632,7 +632,8 @@ namespace Underworld
                         if ((obj.majorclass == 5) && (obj.minorclass == 0) && (obj.classindex < 8))
                         {
                             // is a closed door
-                            if (door.CharacterDoorLockAndKeyInteraction(critter, obj, 0) == 0)
+                            //UW1 has no lock test here (uw1 PATHFIND.C:443)
+                            if ((_RES != GAME_UW2) || (door.CharacterDoorLockAndKeyInteraction(critter, obj, 0) == 0))
                             {
                                 //seg006_1413_1216:
                                 var DoorHeading_var22 = obj.heading;
