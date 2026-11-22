@@ -386,16 +386,16 @@ namespace Underworld
 
 
         /// <summary>
-        /// Handles checking if the critter can operate this door or lock
+        /// Handles checking if the critter can operate this door or lock (checkLock, uw1 USEITEMS.C:1093, uw2 OBJUSE.C:301)
         /// Unimplemented: this function is used to operate the lock in vanilla underowrld
         /// </summary>
         /// <param name="character"></param>
         /// <param name="doorobj"></param>
         /// <param name="skillnegated">Also key index used.</param>
-        /// <returns></returns>
+        /// <returns>0 locked (or the attempt failed), 1 no lock, 2 the key locked it, 3 unlocked, 4 not locked, 5 a lockpick fumble (UW2)</returns>
         public static int CharacterDoorLockAndKeyInteraction(uwObject character, uwObject doorobj, int skillnegated)
         {
-            if ((doorobj.is_quant == 0) && (doorobj.link <= 0))
+            if ((doorobj.is_quant == 0) && (doorobj.link > 0))
             {
                 var LockObject = objectsearch.FindMatchInObjectChain(
                     ListHeadIndex: doorobj.link,
@@ -417,8 +417,8 @@ namespace Underworld
                             //seg040_34E7_901
                             if (skillnegated <= 0)
                             {
-                                //or skillnegated==0
-                                return 1;
+                                //only asking: the lock is set
+                                return 0;
                             }
                             else
                             {
@@ -433,23 +433,7 @@ namespace Underworld
                                     if ((LockObject.link & 0x1FF) == skillnegated)
                                     {
                                         //seg040_34E7_935:
-                                        //unlock trigger
-                                        trigger.TriggerObjectLink(character.index, doorobj, 0xB, doorobj.tileX, doorobj.tileY, UWTileMap.current_tilemap.LevelObjects);
-                                        if (LockObject.flags1 == 0)
-                                        {
-                                            //seg040_34E7_963:
-                                            if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
-                                            {
-                                                ObjectFreeLists.ReleaseFreeObject(LockObject);
-                                            }
-                                            return 3;
-                                        }
-                                        else
-                                        {
-                                            //seg040_34E7_985
-                                            LockObject.flags0 = 0;
-                                            return 3;
-                                        }
+                                        return Unlock(character, doorobj, LockObject);
                                     }
                                     else
                                     {
@@ -462,6 +446,17 @@ namespace Underworld
                         {
                             //seg040_34E7_8A0:
                             //lockpick skill check
+                            if (_RES != GAME_UW2)
+                            {
+                                //UW1's rules: 0x1F for z 0xE and no fumble (uw1 USEITEMS.C:1116)
+                                if (((LockObject.zpos == 0xE) && (-skillnegated < 0x1F))
+                                    || (LockObject.zpos == 0xF)
+                                    || (playerdat.SkillCheck(-skillnegated, LockObject.zpos * 3) <= playerdat.SkillCheckResult.Fail))
+                                {
+                                    return 0;
+                                }
+                                return Unlock(character, doorobj, LockObject);
+                            }
                             var di_checkresult = playerdat.SkillCheck(-skillnegated, LockObject.zpos * 3);
                             if (
                                 ((LockObject.zpos == 0xE) && (-skillnegated < 0x20))
@@ -493,23 +488,7 @@ namespace Underworld
                                 else
                                 {
                                     //seg040_34E7_935: (again)
-                                    //unlock trigger
-                                    trigger.TriggerObjectLink(character.index, doorobj, 0xB, doorobj.tileX, doorobj.tileY, UWTileMap.current_tilemap.LevelObjects);
-                                    if (LockObject.flags1 == 0)
-                                    {
-                                        //seg040_34E7_963:
-                                        if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
-                                        {
-                                            ObjectFreeLists.ReleaseFreeObject(LockObject);
-                                        }
-                                        return 3;
-                                    }
-                                    else
-                                    {
-                                        //seg040_34E7_985
-                                        LockObject.flags0 = 0;
-                                        return 3;
-                                    }
+                                    return Unlock(character, doorobj, LockObject);
                                 }
                             }
                         }
@@ -550,6 +529,29 @@ namespace Underworld
             {
                 return 1;
             }
+        }
+
+        /// <summary>
+        /// Sets off the unlock traps, then deletes the lock or clears its locked bit (uw1 USEITEMS.C:1124, uw2 OBJUSE.C:337)
+        /// </summary>
+        static int Unlock(uwObject character, uwObject doorobj, uwObject LockObject)
+        {
+            //unlock trigger
+            trigger.TriggerObjectLink(character.index, doorobj, (int)triggerObjectDat.UNLOCK_TRIGGER_TYPE, doorobj.tileX, doorobj.tileY, UWTileMap.current_tilemap.LevelObjects);
+            if (LockObject.flags1 == 0)
+            {
+                //seg040_34E7_963:
+                if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
+                {
+                    ObjectFreeLists.ReleaseFreeObject(LockObject);
+                }
+            }
+            else
+            {
+                //seg040_34E7_985
+                LockObject.flags0 = 0;
+            }
+            return 3;
         }
 
 
