@@ -54,7 +54,7 @@ namespace Underworld
         public static void ResurrectAtSilverTree()
         {
             uimanager.EnableDisable(uimanager.instance.uwviewport,true); 
-            ChangeExperience(-Exp >> 3);
+            ChangeExperience(-(Exp >> 3));//uw1 SKILLS.C:832
             ResurrectionEffects();
             Teleportation.CodeToRunOnTeleport = TeleportToSilverTree;
             Teleportation.Teleport(
