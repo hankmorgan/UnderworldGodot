@@ -117,7 +117,7 @@ namespace Underworld
         /// <returns></returns>
         static int ProcessGeneralBlock(byte[] currentblock, int XClockValue, int mode)
         {
-            playerdat.SetXClock(0,0);
+            //the player's time of day is not reset here (Sched_SetTime, uw2 SCHEDULE.C:173)
             Debug.Print($"ProcessGeneralBlock xclockvalue {XClockValue}");
             var si_offset = currentblock[4 + playerdat.dungeon_level * 4];
             var di = XClockValue;
