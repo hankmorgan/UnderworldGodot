@@ -83,9 +83,19 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Lets seconds of game time pass (sleeping, repairing, jail). UW2 then sets the time of day and
+        /// brings the schedules up to date (pass_time, uw2 WORLDEV.C:163). UW1 only adds to the clock.
+        /// </summary>
         public static void AdvanceTime(int span)
         {
             Debug.Print ($"Advance time {span}");
+            ClockValue += span << 8;
+            if (_RES == GAME_UW2)
+            {
+                SetXClock(0, (ClockValue / 0x4B000) % 0x48);
+                scd.ProcessSCDArk(1);
+            }
         }
     }  //end class
 }//end namespace
