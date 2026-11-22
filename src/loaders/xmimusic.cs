@@ -303,6 +303,34 @@ namespace Underworld
             }//end uw1 logic
         }
 
+        /// <summary>
+        /// Starts the theme again once it has ended; UW1's theme 1 gives way to 4, UW2's 1, 6 and 7 to 10.
+        /// (loop_music_maybe, uw1 SOUND.C:928, uw2 SOUND.C:1556)
+        /// </summary>
+        public static void LoopMusicMaybe()
+        {
+            if (!playerdat.MusicEnabled || MusicStreamPlayer.Instance == null || CurrentlyPlayingThemeNo == 0)
+            {
+                return;
+            }
+            if (!MusicStreamPlayer.Instance.IsPlaying)
+            {
+                var theme = CurrentlyPlayingThemeNo;
+                if (_RES == GAME_UW2)
+                {
+                    if ((theme == IntroTheme) || (theme == Fanfare) || (theme == 7))
+                    {
+                        theme = 0xA;
+                    }
+                }
+                else if (theme == IntroTheme)
+                {
+                    theme = 4;
+                }
+                LoadXMI(theme, restartIfSame: true);
+            }
+        }
+
         public static void ChangeThemeMusic(byte newTheme)
         {
             if (CurrentlyPlayingThemeNo != Fanfare)
